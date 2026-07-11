@@ -15,7 +15,7 @@
     "matched_poi_ids": [],
     "source": "apify:tiktok",
     "confidence": 0.4,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "tiktok:7597383554418429202": {
     "platform": "tiktok",
@@ -33,7 +33,7 @@
     "matched_poi_ids": [],
     "source": "apify:tiktok",
     "confidence": 0.4,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "tiktok:7656057796013690119": {
     "platform": "tiktok",
@@ -69,7 +69,7 @@
     "matched_poi_ids": [],
     "source": "apify:tiktok",
     "confidence": 0.4,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "tiktok:7650358046735994133": {
     "platform": "tiktok",
@@ -124,7 +124,7 @@
     "matched_poi_ids": [],
     "source": "apify:facebook_search",
     "confidence": 0.45,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "facebook:100063671435011": {
     "platform": "facebook",
@@ -140,15 +140,17 @@
     "address": "Số 105, đường Dân Chủ, phường Thủ Đức, Ho Chi Minh City, Vietnam, 1234",
     "phone": "+84 28 3722 8308",
     "published_at": "April 27, 2015",
-    "matched_poi_ids": [],
+    "matched_poi_ids": [
+      "real:am-thuc-nhat-ban-ajido-thu-duc-thu-duc"
+    ],
     "source": "apify:facebook_search",
     "confidence": 0.45,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "facebook:100063535662161": {
     "platform": "facebook",
     "signal_id": "facebook:100063535662161",
-    "text": "Subin BBQ Subin BBQ. 2,594 likes 16 talking about this 4,956 were here. CN Vincom Nam Long Q.7 028 6275 9501\nGigamall: 028 6652 9319\n3/2 Q.10: 028 6271 0090\nVõ... CN Vincom Nam Long Q.7 028 6275 9501\nGigamall: 028 6652 9319\n3/2 Q.10: 028 6271 0090\nVõ Văn Kiệt Q.6: 028 6275 8625\nVincom Thủ Đức: 028 6650 3356\nVincom Lê Văn Việt: 028 6686 6353\nVincom Dĩ An: 0274 6268 608\nSatra Củ Chi: 028 6275 3385\nQL22: 028 6274 3392",
+    "text": "Subin BBQ Subin BBQ. 2,594 likes 14 talking about this 4,956 were here. CN Vincom Nam Long Q.7 028 6275 9501\nGigamall: 028 6652 9319\n3/2 Q.10: 028 6271 0090\nVõ... CN Vincom Nam Long Q.7 028 6275 9501\nGigamall: 028 6652 9319\n3/2 Q.10: 028 6271 0090\nVõ Văn Kiệt Q.6: 028 6275 8625\nVincom Thủ Đức: 028 6650 3356\nVincom Lê Văn Việt: 028 6686 6353\nVincom Dĩ An: 0274 6268 608\nSatra Củ Chi: 028 6275 3385\nQL22: 028 6274 3392",
     "url": "https://www.facebook.com/subinbbq/",
     "engagement": {
       "likes": 2594,
@@ -162,7 +164,7 @@
     "matched_poi_ids": [],
     "source": "apify:facebook_search",
     "confidence": 0.45,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   },
   "facebook:100047261370376": {
     "platform": "facebook",
@@ -181,6 +183,2833 @@
     "matched_poi_ids": [],
     "source": "apify:facebook_search",
     "confidence": 0.45,
-    "fetched_at": "2026-07-11T19:24:06.457290+00:00"
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7649303237790567698": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7649303237790567698",
+    "text": "Quán đẹp mà ngon sức sắc vầy xứng đáng viral, con dân Thủ Đức phải lưu lại liền #xuongnuong #nướngngon #thuducangi #reviewthuduc ",
+    "url": "https://www.tiktok.com/@reviewthuduc/video/7649303237790567698",
+    "engagement": {
+      "likes": 702,
+      "comments": 15,
+      "shares": 795,
+      "views": 56600
+    },
+    "author": "reviewthuduc",
+    "published_at": "2026-06-09T08:03:24.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7527660514596375816": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7527660514596375816",
+    "text": "Review lẩu bò.nghĩa địa Thủ Đức #thuducangi #ancungtiktok #laubo #laubonghiadia  #reviewanngon ",
+    "url": "https://www.tiktok.com/@bon.bonreview/video/7527660514596375816",
+    "engagement": {
+      "likes": 10100,
+      "comments": 215,
+      "shares": 4277,
+      "views": 666300
+    },
+    "author": "bon.bonreview",
+    "published_at": "2025-07-16T12:47:26.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7379140903824346376": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7379140903824346376",
+    "text": "Quay lại sự nghiệp food review và mở bát là chiếc quán Thái sân vườn xinh iu 😍 Mọi người ghé tầm chiều chụp ảnh xinh lắm ấy. Nêm nếm hợp khẩu vị của người Việt. Món mì có thể nêm nếm thêm cho vừa ăn nè #fyp #xh #ăncungtiktok #foodtiktok #foodreview #dothai #monthai ",
+    "url": "https://www.tiktok.com/@jan24.1/video/7379140903824346376",
+    "engagement": {
+      "likes": 1439,
+      "comments": 41,
+      "shares": 2159,
+      "views": 244800
+    },
+    "author": "jan24.1",
+    "published_at": "2024-06-11T07:15:30.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7641177818688163092": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7641177818688163092",
+    "text": "Bữa ai hỏi tui chỗ cafe học bài ở thủ đức thì tham khảo chỗ này nhe, nước ngon giá hssv nữa \n#cafethuduc #cafehocbai #thuducdidau #reviewcafe #nghihaydi ",
+    "url": "https://www.tiktok.com/@nghihaydii/video/7641177818688163092",
+    "engagement": {
+      "likes": 1389,
+      "comments": 23,
+      "shares": 713,
+      "views": 56000
+    },
+    "author": "nghihaydii",
+    "published_at": "2026-05-18T10:32:35.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7632294724531145991": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7632294724531145991",
+    "text": "Ụa sao thủ đức có quán ngon vậy mà h tui mới được trải nghiệm thử, tiếc ghê á, mn qua ăn thử coi ngon thiệt hong nè #monhanquoc #garan #gasotcay #friedchicken #tokbokki ",
+    "url": "https://www.tiktok.com/@reviewthuduc/video/7632294724531145991",
+    "engagement": {
+      "likes": 4007,
+      "comments": 73,
+      "shares": 2825,
+      "views": 206000
+    },
+    "author": "reviewthuduc",
+    "published_at": "2026-04-24T12:01:38.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7595086579694046472": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7595086579694046472",
+    "text": "Ê , công nhận chỗ này được review nhiều ghê ta , ai ăn rồi xin đánh giá nhé  #creatorsearchinsights #soymilks #tauhuquan9 #tauhuthuduc #tauhungonthuduc  ",
+    "url": "https://www.tiktok.com/@tattantatquan9thuduc/video/7595086579694046472",
+    "engagement": {
+      "likes": 196,
+      "comments": 26,
+      "shares": 190,
+      "views": 21000
+    },
+    "author": "tattantatquan9thuduc",
+    "published_at": "2026-01-14T05:35:01.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7596303430818237717": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7596303430818237717",
+    "text": "Review quán gà nướng nổi tiếng nhất Thủ Đức 😍 #tholamlanh #khoinghiep #FnB #NVNM ",
+    "url": "https://www.tiktok.com/@tholamlanh/video/7596303430818237717",
+    "engagement": {
+      "likes": 17900,
+      "comments": 269,
+      "shares": 9546,
+      "views": 640000
+    },
+    "author": "tholamlanh",
+    "published_at": "2026-01-17T12:17:05.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7518744460591762696": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7518744460591762696",
+    "text": "Thủ Đức - Buffet Đại Dương \nVé trọn gói chỉ 230 cành, bao nước. Giá thì rẻ mà quầy line đồ ăn quá trời nhiều #xuhuong #foodreview #camreview #viral #buffet #buffethaisan ",
+    "url": "https://www.tiktok.com/@anngoncungcam01/video/7518744460591762696",
+    "engagement": {
+      "likes": 6597,
+      "comments": 118,
+      "shares": 798,
+      "views": 159700
+    },
+    "author": "anngoncungcam01",
+    "published_at": "2025-06-22T12:08:37.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7601362590849043733": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7601362590849043733",
+    "text": "Đi cafe thủ đức mà tưởng lạc qua vùng ngoại ô Châu Âu ✨\n#reviewcafe #cafesaigon #coffee #onedayscoffee #meowdilac ",
+    "url": "https://www.tiktok.com/@meowdilac_/video/7601362590849043733",
+    "engagement": {
+      "likes": 3470,
+      "comments": 44,
+      "shares": 829,
+      "views": 104700
+    },
+    "author": "meowdilac_",
+    "published_at": "2026-01-31T03:29:10.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7593688249046945032": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7593688249046945032",
+    "text": "Quán mì trộn ngon chỉ từ 19 cành ở Thủ Đức #mitron #mìtrộn #thuducanngon #thuduc ",
+    "url": "https://www.tiktok.com/@thuducanngonn/video/7593688249046945032",
+    "engagement": {
+      "likes": 111,
+      "comments": 12,
+      "shares": 73,
+      "views": 9192
+    },
+    "author": "thuducanngonn",
+    "published_at": "2026-01-10T11:08:47.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7476427857208544519": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7476427857208544519",
+    "text": "Thủ Đức có qán đa dạngg mónn về gàa như nì mí ní thử chưa🤤 #angithuduc #thuducangi #thuducanngon #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7476427857208544519",
+    "engagement": {
+      "likes": 6597,
+      "comments": 462,
+      "shares": 4564,
+      "views": 495400
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-02-28T11:18:35.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7291934325983956225": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7291934325983956225",
+    "text": "LÀ MỘT CON DÂN QUẬN 9 VỪA TRÒN 1 NĂM =))) Nay tui quyết định giới thiệu cho mọi người một vài quán mà tui thường hay lui tới 😗😗😗 #review #reviewfood #ăncungtiktok #foodreview #xh #fyp #viral #thuduc #quan9tphcm #reviewer #xuhuong #xuhuongtiktok ",
+    "url": "https://www.tiktok.com/@di.an.cung.trinh/video/7291934325983956225",
+    "engagement": {
+      "likes": 3677,
+      "comments": 129,
+      "shares": 660,
+      "views": 713200
+    },
+    "author": "di.an.cung.trinh",
+    "published_at": "2023-10-20T07:09:26.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7614436540709621012": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7614436540709621012",
+    "text": "Nay ní nàoo chưa bt ănn gì phải ghé qa thử liền qán này ở Thủ Đức nhoo🤤 #angithuduc #thuducangi #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7614436540709621012",
+    "engagement": {
+      "likes": 3632,
+      "comments": 77,
+      "shares": 2714,
+      "views": 274000
+    },
+    "author": "cobelolem195",
+    "published_at": "2026-03-07T09:02:50.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7579461271297248519": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7579461271297248519",
+    "text": "Quán ăn ngon ở quận Thủ Đức #ghiensaigon #thuducangi #thuduc #xuhuong #fyp ",
+    "url": "https://www.tiktok.com/@checkinsaigon2026/video/7579461271297248519",
+    "engagement": {
+      "likes": 269,
+      "comments": 14,
+      "shares": 112,
+      "views": 70100
+    },
+    "author": "checkinsaigon2026",
+    "published_at": "2025-12-03T03:00:52.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7362047045865180417": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7362047045865180417",
+    "text": "Tại Thủ Đức có một quán chay ngon, dành cho tất cả mọi người #lauchay #anchay #buffetchay #vegetarianbuffet #lauchayhangthien #ductanbinh #ancungtiktok #reviewanngon #vegetarian #hotpotbuffet",
+    "url": "https://www.tiktok.com/@huynhhongocduc/video/7362047045865180417",
+    "engagement": {
+      "likes": 1051,
+      "comments": 48,
+      "shares": 394,
+      "views": 175500
+    },
+    "author": "huynhhongocduc",
+    "published_at": "2024-04-27T11:30:00.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7651950612376030472": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7651950612376030472",
+    "text": "Quán ăn của hai mẹ con bán đồ ăn Quảng Ngãi ở Thủ Đức ",
+    "url": "https://www.tiktok.com/@mydien_1296/video/7651950612376030472",
+    "engagement": {
+      "likes": 7030,
+      "comments": 152,
+      "shares": 3145,
+      "views": 156800
+    },
+    "author": "mydien_1296",
+    "published_at": "2026-06-16T11:16:38.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7490871094103133447": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7490871094103133447",
+    "text": "Quán ăn vặt siuu ngon đa dạng món ở Thủ Đức 🤤🤤 #anhmapdian #anngonthuduc #angithuduc #reviewanngon #xuhuong #viral ",
+    "url": "https://www.tiktok.com/@anhmapdian/video/7490871094103133447",
+    "engagement": {
+      "likes": 2039,
+      "comments": 50,
+      "shares": 1099,
+      "views": 130300
+    },
+    "author": "anhmapdian",
+    "published_at": "2025-04-08T09:25:58.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7589634072478108949": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7589634072478108949",
+    "text": "Ai hay ăn Bánh Đúc mà không biết tiệm Bánh Đúc Cô Ánh là 1 thiếu sót nha , lưu ngay video để có dịp ghé trải nghiệm nhé #angithuduc #banhducquan9 #thuducanngon #thuducangi #creatorsearchinsights ",
+    "url": "https://www.tiktok.com/@ngatuthuduc/video/7589634072478108949",
+    "engagement": {
+      "likes": 5523,
+      "comments": 94,
+      "shares": 2892,
+      "views": 220000
+    },
+    "author": "ngatuthuduc",
+    "published_at": "2025-12-30T12:56:33.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7508710619479084308": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7508710619479084308",
+    "text": "Cơm chiên xù nhậtt siuu ngonn ở Thủ Đức cho mí ní nà thử liềnn ii🤤 #angithuduc #thuducanngon #thuducangi #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7508710619479084308",
+    "engagement": {
+      "likes": 8135,
+      "comments": 83,
+      "shares": 5711,
+      "views": 404000
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-05-26T11:12:16.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7594825471464885525": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7594825471464885525",
+    "text": "Quán chân gà cánh gà ăn vặt siêu ngon thủ Đức nò #anvatthuduc #quanngonthuduc #anvat #foodreview ",
+    "url": "https://www.tiktok.com/@bon.bonreview/video/7594825471464885525",
+    "engagement": {
+      "likes": 6146,
+      "comments": 123,
+      "shares": 4098,
+      "views": 259800
+    },
+    "author": "bon.bonreview",
+    "published_at": "2026-01-22T14:22:00.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7628140710063017236": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7628140710063017236",
+    "text": "Quán nướng Thủ Đức không gian vibe Đà Lạt mà tui hay ghé nè #xunauchill #thuduc #ancungtiktok ",
+    "url": "https://www.tiktok.com/@xunauchill/video/7628140710063017236",
+    "engagement": {
+      "likes": 1629,
+      "comments": 56,
+      "shares": 295,
+      "views": 65000
+    },
+    "author": "xunauchill",
+    "published_at": "2026-04-13T07:22:01.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7589263802009472276": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7589263802009472276",
+    "text": "Nay ms có dịpp ănn thử qán nướngg nhonn này ở Thủ Đức🤤 #angithuduc #thuducangi #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7589263802009472276",
+    "engagement": {
+      "likes": 4745,
+      "comments": 99,
+      "shares": 4074,
+      "views": 266000
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-12-29T12:59:44.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7585140451389246727": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7585140451389246727",
+    "text": "Quán Thái ngon ngay Lê Văn Việt, Thủ Đức giá chỉ từ 35k #dothai #shanthai #quanthaiquanthuduc #doanthailan #suoncaythailan ",
+    "url": "https://www.tiktok.com/@shanthaimonthaichitu35k/video/7585140451389246727",
+    "engagement": {
+      "likes": 5851,
+      "comments": 209,
+      "shares": 1582,
+      "views": 261700
+    },
+    "author": "shanthaimonthaichitu35k",
+    "published_at": "2025-12-18T10:18:58.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7589936477602204946": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7589936477602204946",
+    "text": "Tiệm lẩu này thì ngon rẻ khỏi bàn ở Thủ Đức rồi #lẩungon #lẩu #lau69k #thuducanngon #ngatuthuduc ",
+    "url": "https://www.tiktok.com/@reviewthuduc/video/7589936477602204946",
+    "engagement": {
+      "likes": 826,
+      "comments": 34,
+      "shares": 293,
+      "views": 61500
+    },
+    "author": "reviewthuduc",
+    "published_at": "2025-12-31T08:30:03.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7479023033072602386": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7479023033072602386",
+    "text": "Gà nướngg chỗ này Thủ Đức wa truii combo hờii cho mí ní lun nà🤤 #angithuduc #thuducangi #thuducanngon #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7479023033072602386",
+    "engagement": {
+      "likes": 2082,
+      "comments": 57,
+      "shares": 823,
+      "views": 117600
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-03-07T11:09:13.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7564361222213078279": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7564361222213078279",
+    "text": "Quán mì cay ngon vibe tuổi thơ ngay Linh Đông Thủ Đức nè mấy ní #mìcay #anvat #tokbokki #ngatuthuduc ",
+    "url": "https://www.tiktok.com/@reviewthuduc/video/7564361222213078279",
+    "engagement": {
+      "likes": 2882,
+      "comments": 104,
+      "shares": 1263,
+      "views": 177500
+    },
+    "author": "reviewthuduc",
+    "published_at": "2025-10-23T10:24:57.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7496866554512968961": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7496866554512968961",
+    "text": "Ở Thủ Đức ai mee búnn thái là phải thử liềnn qán này ii siu chuẩn vị lun🤤 #thuducangi #angithuduc #thuducanngon #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7496866554512968961",
+    "engagement": {
+      "likes": 1803,
+      "comments": 41,
+      "shares": 1032,
+      "views": 128500
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-04-24T13:11:16.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7658642063759592722": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7658642063759592722",
+    "text": "thêm một tiệm pizza siêu ngon ở Thảo Điền nhe #xuhuong #thaodienq2 #trending #unionpizza #fusion ",
+    "url": "https://www.tiktok.com/@amelinda.dan__/video/7658642063759592722",
+    "engagement": {
+      "likes": 34100,
+      "comments": 117,
+      "shares": 13600,
+      "views": 627600
+    },
+    "author": "amelinda.dan__",
+    "published_at": "2026-07-04T12:02:48.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7644447914928000277": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7644447914928000277",
+    "text": "Đi Quận 2 hẹn hò ili vibe iu lắm luôn á #saigonbeoreview #dotori #monngonquan2",
+    "url": "https://www.tiktok.com/@saigonbeoreview/video/7644447914928000277",
+    "engagement": {
+      "likes": 3354,
+      "comments": 8,
+      "shares": 768,
+      "views": 69900
+    },
+    "author": "saigonbeoreview",
+    "published_at": "2026-05-27T06:02:16.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7590467167653612807": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7590467167653612807",
+    "text": "Bún bò trộn sốt ruốc ngon ở Thảo Điền Q2 \n#tuilasapne #vtmgr #learnontiktok #reviewanngon #ancungtiktok ",
+    "url": "https://www.tiktok.com/@tuilasapne/video/7590467167653612807",
+    "engagement": {
+      "likes": 2419,
+      "comments": 36,
+      "shares": 2897,
+      "views": 196900
+    },
+    "author": "tuilasapne",
+    "published_at": "2026-01-02T02:30:00.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7653059622382636309": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7653059622382636309",
+    "text": "Loanh quanh Thảo Điền Q2 mình mới tìm ra một quán Hàn Quốc ngon nữa nè !!!\n#ccc #koreanpocha #thaodienq2 #reviewanngon #ancungtiktok ",
+    "url": "https://www.tiktok.com/@nghiabiu.daily/video/7653059622382636309",
+    "engagement": {
+      "likes": 3237,
+      "comments": 26,
+      "shares": 1988,
+      "views": 107800
+    },
+    "author": "nghiabiu.daily",
+    "published_at": "2026-06-19T11:00:04.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7483900522295037191": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7483900522295037191",
+    "text": "Series tổng hợp các quán ngon nên thử ở quận 2 #tebefood #AnCungTikTok #LearnOnTikTok #vtmgr #HappyVietNam ",
+    "url": "https://www.tiktok.com/@tebefood/video/7483900522295037191",
+    "engagement": {
+      "likes": 7338,
+      "comments": 55,
+      "shares": 2708,
+      "views": 431300
+    },
+    "author": "tebefood",
+    "published_at": "2025-03-20T14:36:19.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7635274274747534610": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7635274274747534610",
+    "text": "Tìm được quán bún bò, bánh huế ngon ở Quận 2 \n#bunbo #banhhue #doanmientrung #quan2angi #bunbokimlong ",
+    "url": "https://www.tiktok.com/@ganhdoan/video/7635274274747534610",
+    "engagement": {
+      "likes": 1276,
+      "comments": 46,
+      "shares": 518,
+      "views": 95800
+    },
+    "author": "ganhdoan",
+    "published_at": "2026-05-02T12:43:51.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7635199015977504021": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7635199015977504021",
+    "text": "Nồi lẩu bò có 200 cành siêu chất lượng ở đảo Kim Cương Quận 2 #viral #xuhuong #ancungtiktok #learnontiktok #reviewanngon ",
+    "url": "https://www.tiktok.com/@bethanhne_02/video/7635199015977504021",
+    "engagement": {
+      "likes": 311,
+      "comments": 16,
+      "shares": 219,
+      "views": 26800
+    },
+    "author": "bethanhne_02",
+    "published_at": "2026-05-02T07:51:50.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7657764332641504533": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7657764332641504533",
+    "text": "Hello Thái Lannnnnnn, Bangkok thu nhỏ ở ngay quận 2 rồi đây\n#shanthai #amthucthailan #quan2 #quanthaingon #khaitruong ",
+    "url": "https://www.tiktok.com/@shanthaimonthaichitu35k/video/7657764332641504533",
+    "engagement": {
+      "likes": 657,
+      "comments": 129,
+      "shares": 948,
+      "views": 208500
+    },
+    "author": "shanthaimonthaichitu35k",
+    "published_at": "2026-07-02T03:16:44.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7653816436883885333": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7653816436883885333",
+    "text": "Ở Thảo Điền thôi mà có tới 3 nhà hàng lun, tha hồ lựa chọn luôn nè 🤗🤗 #foodtiktok #fyp #hochiminh #thaodienq2 #vietnamesefood ",
+    "url": "https://www.tiktok.com/@hongthuy__98/video/7653816436883885333",
+    "engagement": {
+      "likes": 9,
+      "comments": 2,
+      "shares": 0,
+      "views": 724
+    },
+    "author": "hongthuy__98",
+    "published_at": "2026-06-21T11:56:53.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7652382496423775506": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7652382496423775506",
+    "text": "Quận 2 thì nhất định phải thử Dontam nha cả nhà ơi… ngon xỉuuuuuuu #dailyvlog #review #cơmluonnhat ",
+    "url": "https://www.tiktok.com/@chichi.daily/video/7652382496423775506",
+    "engagement": {
+      "likes": 16600,
+      "comments": 180,
+      "shares": 11800,
+      "views": 435200
+    },
+    "author": "chichi.daily",
+    "published_at": "2026-06-17T15:12:29.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7612658484122930450": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7612658484122930450",
+    "text": "- Địa điểm ăn Ốc không thể bỏ lỡ tại Quận 2. #viraltiktok #xuhuongtiktok #ocqtrannao #foodtiktok #ocngonquan2",
+    "url": "https://www.tiktok.com/@ocqtrannao/video/7612658484122930450",
+    "engagement": {
+      "likes": 21,
+      "comments": 4,
+      "shares": 16,
+      "views": 5539
+    },
+    "author": "ocqtrannao",
+    "published_at": "2026-03-02T14:03:01.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7648126325726792961": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7648126325726792961",
+    "text": "Mới phát hiện một quán cá chuẩn vị Bắc ở Q2 nè 👀 Bún cá đặc biệt topping ngập mặt, cá chiên giòn thơm, nước dùng đậm đà.nóng hổi ăn cùng bún siêu hợp 😋 #cuty #cutyreview #sanglangthang22 #sang #ThiLaQuan #BunCaThiLa #AmThucMienBac #quan2",
+    "url": "https://www.tiktok.com/@sanglangthang22/video/7648126325726792961",
+    "engagement": {
+      "likes": 6589,
+      "comments": 104,
+      "shares": 642,
+      "views": 159100
+    },
+    "author": "sanglangthang22",
+    "published_at": "2026-06-06T03:57:13.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7451076252162723080": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7451076252162723080",
+    "text": "Quán lẩu nướng siêu đẹp món siêu ngon ngay tại làng đại học - Lẩu nướng Cần Giờ #xuhuong #sinhvien #daihoc #langdaihoc #launuong #launuongcangio #studentlife ",
+    "url": "https://www.tiktok.com/@phathungvlog/video/7451076252162723080",
+    "engagement": {
+      "likes": 10900,
+      "comments": 82,
+      "shares": 2517,
+      "views": 388600
+    },
+    "author": "phathungvlog",
+    "published_at": "2024-12-22T03:41:25.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7641872636875640072": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7641872636875640072",
+    "text": "Quán ruột ai dô nhận nha #laubo #langdaihoc #food #laubocongthuong ",
+    "url": "https://www.tiktok.com/@nguyenphuchau.media/video/7641872636875640072",
+    "engagement": {
+      "likes": 5590,
+      "comments": 180,
+      "shares": 3083,
+      "views": 191000
+    },
+    "author": "nguyenphuchau.media",
+    "published_at": "2026-05-20T07:28:53.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7595805810664688916": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7595805810664688916",
+    "text": "Lâu lâu mới đi ăn lẩu bò ở Làng Đại học\n#dungaplucnua #vuianvuidu #reviewanngon #angithuduc #laubolangdaihoc #laubocongthuong #angilangdaihoc #langdaihoc #didaulangdaihoc #laubongonthuduc ",
+    "url": "https://www.tiktok.com/@vuianvuidu/video/7595805810664688916",
+    "engagement": {
+      "likes": 1518,
+      "comments": 16,
+      "shares": 486,
+      "views": 75900
+    },
+    "author": "vuianvuidu",
+    "published_at": "2026-01-16T04:06:16.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7599248835298299144": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7599248835298299144",
+    "text": "Quán Thái gần làng Đại Học giá siêu ok luôn 😋 #thailuvu #quanthai #doanthai #ancungtiktok #hoanganhdidau ",
+    "url": "https://www.tiktok.com/@hoanganhdidau/video/7599248835298299144",
+    "engagement": {
+      "likes": 645,
+      "comments": 4,
+      "shares": 223,
+      "views": 34400
+    },
+    "author": "hoanganhdidau",
+    "published_at": "2026-01-25T10:46:41.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7621172721585622293": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7621172721585622293",
+    "text": "Ở Thủ Đức, chưa chắc bạn biết quán này - P204 - ăn bún chả ngon làng đại học nè #review #ancungtiktok #food #lifestyle #tinhtimtoi ",
+    "url": "https://www.tiktok.com/@tinhtimtoi/video/7621172721585622293",
+    "engagement": {
+      "likes": 1732,
+      "comments": 25,
+      "shares": 1083,
+      "views": 80200
+    },
+    "author": "tinhtimtoi",
+    "published_at": "2026-03-25T12:42:40.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7628091091312577813": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7628091091312577813",
+    "text": "Thêm 1 quán hủ tiếu 25k chất lượng ở Làng Đại học\n#vuianvuidu #vtmgr #hutieulangdaihoc #angilangdaihoc #quanngonthuduc ",
+    "url": "https://www.tiktok.com/@vuianvuidu/video/7628091091312577813",
+    "engagement": {
+      "likes": 2101,
+      "comments": 26,
+      "shares": 1084,
+      "views": 81800
+    },
+    "author": "vuianvuidu",
+    "published_at": "2026-04-13T04:09:26.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7601156482981203218": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7601156482981203218",
+    "text": "Một quán Ốc ngon ngay làng Đại Học ���✨ #rualinhcam #ocbaccotra #langdaihocquocgia #ocngonsaigon ",
+    "url": "https://www.tiktok.com/@rualinhcam/video/7601156482981203218",
+    "engagement": {
+      "likes": 1987,
+      "comments": 56,
+      "shares": 1945,
+      "views": 109700
+    },
+    "author": "rualinhcam",
+    "published_at": "2026-01-30T14:09:20.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654805894080974101": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654805894080974101",
+    "text": "Các mom ở Làng Đại Học ghé liền cho tui 🫣🥹 #embetit #langdaihoc ",
+    "url": "https://www.tiktok.com/@embetit_/video/7654805894080974101",
+    "engagement": {
+      "likes": 25900,
+      "comments": 231,
+      "shares": 12700,
+      "views": 537600
+    },
+    "author": "embetit_",
+    "published_at": "2026-06-24T03:56:28.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7656046878345235719": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7656046878345235719",
+    "text": "Không biết ăn gì ở Làng Đại Học???\n\nThử ghé Tiệm Nhà Ka làm một phần Tokbokki nóng hổi xem sao nha các dợ ơi 🌶️🍢\n\nVị đậm đà, topping đầy đủ, ngồi tám chuyện với bạn bè một lúc là hết veo luônn 😋\n\n📍 Tiệm Nhà Ka – Gần Ký túc xá Khu B\n38 Ống Nước Thô, phường Đông Hòa\n\nAi là tín đồ Tokbokki thì nhất định phải thử một lần đó nha, Goo 🎉",
+    "url": "https://www.tiktok.com/@tiemnhakaxinchao/video/7656046878345235719",
+    "engagement": {
+      "likes": 815,
+      "comments": 40,
+      "shares": 533,
+      "views": 29000
+    },
+    "author": "tiemnhakaxinchao",
+    "published_at": "2026-06-27T12:12:12.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654943399484820754": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654943399484820754",
+    "text": "Mê Thái đi ăn MEE THÁI #MEETHAIDiAn #LearnOnTikTok  #vtmgr #AnCungTikTok #HoptaccungMEETHAI ",
+    "url": "https://www.tiktok.com/@nuchuu.0401/video/7654943399484820754",
+    "engagement": {
+      "likes": 2960,
+      "comments": 17,
+      "shares": 629,
+      "views": 100700
+    },
+    "author": "nuchuu.0401",
+    "published_at": "2026-06-24T12:50:04.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7600310453364870408": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7600310453364870408",
+    "text": "Quán thái mới mở thu hút nửa cái làng đại học cho hssv siêu đông khách #beebangiay #ancungtiktok #reviewanngon #thaifood #monthai ",
+    "url": "https://www.tiktok.com/@beebangiay/video/7600310453364870408",
+    "engagement": {
+      "likes": 440,
+      "comments": 22,
+      "shares": 198,
+      "views": 26300
+    },
+    "author": "beebangiay",
+    "published_at": "2026-01-28T07:26:21.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7438909748004605205": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7438909748004605205",
+    "text": "Đây là 4 quán ăn mình yêu thích nhất ở làng đại học #xuhuong #sinhvien #langdaihoc #daihoc #zalopay #quetQr #chuyenkhoan #doiqua #mienphi ",
+    "url": "https://www.tiktok.com/@phathungvlog/video/7438909748004605205",
+    "engagement": {
+      "likes": 6264,
+      "comments": 32,
+      "shares": 1509,
+      "views": 341100
+    },
+    "author": "phathungvlog",
+    "published_at": "2024-11-19T08:49:21.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7621219378587274516": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7621219378587274516",
+    "text": "Cafe Sài Gòn giờ tầm cỡ này sao? 🥹\n#cafe #coffee #vuonthiengioi #thuduc #shundidau   ",
+    "url": "https://www.tiktok.com/@shundidau_/video/7621219378587274516",
+    "engagement": {
+      "likes": 35600,
+      "comments": 1438,
+      "shares": 31100,
+      "views": 1600000
+    },
+    "author": "shundidau_",
+    "published_at": "2026-03-25T15:43:43.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7655257368342580487": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7655257368342580487",
+    "text": "Quán cafe vibe Đà Lạt giữa Sài Gòn\n#paradisecoffee #thuduc #cafe #chupanh #caphe ",
+    "url": "https://www.tiktok.com/@beli.review/video/7655257368342580487",
+    "engagement": {
+      "likes": 5048,
+      "comments": 127,
+      "shares": 3362,
+      "views": 212800
+    },
+    "author": "beli.review",
+    "published_at": "2026-06-25T09:08:29.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7644783851255991560": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7644783851255991560",
+    "text": "Concept mới toanh của 1 quán cafe ở Thủ Đức đẹp cỡ này #reviewcafe #cafethuduc #thuduc #cafechill #dicungbaoo ",
+    "url": "https://www.tiktok.com/@dicungbaoo/video/7644783851255991560",
+    "engagement": {
+      "likes": 8455,
+      "comments": 159,
+      "shares": 2700,
+      "views": 738700
+    },
+    "author": "dicungbaoo",
+    "published_at": "2026-05-28T03:45:56.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7653794669381291282": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7653794669381291282",
+    "text": "New Studio Ghibli Cafe in\nHo Chi Minh, Vietnam 🇻🇳✨\n\n☕️ Chuyện Của Tùng\n📍 82 Đường 36, Thủ Đức, Hồ Chí Minh, Vietnam\n\n#hochiminh #newcafealert #vietnam #newcoffeeshop #studioghibli ",
+    "url": "https://www.tiktok.com/@vintageguy_/video/7653794669381291282",
+    "engagement": {
+      "likes": 207300,
+      "comments": 380,
+      "shares": 53700,
+      "views": 1100000
+    },
+    "author": "vintageguy_",
+    "published_at": "2026-06-21T10:32:27.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7622292046052707602": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7622292046052707602",
+    "text": "📍Address: 80 Đường 36, Linh Đông, Thủ Đức, Ho Chi Minh City, Vietnam – Vườn Thiên Giới.\n\nIn Vietnam, coffee isn’t just coffee, it’s an experience. From the coffee quality to the concept, the design, and the vibes, every detail is just on the next level. 💯\n\nA hidden coffee spot you’ll want on your Vietnam bucket list, enjoy! 😃\n\n#vuonthiengioi #vietnamcafe #saigoncafe #vietnamesecoffee #vietnamesecoffeeshop ",
+    "url": "https://www.tiktok.com/@ama.vietnam.blog/video/7622292046052707602",
+    "engagement": {
+      "likes": 69200,
+      "comments": 222,
+      "shares": 25800,
+      "views": 897800
+    },
+    "author": "ama.vietnam.blog",
+    "published_at": "2026-03-28T13:06:06.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7643289872588885269": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7643289872588885269",
+    "text": "Giờ mới biết ở Thủ Đức cho nơi ven sông chill như vậy luôn\n#Saigondidauta #viral #xuhuong #cafesaigon ",
+    "url": "https://www.tiktok.com/@saigondidautaaa/video/7643289872588885269",
+    "engagement": {
+      "likes": 728,
+      "comments": 28,
+      "shares": 380,
+      "views": 46600
+    },
+    "author": "saigondidautaaa",
+    "published_at": "2026-05-24T03:08:26.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7586285335697526024": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7586285335697526024",
+    "text": "Thực tế 1 quán cafe ở Thủ Đức 😳 #xuhuong #dicungbaoo #reviewcafe #thuduc #thecloudest ",
+    "url": "https://www.tiktok.com/@dicungbaoo/video/7586285335697526024",
+    "engagement": {
+      "likes": 39400,
+      "comments": 564,
+      "shares": 21500,
+      "views": 1400000
+    },
+    "author": "dicungbaoo",
+    "published_at": "2025-12-21T12:21:42.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7584084574305668372": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7584084574305668372",
+    "text": "Tiệm cafe chill ở Thủ Đức, đi buổi tối lên đèn đẹp thật ấy\n#coffee #cafe #reviewcafe #saigon #paophe ",
+    "url": "https://www.tiktok.com/@baro.phe/video/7584084574305668372",
+    "engagement": {
+      "likes": 6813,
+      "comments": 117,
+      "shares": 9022,
+      "views": 598300
+    },
+    "author": "baro.phe",
+    "published_at": "2025-12-15T14:01:39.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7653001747400576264": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7653001747400576264",
+    "text": "Đủ wao rồi đó #saigon #review #nhagiothom #cafesaigon #reviewcafe ",
+    "url": "https://www.tiktok.com/@budicafehehe_/video/7653001747400576264",
+    "engagement": {
+      "likes": 12900,
+      "comments": 133,
+      "shares": 5408,
+      "views": 191300
+    },
+    "author": "budicafehehe_",
+    "published_at": "2026-06-19T07:15:34.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7641059245642829074": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7641059245642829074",
+    "text": "Không gian cafe Thủ Đức giờ cỡ này… 🥹 #vuonthiengioi #acousticthuduc ",
+    "url": "https://www.tiktok.com/@vuonthiengioi/video/7641059245642829074",
+    "engagement": {
+      "likes": 58800,
+      "comments": 1512,
+      "shares": 4326,
+      "views": 2200000
+    },
+    "author": "vuonthiengioi",
+    "published_at": "2026-05-18T02:52:35.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7604757594070158612": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7604757594070158612",
+    "text": "Saooo có qánn cfee nhìu tầngg rộngg zay ở Thủ Đức mà giừ tui ms bt taa🤤 #angithuduc #thuducangi #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7604757594070158612",
+    "engagement": {
+      "likes": 1661,
+      "comments": 15,
+      "shares": 1678,
+      "views": 182600
+    },
+    "author": "cobelolem195",
+    "published_at": "2026-02-09T07:03:35.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7637481799932824852": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7637481799932824852",
+    "text": "✨THER THẨN CAFE - THỦ ĐỨC✨\n\nGóc Ther Thẩn mới toanh đã sẵn sàng chào đón các bạn ghé chơi 🧡 \nMột không gian mới, một nơi để gặp gỡ, ngồi lại và gửi lại cảm xúc giữa lòng thành phố. \n\n✨ Đặc biệt, giảm 20% toàn menu trong dịp khai trương từ ngày 8/5 - 10/5 như một lời chào - cảm ơn từ tụi mình.\n\nChúng mình ở đây, hẹn gặp mọi người!\n_______________________________\n📍Ther Thẩn Cafe - Thủ Đức - Đại học Kiểm sát \nAddress: Đường 449, P. Tăng Nhơn Phú, Thủ Đức, HCM\n📍 Ther Thẩn Cafe - Tân Bình Address: 149/33 Bành Văn Trân, P.Tân Sơn Nhất, Tân Bình, HCM\n📍 Ther Thẩn Cafe - Quận 4\nAddress: Tầng 3-GS25, số 39 đường 41 P9 Q4 HCM\n\n##therthan##caphesaigon##thuduc##xuhuong##fyp@@Therthan.”ơ”",
+    "url": "https://www.tiktok.com/@therthan.cafe/video/7637481799932824852",
+    "engagement": {
+      "likes": 4938,
+      "comments": 68,
+      "shares": 5175,
+      "views": 290400
+    },
+    "author": "therthan.cafe",
+    "published_at": "2026-05-08T11:30:08.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7621911294228237588": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7621911294228237588",
+    "text": "Thủ Đức có quán mới vibe nhà gỗ Đà Lạt siu hợp cho các nàng thơ luôn ☀️🍃✨\n#reviewcafe #cafesaigon #quancafedep #chupanh #meowdilac ",
+    "url": "https://www.tiktok.com/@meowdilac_/video/7621911294228237588",
+    "engagement": {
+      "likes": 9321,
+      "comments": 127,
+      "shares": 4666,
+      "views": 305300
+    },
+    "author": "meowdilac_",
+    "published_at": "2026-03-27T12:28:43.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7223710697920793862": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7223710697920793862",
+    "text": "Tiệm lẩu nướng chill chill giữa lòng thành phố Thủ Đức vừa khai trương chào đón quý khách ❤️ #ReviewQuánĂnNgon #điđâuănGì #buffetlẩunướng ",
+    "url": "https://www.tiktok.com/@tiemannhakhoii/video/7223710697920793862",
+    "engagement": {
+      "likes": 23800,
+      "comments": 385,
+      "shares": 7708,
+      "views": 1000000
+    },
+    "author": "tiemannhakhoii",
+    "published_at": "2023-04-19T10:46:55.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7645893842977246484": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7645893842977246484",
+    "text": "Lâu lâu quay chơi xong rồi ủ 3 ngày mới edit, mà edit lỏ này trình tới đây thôi, có gì xem đỡ nhé.\nQuán này siêu recommend luôn ấy, giá rẻ đồ ăn ngon không gian đẹp mà gần trung tâm tp nữa\n#hssv #giare #pizza #saizeriya #review ",
+    "url": "https://www.tiktok.com/@neweditionnewme/video/7645893842977246484",
+    "engagement": {
+      "likes": 4718,
+      "comments": 62,
+      "shares": 2858,
+      "views": 127000
+    },
+    "author": "neweditionnewme",
+    "published_at": "2026-05-31T03:33:14.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7649221902602489109": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7649221902602489109",
+    "text": "Phát hiện gần ga metro Thủ Đức có quán cafe căn biệt thự châu Âu tựa như cổ tích…😳🦢 #dathaydireview #cafethuduc #coffee #reviewcafe #sofarsogoodcoffee ",
+    "url": "https://www.tiktok.com/@dathaydireview/video/7649221902602489109",
+    "engagement": {
+      "likes": 1878,
+      "comments": 37,
+      "shares": 678,
+      "views": 82300
+    },
+    "author": "dathaydireview",
+    "published_at": "2026-06-09T02:47:46.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7585975107072380167": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7585975107072380167",
+    "text": "Quán ngon ít bạn biết ở Thủ Đức #beefsteak #thuducanngon #bobittet #thuduc #CapCut ",
+    "url": "https://www.tiktok.com/@thuductattantat/video/7585975107072380167",
+    "engagement": {
+      "likes": 3683,
+      "comments": 200,
+      "shares": 1629,
+      "views": 220900
+    },
+    "author": "thuductattantat",
+    "published_at": "2025-12-20T16:17:50.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7601832572259241236": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7601832572259241236",
+    "text": "Mn muốn Ad review quán nào thì cmt xuống dưới nha. #ansapquan9thuduc #angithuduc #thuducangi #buffetnuong #bossiebuffet ",
+    "url": "https://www.tiktok.com/@ansapquan9thuduc/video/7601832572259241236",
+    "engagement": {
+      "likes": 1335,
+      "comments": 46,
+      "shares": 1086,
+      "views": 139400
+    },
+    "author": "ansapquan9thuduc",
+    "published_at": "2026-02-01T09:53:03.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7600019312002321672": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7600019312002321672",
+    "text": "Quán này mới mở ở Tô Vĩnh Diện , Thủ Đức nè , mọi người ghé ăn thử đi #creatorsearchinsights #Thailuvu #thuducangi #angithuduc #thuduc ",
+    "url": "https://www.tiktok.com/@ngatuthuduc/video/7600019312002321672",
+    "engagement": {
+      "likes": 440,
+      "comments": 24,
+      "shares": 849,
+      "views": 62500
+    },
+    "author": "ngatuthuduc",
+    "published_at": "2026-01-27T12:36:33.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7566567530177875218": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7566567530177875218",
+    "text": "Mí ní ghiền cơm nhìu món phải thử qán này Thủ Đức liền nhoo🤤 #thuducangi #angithuduc #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7566567530177875218",
+    "engagement": {
+      "likes": 784,
+      "comments": 28,
+      "shares": 450,
+      "views": 60900
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-10-29T09:06:32.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7577712211947277576": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7577712211947277576",
+    "text": "Thủ Đức có quán bán lẩu cá ngon ghê hen #lẩucá #lẩungon #thuduc #ngatuthuduc #thuducangi ",
+    "url": "https://www.tiktok.com/@reviewthuduc/video/7577712211947277576",
+    "engagement": {
+      "likes": 249,
+      "comments": 15,
+      "shares": 178,
+      "views": 16700
+    },
+    "author": "reviewthuduc",
+    "published_at": "2025-11-28T09:53:36.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7628940130320911636": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7628940130320911636",
+    "text": "Hemm nghĩ giờ ở Thủ Đức có qán hạt dẻee mà nhonn zay lun ó mí ní oi🤤 #angithuduc #thuducangi #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7628940130320911636",
+    "engagement": {
+      "likes": 712,
+      "comments": 31,
+      "shares": 360,
+      "views": 75800
+    },
+    "author": "cobelolem195",
+    "published_at": "2026-04-15T11:04:08.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7598424361875426578": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7598424361875426578",
+    "text": "Đi ăn ngon mà lại còn được ngắm tàu lửa mỗi giờ luôn nè , ghé trải nghiệm ngay nha #creatorsearchinsights #dacsan28 #angithuduc #thuduc #xuhuong ",
+    "url": "https://www.tiktok.com/@ngatuthuduc/video/7598424361875426578",
+    "engagement": {
+      "likes": 417,
+      "comments": 43,
+      "shares": 340,
+      "views": 53200
+    },
+    "author": "ngatuthuduc",
+    "published_at": "2026-01-23T05:27:19.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7657071277420711188": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7657071277420711188",
+    "text": "Lại thêm một chiếc quán xinh chạy deadlines lý tưởng ở Thủ Đức 😘 #neidichiuu #caphethuduc #aestheticcoffee #caphehocbai #coffeefirst ",
+    "url": "https://www.tiktok.com/@neidichiuu/video/7657071277420711188",
+    "engagement": {
+      "likes": 593,
+      "comments": 1,
+      "shares": 31,
+      "views": 10300
+    },
+    "author": "neidichiuu",
+    "published_at": "2026-06-30T06:27:27.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7617357116214398229": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7617357116214398229",
+    "text": "Có một tiệm cà phê vibe Thái Lan hơn 1500m2 ở Thủ Đức không phải ai cũng biết ..! #tiemcaphechangdao #vibethailand #caphedepthuduc #caphedepsaigon ",
+    "url": "https://www.tiktok.com/@changdaothuduc/video/7617357116214398229",
+    "engagement": {
+      "likes": 3345,
+      "comments": 188,
+      "shares": 1230,
+      "views": 245800
+    },
+    "author": "changdaothuduc",
+    "published_at": "2026-03-15T05:56:15.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7655604103988415762": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7655604103988415762",
+    "text": "Thủ Đức vừa xuất hiện quán cà phê mới toanh, thích hợp để học bài nè #thoxayca #reviewcaphe #caphechill #caphesaigon #caphethuduc ",
+    "url": "https://www.tiktok.com/@anhthoxaycaphe/video/7655604103988415762",
+    "engagement": {
+      "likes": 207,
+      "comments": 8,
+      "shares": 18,
+      "views": 4377
+    },
+    "author": "anhthoxaycaphe",
+    "published_at": "2026-06-26T07:34:00.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7655678024603618581": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7655678024603618581",
+    "text": "Quán cafe mới toanh ở Thủ Đức siu hợp để chạy deadline 🎧🍃\n#reviewcafe #coffee #cafesaigon #chill #meowdilac ",
+    "url": "https://www.tiktok.com/@meowdilac_/video/7655678024603618581",
+    "engagement": {
+      "likes": 570,
+      "comments": 17,
+      "shares": 33,
+      "views": 9376
+    },
+    "author": "meowdilac_",
+    "published_at": "2026-06-26T12:20:46.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654412798016949511": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654412798016949511",
+    "text": "The cafes here in Vietnam are on another level!\n\n☕️ Chuyện Của Tùng \n📍 82 Đường 36, Thủ Đức, Hồ Chí Minh, Vietnam\n\n#newcafealert #newcoffeeshop #hochiminh #vietnam ",
+    "url": "https://www.tiktok.com/@vintageguy_/video/7654412798016949511",
+    "engagement": {
+      "likes": 436,
+      "comments": 10,
+      "shares": 78,
+      "views": 6249
+    },
+    "author": "vintageguy_",
+    "published_at": "2026-06-23T02:31:05.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7637142764504861972": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7637142764504861972",
+    "text": "Trải nghiệm tiệm bò kho lowkey tại Quận 2 🫨 mọi người có quán nào lowkey chia sẻ thêm tui với nha 😆 dạo này bị thích kiểu quán lowkey kkk #QuanAnhBui ",
+    "url": "https://www.tiktok.com/@stevie_quan55/video/7637142764504861972",
+    "engagement": {
+      "likes": 3551,
+      "comments": 53,
+      "shares": 1269,
+      "views": 115100
+    },
+    "author": "stevie_quan55",
+    "published_at": "2026-05-07T13:34:32.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7622528806103846151": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7622528806103846151",
+    "text": "lần đầu tiên ăn gà xào cay của tui 🤤 #thaodienq2 #quan2angi #SINSADAK #quan2 #saigon",
+    "url": "https://www.tiktok.com/@mingsanyi/video/7622528806103846151",
+    "engagement": {
+      "likes": 29900,
+      "comments": 100,
+      "shares": 10700,
+      "views": 421900
+    },
+    "author": "mingsanyi",
+    "published_at": "2026-03-29T04:24:54.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7635210684686535943": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7635210684686535943",
+    "text": "Gợi ý vài chỗ ăn trưa ở quận 2, chắc chắn sẽ có người cần 🥰",
+    "url": "https://www.tiktok.com/@anxoancyrus/video/7635210684686535943",
+    "engagement": {
+      "likes": 1460,
+      "comments": 24,
+      "shares": 230,
+      "views": 27000
+    },
+    "author": "anxoancyrus",
+    "published_at": "2026-05-02T08:37:08.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7632677618722098453": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7632677618722098453",
+    "text": "Cơm tấm ngon cũng cũng quận 2 #trending #fyp #LearnOnTikTok #saigon ",
+    "url": "https://www.tiktok.com/@nguyenchenno_/video/7632677618722098453",
+    "engagement": {
+      "likes": 6581,
+      "comments": 47,
+      "shares": 736,
+      "views": 126400
+    },
+    "author": "nguyenchenno_",
+    "published_at": "2026-04-25T12:47:26.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7602850918853397768": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7602850918853397768",
+    "text": "BẠCH TUỘC NƯỚNG 78 mở xuyên tết nha Q.2 ơii #kyn99er #quannuong78 #quan2angi #bachtuocnuong #moxuyentet ",
+    "url": "https://www.tiktok.com/@kyn99er/video/7602850918853397768",
+    "engagement": {
+      "likes": 6647,
+      "comments": 91,
+      "shares": 3042,
+      "views": 519700
+    },
+    "author": "kyn99er",
+    "published_at": "2026-02-04T03:44:38.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7647896195771190536": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7647896195771190536",
+    "text": "Quán ốc siêu ngon và đông khách tại làng đại học, mấy bạn sinh viên hay ăn lắm nè.\n#thuducangi #angithuduc #langdaihoc #ocngon #ansapquan9thuduc ",
+    "url": "https://www.tiktok.com/@ansapquan9thuduc/video/7647896195771190536",
+    "engagement": {
+      "likes": 1932,
+      "comments": 138,
+      "shares": 1078,
+      "views": 180600
+    },
+    "author": "ansapquan9thuduc",
+    "published_at": "2026-06-05T13:03:21.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7480402636122885383": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7480402636122885383",
+    "text": "Nem nướng Nha Trang ở Làng Đại học ngon quá. Chỉ 25k mà fr.ee bún thêm, rau thêm, bánh tráng, nước chấm thoải mái\n#angithuduc #didauthuduc #thuduc #anngonthuduc #quanngonthuduc #langdaihocthuduc #nemnuongnhatrang #angilangdaihoc ",
+    "url": "https://www.tiktok.com/@angithuduc/video/7480402636122885383",
+    "engagement": {
+      "likes": 700,
+      "comments": 23,
+      "shares": 431,
+      "views": 61200
+    },
+    "author": "angithuduc",
+    "published_at": "2025-03-11T04:22:47.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654916867731082504": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654916867731082504",
+    "text": "Quán ốc ở làng đại học giá bình dân cho sinh viên",
+    "url": "https://www.tiktok.com/@mydien_1296/video/7654916867731082504",
+    "engagement": {
+      "likes": 1421,
+      "comments": 22,
+      "shares": 24,
+      "views": 19900
+    },
+    "author": "mydien_1296",
+    "published_at": "2026-06-24T11:07:07.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7314173481271250177": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7314173481271250177",
+    "text": "Lưu ngay quán nướng lẩu có vibe Hàn Quốc ngay trong Làng ĐH này, nào có bồ thì đi hẹn hò thoiii\n#sinhvien #langdaihoc #beolangdaihoc #angithuduc #butmedia ",
+    "url": "https://www.tiktok.com/@beolangdaihoc/video/7314173481271250177",
+    "engagement": {
+      "likes": 447,
+      "comments": 12,
+      "shares": 317,
+      "views": 88600
+    },
+    "author": "beolangdaihoc",
+    "published_at": "2023-12-19T05:28:45.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7602610487062236424": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7602610487062236424",
+    "text": "Lần đầu trải nghiệm quán ăn 3 sao tại làng đại học #xh #reviewanngon #quynhdobm #langdaihoc ",
+    "url": "https://www.tiktok.com/@quynhdo.bm/video/7602610487062236424",
+    "engagement": {
+      "likes": 395,
+      "comments": 10,
+      "shares": 75,
+      "views": 23100
+    },
+    "author": "quynhdo.bm",
+    "published_at": "2026-02-03T12:11:37.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7279425888058428690": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7279425888058428690",
+    "text": "1 quán cafe có vibe màu nude độc lạ tại Thủ Đức mà ít người biết #fyp #xuhuong #coffeethuduc #eminorcafe #thuduc #reviewcoffee ",
+    "url": "https://www.tiktok.com/@lenoilen_/video/7279425888058428690",
+    "engagement": {
+      "likes": 600,
+      "comments": 13,
+      "shares": 359,
+      "views": 51500
+    },
+    "author": "lenoilen_",
+    "published_at": "2023-09-16T14:10:17.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7633418904064232724": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7633418904064232724",
+    "text": "Nhà hàng nhà Gỗ này chill quá, có không gian sân vườn, vừa có view sông mát mẻ #nhagogrillchill #nhahangthuduc #nhahangngoaitroi  #nhahangvensong #baobanhbao2308 ",
+    "url": "https://www.tiktok.com/@baobanhbao2308/video/7633418904064232724",
+    "engagement": {
+      "likes": 6699,
+      "comments": 121,
+      "shares": 1656,
+      "views": 663100
+    },
+    "author": "baobanhbao2308",
+    "published_at": "2026-04-27T12:44:02.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7650278083215297812": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7650278083215297812",
+    "text": "Êh nhó tiẹm buffet ngon rẻ Thủ Đức #theotheoriviu #vtmgr #AncungTiktok #reviewanngon ",
+    "url": "https://www.tiktok.com/@theotheoriviu/video/7650278083215297812",
+    "engagement": {
+      "likes": 4161,
+      "comments": 92,
+      "shares": 1845,
+      "views": 192800
+    },
+    "author": "theotheoriviu",
+    "published_at": "2026-06-12T04:00:00.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654948225379699989": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654948225379699989",
+    "text": "Quán này đang HOT ở Thủ Đức lắm luôn , cả nhà check in chưa nhỉ? #creatorsearchinsights #XuongNuong #Chillthuduc #quanansanvuon #xuhuong ",
+    "url": "https://www.tiktok.com/@ngatuthuduc/video/7654948225379699989",
+    "engagement": {
+      "likes": 1459,
+      "comments": 47,
+      "shares": 948,
+      "views": 116100
+    },
+    "author": "ngatuthuduc",
+    "published_at": "2026-06-24T13:08:47.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7654551017480129810": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7654551017480129810",
+    "text": "Một tiệm ốc tươi chất lượng gi.á bình dân ở Thủ Đức\n#ocsaigon #ocbinhdan #reviewanngon #sinhvienangi #octuoi ",
+    "url": "https://www.tiktok.com/@ganhdoan/video/7654551017480129810",
+    "engagement": {
+      "likes": 2962,
+      "comments": 36,
+      "shares": 1565,
+      "views": 145400
+    },
+    "author": "ganhdoan",
+    "published_at": "2026-06-23T11:27:27.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7658569363229854983": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7658569363229854983",
+    "text": "Thèm qua bên đây ăn thử nha #laubonhunggiam #thuducangi #reviewthuduc ",
+    "url": "https://www.tiktok.com/@nguyenphuchau.media/video/7658569363229854983",
+    "engagement": {
+      "likes": 2965,
+      "comments": 76,
+      "shares": 2558,
+      "views": 130000
+    },
+    "author": "nguyenphuchau.media",
+    "published_at": "2026-07-04T07:20:44.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7582525807763983634": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7582525807763983634",
+    "text": "Quán ăn có đa dạng món ăn no cơm, mì, hủ tiếu, với món cơm cà ri rất ngon mọi người nhớ thử nha 😁 #thyangicungduoc #reviewanngon #diadiemanuong #reviewdiadiem #thuduc  ",
+    "url": "https://www.tiktok.com/@thyangicungduoc/video/7582525807763983634",
+    "engagement": {
+      "likes": 12100,
+      "comments": 217,
+      "shares": 8776,
+      "views": 557900
+    },
+    "author": "thyangicungduoc",
+    "published_at": "2025-12-11T09:12:52.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7443028650364095761": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7443028650364095761",
+    "text": "buffet cuốn thả gaa ở Thủ Đức nà🤤 #thuducangi #thuducanngon #angithuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7443028650364095761",
+    "engagement": {
+      "likes": 3960,
+      "comments": 173,
+      "shares": 2596,
+      "views": 231700
+    },
+    "author": "cobelolem195",
+    "published_at": "2024-11-30T11:13:01.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7514676102057528597": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7514676102057528597",
+    "text": "Tui ms tìm ra qán đa dạng món hạt dẻ và không gian siu chiu ở Thủ Đức lun🤤 #angithuduc #thuducanngon #thuducangi #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7514676102057528597",
+    "engagement": {
+      "likes": 663,
+      "comments": 20,
+      "shares": 398,
+      "views": 71500
+    },
+    "author": "cobelolem195",
+    "published_at": "2025-06-11T13:01:22.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "tiktok:7592886919319653653": {
+    "platform": "tiktok",
+    "signal_id": "tiktok:7592886919319653653",
+    "text": "Tìm đc qánn nhonn cho mí ní Thủ Đức ghée ănn tốii gòi nà🤤 #angithuduc #thuducangi #thuducanngon #anngonthuduc #minnnthuduc ",
+    "url": "https://www.tiktok.com/@cobelolem195/video/7592886919319653653",
+    "engagement": {
+      "likes": 307,
+      "comments": 11,
+      "shares": 215,
+      "views": 38900
+    },
+    "author": "cobelolem195",
+    "published_at": "2026-01-08T07:19:18.000Z",
+    "matched_poi_ids": [],
+    "source": "apify:tiktok",
+    "confidence": 0.4,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100076584126130": {
+    "platform": "facebook",
+    "signal_id": "facebook:100076584126130",
+    "text": "Nướng BBQ hè phố Thủ Đức Hồ Chí Minh | Thủ Đức Nướng BBQ hè phố Thủ Đức Hồ Chí Minh, Thủ Đức. 1,759 likes 1,939 were here. Nhà hàng Nướng BBQ hè phố là nhà hàng lẩu nướng giúp bạn khám phá địa đi� Nhà hàng Nướng BBQ hè phố là nhà hàng lẩu nướng giúp bạn khám phá địa đi?",
+    "url": "https://www.facebook.com/bbqhephothuduc/",
+    "engagement": {
+      "likes": 1759,
+      "followers": 1759,
+      "rating_percent": 100,
+      "rating_count": 7
+    },
+    "address": "244 Man Thiện Tăng Nhơn Phú A, Thủ Đức, Vietnam, 71301",
+    "phone": "+84 38 464 4038",
+    "published_at": "December 20, 2021",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100064682617485": {
+    "platform": "facebook",
+    "signal_id": "facebook:100064682617485",
+    "text": "PHỞ24 PHỞ24. 20,207 likes 4 talking about this 2,010 were here. PHỞ24 - Phở Việt Chính Hiệu PHỞ24 - Phở Việt Chính Hiệu",
+    "url": "https://www.facebook.com/pho24.24giavitinhte/",
+    "engagement": {
+      "likes": 20207,
+      "followers": 20207,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": null,
+    "phone": "+84 88 660 05 39",
+    "published_at": "December 13, 2012",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100091257905654": {
+    "platform": "facebook",
+    "signal_id": "facebook:100091257905654",
+    "text": "Bcons Land - Bcons Homes Bcons Land - Bcons Homes. 1,489 likes. PKD CĐT BCONS - 096.505.4641 PKD CĐT BCONS - 096.505.4641",
+    "url": "https://www.facebook.com/phuongoanhbcons/",
+    "engagement": {
+      "likes": 1489,
+      "followers": 1489,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "178/31 Nguyễn Văn Thương, Phường 25, Bình Thạnh, Thành Phố Hồ Chí Minh",
+    "phone": "+84 96 505 46 41",
+    "published_at": "March 21, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61563955317652": {
+    "platform": "facebook",
+    "signal_id": "facebook:61563955317652",
+    "text": "Hội Quán Nông Lâm | Thủ Đức Hội Quán Nông Lâm, Thủ Đức. 957 likes 8 were here. Coffee & Food cho sinh viên Coffee & Food cho sinh viên",
+    "url": "https://www.facebook.com/hoiquannonglam/",
+    "engagement": {
+      "likes": 957,
+      "followers": 957,
+      "rating_percent": 100,
+      "rating_count": 9
+    },
+    "address": "VQ9Q+XFM, Đ. Nhà khách, Phường Linh Trung, Thành Phố Thủ Đức, Hồ Chí Minh, Việt Nam, Thủ Đức, Vietnam",
+    "phone": "+84 91 955 33 21",
+    "published_at": "August 5, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100071165596701": {
+    "platform": "facebook",
+    "signal_id": "facebook:100071165596701",
+    "text": "GẠCH ỐNG Food & Beer",
+    "url": "https://www.facebook.com/NhahangGachOng/mentions/",
+    "engagement": {
+      "likes": null,
+      "followers": 13000,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "Số 11 Nguyễn Văn Bá, P.Bình Thọ, Tp.Thủ Đức, Ho Chi Minh City, Vietnam, 70000",
+    "phone": "+84 90 110 68 48",
+    "published_at": "June 25, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61561010842471": {
+    "platform": "facebook",
+    "signal_id": "facebook:61561010842471",
+    "text": "SUStain Vĩnh Hy SUStain Vĩnh Hy. 373 likes. Khám phá Vĩnh Hy theo cách có trách nhiệm! 🌿 Chúng tôi là dự án phi lợi nhuận, cam kết phát triển du lịch bền vững, bảo vệ... Khám phá Vĩnh Hy theo cách có trách nhiệm! 🌿 Chúng tôi là dự án phi lợi nhuận, cam kết phát triển du lịch bền vững, bảo vệ môi trường và bảo vệ hệ sinh thái của người dân địa phương tại Vĩnh Hy",
+    "url": "https://www.facebook.com/p/SUStain-V%C4%A9nh-Hy-61561010842471/",
+    "engagement": {
+      "likes": 373,
+      "followers": 373,
+      "rating_percent": null,
+      "rating_count": 1
+    },
+    "address": null,
+    "phone": "+84 38 481 6003",
+    "published_at": "June 9, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063791553331": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063791553331",
+    "text": "Napoli Coffee Cô Ba Sài Gòn | Ho Chi Minh City Napoli Coffee Cô Ba Sài Gòn, Ho Chi Minh City. 4,025 likes 1 talking about this 758 were here. Cô Ba Sài Gòn Food Mart chuỗi cửa hàng chuyên cung cấp... Cô Ba Sài Gòn Food Mart chuỗi cửa hàng chuyên cung cấp thực phẩm xanh cho mọi nhà.",
+    "url": "https://www.facebook.com/CoBaSaiGonFood/",
+    "engagement": {
+      "likes": 4025,
+      "followers": 4025,
+      "rating_percent": null,
+      "rating_count": 3
+    },
+    "address": "61/12 Đường Số 23, Khu Phố 5, Hiệp Bình Chánh, Thủ Đức, Ho Chi Minh City, Vietnam, 71315",
+    "phone": "+84 96 987 85 98",
+    "published_at": "October 1, 2017",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61551790144995": {
+    "platform": "facebook",
+    "signal_id": "facebook:61551790144995",
+    "text": "Coffeetimeofhang Coffeetimeofhang. 2,087 likes 30 talking about this. Review Cafe & Bar - Travel Review Cafe & Bar - Travel",
+    "url": "https://www.facebook.com/p/Coffeetimeofhang-61551790144995/",
+    "engagement": {
+      "likes": 2087,
+      "followers": 2087,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "September 29, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61568406543057": {
+    "platform": "facebook",
+    "signal_id": "facebook:61568406543057",
+    "text": "Trung Nguyên E-Coffee - Nhà Gỗ Ven Sông | Ho Chi Minh City Trung Nguyên E-Coffee - Nhà Gỗ Ven Sông, Ho Chi Minh City. 129 likes 17 were here. Coffee shop",
+    "url": "https://www.facebook.com/nhagovensongcoffee/",
+    "engagement": {
+      "likes": 129,
+      "followers": 129,
+      "rating_percent": null,
+      "rating_count": 3
+    },
+    "address": "15 Đường Lê Hữu Kiều, Phường Bình Trưng Tây, Thành Phố Thủ Đức, Ho Chi Minh City, Vietnam, 700000",
+    "phone": null,
+    "published_at": "November 8, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100091563391232": {
+    "platform": "facebook",
+    "signal_id": "facebook:100091563391232",
+    "text": "Kinh doanh cafe vỉa hè - 1 vốn 4 lời | Thủ Đức Kinh doanh cafe vỉa hè - 1 vốn 4 lời, Thủ Đức. 3,222 likes 15 talking about this. Hỗ trợ Kinh doanh cafe vỉa hè - 1 vốn 4 lời, miễn phí trọn bộ máy pha... Hỗ trợ Kinh doanh cafe vỉa hè - 1 vốn 4 lời, miễn phí trọn bộ máy pha và quầy bán cafe mang đi...liên hệ: 0909.317.285.",
+    "url": "https://www.facebook.com/p/Kinh-doanh-cafe-v%E1%BB%89a-h%C3%A8-1-v%E1%BB%91n-4-l%E1%BB%9Di-100091563391232/",
+    "engagement": {
+      "likes": 3222,
+      "followers": 3222,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "39/5A đường số 23, Hiệp Bình Chánh, Thủ Đức, Vietnam",
+    "phone": "+84 90 931 72 85",
+    "published_at": "March 28, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61574561964086": {
+    "platform": "facebook",
+    "signal_id": "facebook:61574561964086",
+    "text": "Nhà Hàng ASEAN | Ho Chi Minh City Nhà Hàng ASEAN, Ho Chi Minh City. 696 likes 22 talking about this. Nhà hàng đặc sản - Hải sản - Ẩm thực ba miền       📞Hotline: 0919 123 279 - 0967 905 138 Nhà hàng đặc sản - Hải sản - Ẩm thực ba miền       📞Hotline: 0919 123 279 - 0967 905 138",
+    "url": "https://www.facebook.com/p/Nh%C3%A0-H%C3%A0ng-ASEAN-61574561964086/",
+    "engagement": {
+      "likes": 696,
+      "followers": 696,
+      "rating_percent": 100,
+      "rating_count": 10
+    },
+    "address": "03 Công Lý, Phường Thủ Đức, Ho Chi Minh City, Vietnam, 00700",
+    "phone": "+84 91 912 32 79",
+    "published_at": "March 19, 2025",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61579361540180": {
+    "platform": "facebook",
+    "signal_id": "facebook:61579361540180",
+    "text": "CAFE QUIN CAFE QUIN. 399 likes 1 was here. Coffee shop",
+    "url": "https://www.facebook.com/coffeequin/",
+    "engagement": {
+      "likes": 399,
+      "followers": 399,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "August 6, 2025",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100068254655423": {
+    "platform": "facebook",
+    "signal_id": "facebook:100068254655423",
+    "text": "Dalaland Coffee",
+    "url": "https://www.facebook.com/dalaland.coffee/mentions/",
+    "engagement": {
+      "likes": null,
+      "followers": 27000,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "24/4/1 Trần Ngọc Diện. P.Thảo Điền. Quận 2, Ho Chi Minh City, Vietnam, 71107",
+    "phone": "+84 38 355 2591",
+    "published_at": "January 13, 2013",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61556677123437": {
+    "platform": "facebook",
+    "signal_id": "facebook:61556677123437",
+    "text": "Vintage Taste Deli Cafe | Thủ Đức Vintage Taste Deli Cafe, Thủ Đức. 7,459 likes 739 talking about this 108 were here. Vintage Taste Deli Cafe - nơi hòa mình trong không gian ấm cúng... Vintage Taste Deli Cafe - nơi hòa mình trong không gian ấm cúng và thưởng thức hương vị cà phê độc đáo.",
+    "url": "https://www.facebook.com/vintagetastedelicafe/",
+    "engagement": {
+      "likes": 7459,
+      "followers": 7459,
+      "rating_percent": 100,
+      "rating_count": 213
+    },
+    "address": "D9-28, Vinhomes Grand Park, Phường Long Bình, Thành Phố Hồ Chí Minh, Thủ Đức, Vietnam, 71200",
+    "phone": "+84 83 333 3928",
+    "published_at": "March 2, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61567268301181": {
+    "platform": "facebook",
+    "signal_id": "facebook:61567268301181",
+    "text": "Happy Kitchen - Gian Bếp Vui Vẻ",
+    "url": "https://www.facebook.com/happykitchen204/mentions/",
+    "engagement": {
+      "likes": null,
+      "followers": 970,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "204/20 Nguyễn Văn Hưởng, phường An Khánh, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 90 889 16 48",
+    "published_at": "October 10, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100084461703673": {
+    "platform": "facebook",
+    "signal_id": "facebook:100084461703673",
+    "text": "⓬•Cho thuê nguyên căn nhà phố với giá tốt, khu Lakeview quận 2, tin T08/22 | Ho Chi Minh City ⓬•Cho thuê nguyên căn nhà phố với giá tốt, khu Lakeview quận 2, tin T08/22, Ho Chi Minh City. 45 likes. Cho thuê nguyên căn nhà phố với giá tốt, khu... Cho thuê nguyên căn nhà phố với giá tốt, khu Lakeview quận 2, tin T08/22 được chúng tôi đăng tin rộng rãi nhằm giúp cho Khách hàng có được lựa chọn tốt nhất, phù hợp nhất với nhu cầu của mình.",
+    "url": "https://www.facebook.com/chothuenguyencannhaphovoigiatotkhulakeviewquan2/",
+    "engagement": {
+      "likes": 45,
+      "followers": 45,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "Quận 2, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 90 331 87 78",
+    "published_at": "August 4, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100070934851400": {
+    "platform": "facebook",
+    "signal_id": "facebook:100070934851400",
+    "text": "Dollar Flower - Shop Hoa Tươi Quận 2 Hồ Chí Minh | Ho Chi Minh City Dollar Flower - Shop Hoa Tươi Quận 2 Hồ Chí Minh, Ho Chi Minh City. 93 likes 5 talking about this. Shop hoa tươi Quận 2 Tp.HCM \n☎️: 0813 524 523\n 📍Miễn... Shop hoa tươi Quận 2 Tp.HCM \n☎️: 0813 524 523\n 📍Miễn ship tận nhà📍Xuất HĐ VAT📍Tặng thiệp\n📍Giá sản phẩm từ 300k/ 1 sản phẩm",
+    "url": "https://www.facebook.com/dollarflowershophoatuoiquan2hochiminh/",
+    "engagement": {
+      "likes": 93,
+      "followers": 93,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "68 Nguyễn Bá Lân, Thảo Điền, Quận 2, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 81 352 4523",
+    "published_at": "July 10, 2021",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61562124266573": {
+    "platform": "facebook",
+    "signal_id": "facebook:61562124266573",
+    "text": "Nhà Hàng Thịt Nướng Butoomac Hồ Chí Minh - 부뚜막 호치민 고기집 | Ho Chi Minh City Nhà Hàng Thịt Nướng Butoomac Hồ Chí Minh - 부뚜막 호치민 고기집, Ho Chi Minh City. 2,062 likes 4 talking about this 47 were here. Nhà hàng chuyên về thịt... Nhà hàng chuyên về thịt nướng Hàn Quốc",
+    "url": "https://www.facebook.com/p/Nh%C3%A0-H%C3%A0ng-Th%E1%BB%8Bt-N%C6%B0%E1%BB%9Bng-Butoomac-H%E1%BB%93-Ch%C3%AD-Minh-%EB%B6%80%EB%9A%9C%EB%A7%89-%ED%98%B8%EC%B9%98%EB%AF%BC-%EA%B3%A0%EA%B8%B0%EC%A7%91-61562124266573/",
+    "engagement": {
+      "likes": 2062,
+      "followers": 2062,
+      "rating_percent": null,
+      "rating_count": 1
+    },
+    "address": "22 Đ. Số 10, Thảo Điền, Quận 2, Ho Chi Minh City, Vietnam",
+    "phone": "+84 36 819 5577",
+    "published_at": "July 5, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61551866557002": {
+    "platform": "facebook",
+    "signal_id": "facebook:61551866557002",
+    "text": "Lekker - South African BBQ | Ho Chi Minh City Lekker - South African BBQ, Ho Chi Minh City. 696 likes 1 talking about this 37 were here. Bringing the taste and aroma of South African cuisine to... Bringing the taste and aroma of South African cuisine to Vietnam.",
+    "url": "https://www.facebook.com/Lekker.vn/",
+    "engagement": {
+      "likes": 696,
+      "followers": 696,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "520b đặng tiến đông, phường an Phú, Tp. Thủ Đức, Hồ Chí Minh, Ho Chi Minh City, Vietnam",
+    "phone": "+84 32 800 7047",
+    "published_at": "October 3, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100065505012318": {
+    "platform": "facebook",
+    "signal_id": "facebook:100065505012318",
+    "text": "Buffet Chay D'gemma Thủ Đức | Thủ Đức Buffet Chay D'gemma Thủ Đức, Thủ Đức. 4,502 likes 2 talking about this 11 were here. Buffet Chay hàng ngày trưa 11h-14h và chiều 17h-21h với trên 50... Buffet Chay hàng ngày trưa 11h-14h và chiều 17h-21h với trên 50 món đa dạng.  1225 Tỉnh lộ 43 Bình Chiểu Thành Phố Thủ Đức",
+    "url": "https://www.facebook.com/BuffetChaythuduc/",
+    "engagement": {
+      "likes": 4502,
+      "followers": 4502,
+      "rating_percent": 84,
+      "rating_count": 8
+    },
+    "address": "1225 Tỉnh lộ 43, Phường Bình Chiểu, Thủ Đức, Hồ Chí Minh , Thủ Đức, Vietnam, 700000",
+    "phone": "+84 81 990 0991",
+    "published_at": "March 27, 2021",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100093062215332": {
+    "platform": "facebook",
+    "signal_id": "facebook:100093062215332",
+    "text": "Manwah Vincom Thảo Điền | Thủ Đức Manwah Vincom Thảo Điền, Thủ Đức. 623 likes 11 talking about this 29 were here. Nhà hàng lẩu phong cách Đài Loan Nhà hàng lẩu phong cách Đài Loan",
+    "url": "https://www.facebook.com/p/Manwah-Vincom-Th%E1%BA%A3o-%C4%90i%E1%BB%81n-100093062215332/",
+    "engagement": {
+      "likes": 623,
+      "followers": 623,
+      "rating_percent": null,
+      "rating_count": 4
+    },
+    "address": "Lô L5-08, TTTM Vincom Megamall, 161 XL Hà Nội, Thảo Điền, Thủ Đức, Vietnam",
+    "phone": "+84 28 7300 5518",
+    "published_at": "June 5, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100083079527438": {
+    "platform": "facebook",
+    "signal_id": "facebook:100083079527438",
+    "text": "Philippines BBQ & Drinks",
+    "url": "https://www.facebook.com/PhilippinesBBQ.Drinks/mentions/",
+    "engagement": {
+      "likes": null,
+      "followers": 2200,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "47 đường 66, thảo điền, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 93 400 49 86",
+    "published_at": "March 4, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100054354896649": {
+    "platform": "facebook",
+    "signal_id": "facebook:100054354896649",
+    "text": "Suunto Vietnam | Ho Chi Minh City Suunto Vietnam, Ho Chi Minh City. 6,710 likes 293 talking about this 38 were here. Chào mừng bạn đến với trang Facebook chính thức của Suunto... Chào mừng bạn đến với trang Facebook chính thức của Suunto Vietnam🔺⌚️⛰️",
+    "url": "https://www.facebook.com/vn.suunto/",
+    "engagement": {
+      "likes": 6710,
+      "followers": 6710,
+      "rating_percent": null,
+      "rating_count": 1
+    },
+    "address": "12 đường B4, khu Đô thị Sala, phường An Lợi Đông, Tp Thủ Đức, Hồ Chí Minh, Ho Chi Minh City, Vietnam",
+    "phone": "+84 90 299 85 60",
+    "published_at": "March 27, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063855982396": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063855982396",
+    "text": "Samagon ADV | Ho Chi Minh City Samagon ADV, Ho Chi Minh City. 12,201 likes 969 talking about this. Samagon ADV chuyên cung cấp/sản xuất thùng xe nhôm, baga, chống đổ dành cho các... Samagon ADV chuyên cung cấp/sản xuất thùng xe nhôm, baga, chống đổ dành cho các loại xe mô tô.",
+    "url": "https://www.facebook.com/Samagonadv.co/",
+    "engagement": {
+      "likes": 12201,
+      "followers": 12201,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "129B Mai Chí Thọ, An Phú, Quận 2, Thủ Đức, Hồ Chí Minh (Showroom), Ho Chi Minh City, Vietnam",
+    "phone": "+84 70 733 0370",
+    "published_at": "February 8, 2021",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100066377666309": {
+    "platform": "facebook",
+    "signal_id": "facebook:100066377666309",
+    "text": "Maneki Neko House | Ho Chi Minh City Maneki Neko House, Ho Chi Minh City. 2,482 likes 28 were here. Maneki Neko House chuyên cung cấp tất cả các loại phụ kiện quà tặng trang trí liên quan... Maneki Neko House chuyên cung cấp tất cả các loại phụ kiện quà tặng trang trí liên quan đến chú mèo thần tài may mắn Maneki Neko Nhật Bản .",
+    "url": "https://www.facebook.com/meothantaimayman/",
+    "engagement": {
+      "likes": 2482,
+      "followers": 2482,
+      "rating_percent": 100,
+      "rating_count": 27
+    },
+    "address": "81 đường Bình Lợi ,phường 13, quận Bình Thạnh ,TP Hồ Chí Minh, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 39 863 0727",
+    "published_at": "July 17, 2012",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100089291554970": {
+    "platform": "facebook",
+    "signal_id": "facebook:100089291554970",
+    "text": "Công Ty TNHH Anh Hoàng Thy | Thủ Đức Công Ty TNHH Anh Hoàng Thy, Thủ Đức. 68 likes. Thực phẩm Tươi - Sạch - An Toàn cho mọi nhà Thực phẩm Tươi - Sạch - An Toàn cho mọi nhà",
+    "url": "https://www.facebook.com/p/C%C3%B4ng-Ty-TNHH-Anh-Ho%C3%A0ng-Thy-100089291554970/",
+    "engagement": {
+      "likes": 68,
+      "followers": 68,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "Phạm Văn Đồng , Thủ Đức, Vietnam",
+    "phone": "+84 36 923 7778",
+    "published_at": "February 13, 2019",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100068502669996": {
+    "platform": "facebook",
+    "signal_id": "facebook:100068502669996",
+    "text": "Khách sạn Royal quận 2 | Ho Chi Minh City Khách sạn Royal quận 2, Ho Chi Minh City. 44 likes 62 were here. Nằm ngay trung tâm quận 2 của thành phố Hồ Chí Minh, Khách sạn Royal cách quận 1 chỉ... Nằm ngay trung tâm quận 2 của thành phố Hồ Chí Minh, Khách sạn Royal cách quận 1 chỉ với 5 phút chạy xe nên sẽ thuận tiện cho việc đi lại với khách du lịch",
+    "url": "https://www.facebook.com/p/Kh%C3%A1ch-s%E1%BA%A1n-Royal-qu%E1%BA%ADn-2-100068502669996/",
+    "engagement": {
+      "likes": 44,
+      "followers": 44,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "1A, đường 30, phường An Khánh, Hồ Chí Minh ( phường Bình An, Quận 2 cũ), Ho Chi Minh City, Vietnam, 70000",
+    "phone": "+84 28 3636 6539",
+    "published_at": "June 23, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100064626372274": {
+    "platform": "facebook",
+    "signal_id": "facebook:100064626372274",
+    "text": "Tuyển dụng nhân sự - Công ty Interdist | Ho Chi Minh City Tuyển dụng nhân sự - Công ty Interdist, Ho Chi Minh City. 62,666 likes 182 talking about this 642 were here. Trang Tuyển dụng nhân sự - Công ty... Trang Tuyển dụng nhân sự - Công ty Interdist là nơi cập nhật những thông tin mới nhất về các vị trí tuyển dụng và chương trình tuyển dụng nhân viên bán hàng cho các nhãn hàng nổi tiếng.",
+    "url": "https://www.facebook.com/tuyendungInterdist/",
+    "engagement": {
+      "likes": 62666,
+      "followers": 62666,
+      "rating_percent": 96,
+      "rating_count": 72
+    },
+    "address": "Trụ sở chính - Tòa nhà ID Box Office, Số 17, đường số 55, Thạnh Mỹ Lợi, Quận 2, TP Thủ Đức, Hồ Chí Minh, Ho Chi Minh City, Vietnam",
+    "phone": "+84 91 733 73 20",
+    "published_at": "October 15, 2015",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100054471220475": {
+    "platform": "facebook",
+    "signal_id": "facebook:100054471220475",
+    "text": "Saigonita Saigonita. 678 likes. Saigonita is a closed-door restaurant that reinterprets Mexican cuisine through the lens of Vietnamese ingredients and dishes. Saigonita is a closed-door restaurant that reinterprets Mexican cuisine through the lens of Vietnamese ingredients and dishes.",
+    "url": "https://www.facebook.com/saigonita/",
+    "engagement": {
+      "likes": 678,
+      "followers": 678,
+      "rating_percent": null,
+      "rating_count": 4
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "May 10, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61555750325668": {
+    "platform": "facebook",
+    "signal_id": "facebook:61555750325668",
+    "text": "1Day Pizza - Tiệm Pizza, Mỳ ý Vinhomes Grand Park 1Day Pizza - Tiệm Pizza, Mỳ ý Vinhomes Grand Park. 310 likes 1 talking about this 21 were here. One Day Pizza - không chỉ là một ngày làm bánh – mà... One Day Pizza - không chỉ là một ngày làm bánh – mà là bánh mới, niềm vui mới với mỗi 1 ngày mới\nCall: 0822.333.993 - 085.565.2221",
+    "url": "https://www.facebook.com/1daypizza.vn/",
+    "engagement": {
+      "likes": 310,
+      "followers": 310,
+      "rating_percent": null,
+      "rating_count": 1
+    },
+    "address": "S3.01 shop house 01S07 Vinhomes Grand Park, Long Thạnh Mỹ Thủ Đức, Vietnam, 71216, 71216",
+    "phone": "+84 82 233 3993",
+    "published_at": "January 22, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61570478023370": {
+    "platform": "facebook",
+    "signal_id": "facebook:61570478023370",
+    "text": "Ô Tô VinFast Hùng Sơn - Thủ Đức | Quận 9 Ô Tô VinFast Hùng Sơn - Thủ Đức, Quận 9. 807 likes 1,039 talking about this 49 were here. ĐÂY LÀ TRANG PAGE VỀ OTO VINFAST CHÍNH THỨC THUỘC CTY TNHH... ĐÂY LÀ TRANG PAGE VỀ OTO VINFAST CHÍNH THỨC THUỘC CTY TNHH TM DV DU LỊCH HÙNG SƠN\nHOTLINE: 1900 9966 59",
+    "url": "https://www.facebook.com/otovinfasthungsonthuduc/",
+    "engagement": {
+      "likes": 807,
+      "followers": 807,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "720 xa lộ hà nội, Quận 9, Vietnam, 700000",
+    "phone": "+84 1900 996659",
+    "published_at": "December 19, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100094843870363": {
+    "platform": "facebook",
+    "signal_id": "facebook:100094843870363",
+    "text": "FC VƯƠNG BÌNH - VOI CON FC VƯƠNG BÌNH - VOI CON. 9,511 likes 5,088 talking about this. Được quản lý và kiểm duyệt bởi công ty ST.319 Entertainment Được quản lý và kiểm duyệt bởi công ty ST.319 Entertainment",
+    "url": "https://www.facebook.com/fcvuongbinh/",
+    "engagement": {
+      "likes": 9511,
+      "followers": 9511,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "July 14, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063937577247": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063937577247",
+    "text": "Đặc sản Xứ Quảng | Thủ Đức District Đặc sản Xứ Quảng, Thủ Đức District. 1,183 likes 45 were here. Xứ Quảng Quán chuyên bán những món ăn ngon xứ Quảng Ngãi, Miền Trung. Xứ Quảng Quán chuyên bán những món ăn ngon xứ Quảng Ngãi, Miền Trung.",
+    "url": "https://www.facebook.com/dacsanxq/",
+    "engagement": {
+      "likes": 1183,
+      "followers": 1183,
+      "rating_percent": 100,
+      "rating_count": 7
+    },
+    "address": "109A, Hiệp Bình , Hiệp Bình Phước, Thủ Đức, Thủ Đức District, Vietnam",
+    "phone": "+84 93 277 75 13",
+    "published_at": "August 12, 2017",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063771812150": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063771812150",
+    "text": "Nhà Hàng - Hầm Rượu 77 | Thủ Đức Nhà Hàng - Hầm Rượu 77, Thủ Đức. 1,677 likes 1 talking about this. ♥️ HẦM RƯỢU 77 ♥️\nĐẬM TÌNH ĐẤT VÕ-PHỤC VỤ TỪ TÂM\nChuyên về Hải Sản - Đặc sản\nCó... ♥️ HẦM RƯỢU 77 ♥️\nĐẬM TÌNH ĐẤT VÕ-PHỤC VỤ TỪ TÂM\nChuyên về Hải Sản - Đặc sản\nCó Phòng Tiệc Lớn - Âm Thanh Sống Động\nĐặt Bàn Tại 0938987959",
+    "url": "https://www.facebook.com/p/Nh%C3%A0-H%C3%A0ng-H%E1%BA%A7m-R%C6%B0%E1%BB%A3u-77-100063771812150/",
+    "engagement": {
+      "likes": 1677,
+      "followers": 1677,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "Quốc Lộ 13, Thủ Đức, Vietnam",
+    "phone": null,
+    "published_at": "July 23, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100064752697047": {
+    "platform": "facebook",
+    "signal_id": "facebook:100064752697047",
+    "text": "Tổ Đình Bửu Long Fanpage Tổ Đình Bửu Long Fanpage. 34,818 likes 1,620 talking about this 1,158 were here. Religious organization",
+    "url": "https://www.facebook.com/todinhbuulongfanpage/",
+    "engagement": {
+      "likes": 34818,
+      "followers": 34818,
+      "rating_percent": 100,
+      "rating_count": 11
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "October 10, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100066371535888": {
+    "platform": "facebook",
+    "signal_id": "facebook:100066371535888",
+    "text": "Nong Tuyển Dụng HCM Nong Tuyển Dụng HCM. 7,096 likes 2 talking about this. Page Tuyển Dụng Chính Thức Nhà NONG\nCN1: 663 Âu Cơ, Phường Phú Thọ Hòa, TP HCM\nCN2: 48 Xuân... Page Tuyển Dụng Chính Thức Nhà NONG\nCN1: 663 Âu Cơ, Phường Phú Thọ Hòa, TP HCM\nCN2: 48 Xuân Thủy, Phường An Khánh, TP HCM",
+    "url": "https://www.facebook.com/NongTuyenDung/",
+    "engagement": {
+      "likes": 7096,
+      "followers": 7096,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": null,
+    "phone": null,
+    "published_at": "September 14, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100061858249650": {
+    "platform": "facebook",
+    "signal_id": "facebook:100061858249650",
+    "text": "SUPER BÒ Thủ Đức | Thủ Đức District SUPER BÒ Thủ Đức, Thủ Đức District. 11,028 likes 1,054 were here. Bạn muốn thưởng thức món thịt bò ngon, hấp dẫn, nhiều và giá lại hợp lý. Hãy ghé ngay... Bạn muốn thưởng thức món thịt bò ngon, hấp dẫn, nhiều và giá lại hợp lý. Hãy ghé ngay tại quán “SUPER BÒ”!",
+    "url": "https://www.facebook.com/superbothuduc/",
+    "engagement": {
+      "likes": 11028,
+      "followers": 11028,
+      "rating_percent": 90,
+      "rating_count": 15
+    },
+    "address": "254 Hoàng Diệu 2, P. Linh Chiểu, Q. Thủ Đức, Tp. HCM, Thủ Đức District, Vietnam, 700000",
+    "phone": "+84 88 842 62 82",
+    "published_at": "November 2, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100069759482802": {
+    "platform": "facebook",
+    "signal_id": "facebook:100069759482802",
+    "text": "Hào Sĩ Phường | Ho Chi Minh City Hào Sĩ Phường, Ho Chi Minh City. 424 likes 2 were here. SÂN CHƠI GIỚI TRẺ, NƠI ĐEM LẠI SỰ GIẢI TRÍ TUYỆT ĐỈNH VÀ PHỤC VỤ TẬN TÌNH, NƠI XÓA TAN MỌI ƯU PHIỀN SÂN CHƠI GIỚI TRẺ, NƠI ĐEM LẠI SỰ GIẢI TRÍ TUYỆT ĐỈNH VÀ PHỤC VỤ TẬN TÌNH, NƠI XÓA TAN MỌI ƯU PHIỀN",
+    "url": "https://www.facebook.com/p/H%C3%A0o-S%C4%A9-Ph%C6%B0%E1%BB%9Dng-100069759482802/",
+    "engagement": {
+      "likes": 424,
+      "followers": 424,
+      "rating_percent": null,
+      "rating_count": 3
+    },
+    "address": "56 Bát Nàn,phường Bình Trưng Tây, TP Thủ Đức, Hồ Chí Minh, Việt Nam, Ho Chi Minh City, Vietnam",
+    "phone": "+84 91 518 28 78",
+    "published_at": "June 10, 2021",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100064369014332": {
+    "platform": "facebook",
+    "signal_id": "facebook:100064369014332",
+    "text": "Daddy Cool | Ho Chi Minh City Daddy Cool, Ho Chi Minh City. 107,144 likes 2,662 talking about this 933 were here. City Park, 01 - D3 Street, Binh Trung,HCM\nVan Phuc City - 18... City Park, 01 - D3 Street, Binh Trung,HCM\nVan Phuc City - 18 Street,Hiep Binh,HCMC\nThe Centric - Thuy Nguyen, Hai Phong City\nHotline : 038.457.2167",
+    "url": "https://www.facebook.com/daddycoolvn/",
+    "engagement": {
+      "likes": 107144,
+      "followers": 107144,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "City Park - đường D3 - phường An Phú - Thủ Đức - Hồ Chí Minh, Ho Chi Minh City, Vietnam, 700000",
+    "phone": null,
+    "published_at": "November 1, 2013",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100082950681808": {
+    "platform": "facebook",
+    "signal_id": "facebook:100082950681808",
+    "text": "Mùa Hè Cafe & Friends | Thủ Đức Mùa Hè Cafe & Friends, Thủ Đức. 1,516 likes 99 talking about this 128 were here. 🌧️ By Dean’s Dream - Bếp Nhà Dean 🌧️\nMột quán cafe mèo bé xinh trong... 🌧️ By Dean’s Dream - Bếp Nhà Dean 🌧️\nMột quán cafe mèo bé xinh trong lối nhỏ, chốn trở về cho những tâm hồn lạc lõng 🐈‍⬛🐈‍⬛🐈‍⬛\n🐾33/1 Đặng Văn Bi, Thủ Đức, HCM\n📞0559568903",
+    "url": "https://www.facebook.com/muahecafeandfriends/",
+    "engagement": {
+      "likes": 1516,
+      "followers": 1516,
+      "rating_percent": 100,
+      "rating_count": 23
+    },
+    "address": "33/1 Đặng Văn Bi, Thủ Đức, Vietnam, 70000",
+    "phone": "+84 55 956 8903",
+    "published_at": "March 9, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61577243537864": {
+    "platform": "facebook",
+    "signal_id": "facebook:61577243537864",
+    "text": "Nhà Hàng Hải Sản O2 Seafood | Ho Chi Minh City Nhà Hàng Hải Sản O2 Seafood, Ho Chi Minh City. 377 likes 6 talking about this 39 were here. “Hải sản bơi sống - Quầy bếp mở - Biển về giữa phố” “Hải sản bơi sống - Quầy bếp mở - Biển về giữa phố”",
+    "url": "https://www.facebook.com/o2seafood/",
+    "engagement": {
+      "likes": 377,
+      "followers": 377,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "86a Song Hành, An Phú, Thủ Đức, Hồ Chí Minh 700000, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 93 921 49 11",
+    "published_at": "June 23, 2025",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100092897214977": {
+    "platform": "facebook",
+    "signal_id": "facebook:100092897214977",
+    "text": "Bún Mọc Cầu Gỗ - New City Thủ Thiêm.Q2 | Ho Chi Minh City Bún Mọc Cầu Gỗ - New City Thủ Thiêm.Q2, Ho Chi Minh City. 809 likes 15 were here. Bún Mọc Cầu Gỗ - Quán Bún Mang Đậm Chất Hương Vị Hà Nội, Nơi mà bạn... Bún Mọc Cầu Gỗ - Quán Bún Mang Đậm Chất Hương Vị Hà Nội, Nơi mà bạn sẽ được trải nghiệm hương vị truyền thống và văn hóa mà bát bún mọc chúng tôi đem lại.",
+    "url": "https://www.facebook.com/bunmochanoi/",
+    "engagement": {
+      "likes": 809,
+      "followers": 809,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "17 Đ. Mai Chí Thọ, Phường An Khánh, Thủ Đức, Hồ Chí Minh, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 94 236 77 99",
+    "published_at": "June 1, 2023",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61565195581169": {
+    "platform": "facebook",
+    "signal_id": "facebook:61565195581169",
+    "text": "WagWel Saigon - Feline | Ho Chi Minh City WagWel Saigon - Feline, Ho Chi Minh City. 902 likes 11 talking about this. WagWel Rescue is a Vietnam-based social enterprise dedicated to the rescue &... WagWel Rescue is a Vietnam-based social enterprise dedicated to the rescue & rehabilitation of dogs & cats. WagWel is creating a more compassionate & safer future for dogs, cats & their human companions through community-driven programs & collaborations.",
+    "url": "https://www.facebook.com/WagWelSaigonFeline/",
+    "engagement": {
+      "likes": 902,
+      "followers": 902,
+      "rating_percent": null,
+      "rating_count": 1
+    },
+    "address": "24/2 Trận Ngọc Diện, P.Thảo Điền, Tp.Thủ Đức, Hồ Chí Minh, Vietnam, Ho Chi Minh City, Vietnam, 70000",
+    "phone": "+84 79 810 7559",
+    "published_at": "September 1, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100082989049375": {
+    "platform": "facebook",
+    "signal_id": "facebook:100082989049375",
+    "text": "Bò Chị EM | Thủ Đức Bò Chị EM, Thủ Đức. 1,825 likes 236 were here. Bò chị em Bò chị em",
+    "url": "https://www.facebook.com/p/B%C3%B2-Ch%E1%BB%8B-EM-100082989049375/",
+    "engagement": {
+      "likes": 1825,
+      "followers": 1825,
+      "rating_percent": null,
+      "rating_count": 3
+    },
+    "address": " 856 Đường phạm văn đồng, Thủ Đức, Vietnam",
+    "phone": "+84 34 670 4394",
+    "published_at": "April 13, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100084482020497": {
+    "platform": "facebook",
+    "signal_id": "facebook:100084482020497",
+    "text": "Tuyển dụng Pi Thai - Hủ tiếu Thái Lan",
+    "url": "https://www.facebook.com/tuyendungPiThai/mentions/",
+    "engagement": {
+      "likes": null,
+      "followers": 1000,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "17 Nguyễn Gia Trí, Phường Thạnh Mỹ Tây, Thành phố Hồ Chí Minh, Ho Chi Minh City, Vietnam, 70000 - 74000",
+    "phone": "+84 90 656 08 84",
+    "published_at": "August 7, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61558304111869": {
+    "platform": "facebook",
+    "signal_id": "facebook:61558304111869",
+    "text": "Asia Island Glamping | Ho Chi Minh City Asia Island Glamping, Ho Chi Minh City. 16,480 likes 1,323 talking about this 1,370 were here. ASIA ISLAND GLAMPING nơi chữa lành tâm hồn giữa nhịp... ASIA ISLAND GLAMPING nơi chữa lành tâm hồn giữa nhịp sống hối hả ngay trong lòng quận 9",
+    "url": "https://www.facebook.com/AsiaIsland.Glamping/",
+    "engagement": {
+      "likes": 16480,
+      "followers": 16480,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "195 Đường số 5, Lân Ngoài, Thủ Đức, Ho Chi Minh City, Vietnam, 790000",
+    "phone": "+84 91 200 00 38",
+    "published_at": "April 17, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100057631381549": {
+    "platform": "facebook",
+    "signal_id": "facebook:100057631381549",
+    "text": "Maison De Concept | Ho Chi Minh City Maison De Concept, Ho Chi Minh City. 2,810 likes. MAISON DE CONCEPT \nThiết kế nội thất & thi công MAISON DE CONCEPT \nThiết kế nội thất & thi công",
+    "url": "https://www.facebook.com/Maisondeconcept/",
+    "engagement": {
+      "likes": 2810,
+      "followers": 2810,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "A29 - 31 Đường Nguyễn Hữu Thọ, Phường Tân Phong, Quận 7, Ho Chi Minh City, Vietnam",
+    "phone": "+84 90 221 90 20",
+    "published_at": "July 14, 2017",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063726080401": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063726080401",
+    "text": "Infinity | Ho Chi Minh City Infinity, Ho Chi Minh City. 4,240 likes 2,329 talking about this. Karting for all — Rookies to Pros 🏎️⚡️\nJoin the race today @ Vincom Mega Mall Thao... Karting for all — Rookies to Pros 🏎️⚡️\nJoin the race today @ Vincom Mega Mall Thao Dien! \n\nKarting | Racing | Events | SIM",
+    "url": "https://www.facebook.com/racing.infinity/",
+    "engagement": {
+      "likes": 4240,
+      "followers": 4240,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "161 Đ. Võ Nguyên Giáp, Thảo Điền, Thủ Đức, Hồ Chí Minh 700000, Ho Chi Minh City, Vietnam, 70000",
+    "phone": "+84 82 280 8022",
+    "published_at": "November 17, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063885494931": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063885494931",
+    "text": "Chilux.vn Chilux.vn, Ho Chi Minh City. 86,078 likes 848 talking about this 30 were here. Thương hiệu chuyên cung cấp sản phẩm tiện ích cho mẹ và bé Thương hiệu chuyên cung cấp sản phẩm tiện ích cho mẹ và bé",
+    "url": "https://www.facebook.com/chilux.vn/",
+    "engagement": {
+      "likes": 86078,
+      "followers": 86078,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "Tầng 2, Số 208 Cô Bắc, Phường Cô Giang, Quận 1, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 34 677 6788",
+    "published_at": "June 6, 2014",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100083300562621": {
+    "platform": "facebook",
+    "signal_id": "facebook:100083300562621",
+    "text": "Sò_Si 2 | Ho Chi Minh City Sò_Si 2, Ho Chi Minh City. 417 likes. Tiệm đồ với đa dạng các mặt hàng và giá cả sinh viên dành cho các tín đồ 2hand Tiệm đồ với đa dạng các mặt hàng và giá cả sinh viên dành cho các tín đồ 2hand",
+    "url": "https://www.facebook.com/p/S%C3%B2_Si-2-100083300562621/",
+    "engagement": {
+      "likes": 417,
+      "followers": 417,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": " Trục đường số 10, Làng Đại học Thủ Đức  (hướng ra thư viện Trung Tâm, gần shop Ngọc Việt), Ho Chi Minh City, Vietnam, 720325",
+    "phone": "+84 94 420 95 46",
+    "published_at": "April 21, 2022",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100057388632556": {
+    "platform": "facebook",
+    "signal_id": "facebook:100057388632556",
+    "text": "Giải Pháp Công Nghệ Egotech | Ho Chi Minh City Giải Pháp Công Nghệ Egotech, Ho Chi Minh City. 9,142 likes. Offical Facebook Page of For Business Technology Offical Facebook Page of For Business Technology",
+    "url": "https://www.facebook.com/egotechvietnam/",
+    "engagement": {
+      "likes": 9142,
+      "followers": 9142,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "52 Đường B4, Saritown Khu Đô Thị Sala, Quận 2, Hồ Chí Minh, Ho Chi Minh City, Vietnam",
+    "phone": "+84 896343368",
+    "published_at": "September 21, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61578295573391": {
+    "platform": "facebook",
+    "signal_id": "facebook:61578295573391",
+    "text": "Fellini.VN | Ho Chi Minh City Fellini.VN, Ho Chi Minh City. 50 likes 1 talking about this 18 were here. Italian Restaurant",
+    "url": "https://www.facebook.com/fellini.vn/",
+    "engagement": {
+      "likes": 50,
+      "followers": 50,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "26B Thao Dien, Street , Ho Chi Minh City, Vietnam",
+    "phone": "+84 70 333 8877",
+    "published_at": "July 23, 2025",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063522222690": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063522222690",
+    "text": "Phòng khám Sản phụ khoa Lê Thị Bích Hường - Bệnh viện Quận 2 | Ho Chi Minh City Phòng khám Sản phụ khoa Lê Thị Bích Hường - Bệnh viện Quận 2, Ho Chi Minh City. 1,402 likes 1 talking about this 31 were here. Bác sĩ Lê Thị... Bác sĩ Lê Thị Bích Hường\nBác sĩ sản phụ khoa Bệnh viện Quận 2",
+    "url": "https://www.facebook.com/bslethibichhuong/",
+    "engagement": {
+      "likes": 1402,
+      "followers": 1402,
+      "rating_percent": null,
+      "rating_count": 0
+    },
+    "address": "Số 85 Lê Văn Thịnh, KP 5, Phường Bình Trưng Đông, Quận 2, Ho Chi Minh City, Vietnam",
+    "phone": "+84 36 891 7639",
+    "published_at": "July 12, 2018",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:100063973095557": {
+    "platform": "facebook",
+    "signal_id": "facebook:100063973095557",
+    "text": "UniBaker | Hanoi UniBaker, Hanoi. 15,930 likes 1 talking about this. Unibaker là thương hiệu hàng đầu Việt Nam về các dụng cụ làm bánh. Unibaker là thương hiệu hàng đầu Việt Nam về các dụng cụ làm bánh.",
+    "url": "https://www.facebook.com/unibakervn/",
+    "engagement": {
+      "likes": 15930,
+      "followers": 15930,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "Tầng 2, Toà B, Chung cư Đồng Phát Parkview Tower, KCN Vĩnh Tuy, Hoàng Mai, Hà Nội, Hanoi, Vietnam, 100000",
+    "phone": "+84 1900 9207",
+    "published_at": "November 18, 2020",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
+  },
+  "facebook:61565072582084": {
+    "platform": "facebook",
+    "signal_id": "facebook:61565072582084",
+    "text": "Gia Sư Tri Thức - Lớp Dạy Kèm Cần Gia Sư 02 | Ho Chi Minh City Gia Sư Tri Thức - Lớp Dạy Kèm Cần Gia Sư 02, Ho Chi Minh City. 30,205 likes 886 talking about this. Tutor/Teacher",
+    "url": "https://www.facebook.com/lopmoi.giasutrithuc.net/",
+    "engagement": {
+      "likes": 30205,
+      "followers": 30205,
+      "rating_percent": null,
+      "rating_count": null
+    },
+    "address": "130/10 Dương Thị Giang, Tân Thới Nhất, Quận 12, Ho Chi Minh City, Vietnam, 700000",
+    "phone": "+84 97 614 81 49",
+    "published_at": "August 29, 2024",
+    "matched_poi_ids": [],
+    "source": "apify:facebook_search",
+    "confidence": 0.45,
+    "fetched_at": "2026-07-11T20:45:36.561231+00:00"
   }
 }

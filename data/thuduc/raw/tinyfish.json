@@ -1,0 +1,2846 @@
+{
+  "real:papas-chicken-beer-thu-duc-thu-duc": {
+    "id": "real:papas-chicken-beer-thu-duc-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Papas' Chicken & Beer Thủ Đức",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Hàn, Châu Phi",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "165 Thống Nhất, P. Bình Thọ, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 100000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.5,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 191,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 660,
+        "close_min": 1380,
+        "overnight": false,
+        "raw": "11:00 - 23:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "bong da",
+        "card",
+        "cho ngoi ngoai troi",
+        "ho tro hoi thao",
+        "ho tro nguoi khuyet tat",
+        "hoa don vat",
+        "hut thuoc",
+        "karaoke",
+        "khu vui choi tre em",
+        "lo suoi",
+        "mua mang ve",
+        "nhac song",
+        "private_room",
+        "the thanh vien",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "papas",
+      "chicken",
+      "beer",
+      "thu",
+      "duc"
+    ],
+    "known_entities": {
+      "names": [
+        "papas' chicken & beer thu duc"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Nhà hàng chuyên các món gà kiểu Hàn Quốc và bia, không gian rộng rãi.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:hutong-hotpot-paradise-vincom-thu-duc-thu-duc": {
+    "id": "real:hutong-hotpot-paradise-vincom-thu-duc-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Hutong - Hotpot Paradise - Vincom Thủ Đức",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Trung Hoa",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Tầng 5 Vincom Thủ Đức, 216 Võ Văn Ngân, P. Bình Thọ, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 190000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 4.4,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 86,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 600,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "10:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "delivery",
+        "mua mang ve",
+        "wi-fi",
+        "xuat hoa don"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "hutong",
+      "hotpot",
+      "paradise",
+      "vincom",
+      "thu",
+      "duc"
+    ],
+    "known_entities": {
+      "names": [
+        "hutong - hotpot paradise - vincom thu duc"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Chuỗi nhà hàng lẩu Hồng Kông nổi tiếng với thực đơn đa dạng và không gian trang trí đậm chất Trung Hoa.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:ozone-cafe-thu-duc": {
+    "id": "real:ozone-cafe-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Ozone Cafe",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Café/Dessert",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "236 - 238 Hoàng Diệu 2, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 28500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.5,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 84,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 420,
+        "close_min": 1350,
+        "overnight": false,
+        "raw": "07:00 - 22:30"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "mua mang ve",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "ozone",
+      "cafe"
+    ],
+    "known_entities": {
+      "names": [
+        "ozone cafe"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán cafe có không gian rộng rãi, thoáng mát, có bệt gỗ và đệm lót, phù hợp cho hẹn hò và họp nhóm.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:com-tam-phuc-loc-tho-le-van-viet-thu-duc": {
+    "id": "real:com-tam-phuc-loc-tho-le-van-viet-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Cơm Tấm Phúc Lộc Thọ - Lê Văn Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "31 - 33 Lê Văn Việt, P. Hiệp Phú, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 35000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.4,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 76,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 360,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "06:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "bong da",
+        "card",
+        "cho ngoi ngoai troi",
+        "delivery",
+        "hoa don vat",
+        "hut thuoc",
+        "khu vui choi tre em",
+        "mua mang ve",
+        "private_room",
+        "reservation",
+        "the thanh vien",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "com",
+      "tam",
+      "phuc",
+      "loc",
+      "tho",
+      "le",
+      "van",
+      "viet"
+    ],
+    "known_entities": {
+      "names": [
+        "com tam phuc loc tho - le van viet"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán cơm tấm bình dân nổi tiếng, sạch sẽ, phục vụ nhanh chóng các món sườn nướng, gà.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:tra-sua-apa-thu-duc": {
+    "id": "real:tra-sua-apa-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Trà Sữa APA",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Café/Dessert",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "10 Tô Vĩnh Diện, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 17000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.4,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 64,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 540,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "09:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "mua mang ve",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": false,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "tra",
+      "sua",
+      "apa"
+    ],
+    "known_entities": {
+      "names": [
+        "tra sua apa"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán trà sữa bình dân phục vụ các loại trà sữa và thức uống vỉa hè.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:k-food-kitchen-thu-duc": {
+    "id": "real:k-food-kitchen-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "K-Food Kitchen",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Hàn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "106 Tô Vĩnh Diện, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 17500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.1,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 63,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 600,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "10:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "delivery",
+        "mua mang ve",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "k",
+      "food",
+      "kitchen"
+    ],
+    "known_entities": {
+      "names": [
+        "k-food kitchen"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán ăn phục vụ các món ăn nhẹ và đồ ăn nhanh kiểu Hàn Quốc giá rẻ.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:met-tre-bun-dau-mam-tom-hoang-dieu-thu-duc": {
+    "id": "real:met-tre-bun-dau-mam-tom-hoang-dieu-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Mẹt Tre - Bún Đậu Mắm Tôm - Hoàng Diệu",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Bắc",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "177 Hoàng Diệu 2, P. Linh Trung, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 40000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.25,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 63,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 480,
+        "close_min": 1350,
+        "overnight": false,
+        "raw": "08:00 - 22:30"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "cho ngoi ngoai troi",
+        "delivery",
+        "hoa don vat",
+        "khu vui choi tre em",
+        "mua mang ve",
+        "private_room",
+        "reservation",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "met",
+      "tre",
+      "bun",
+      "dau",
+      "mam",
+      "tom",
+      "hoang",
+      "dieu"
+    ],
+    "known_entities": {
+      "names": [
+        "met tre - bun dau mam tom - hoang dieu"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán bún đậu mắm tôm chuẩn vị Bắc, không gian phù hợp cho gia đình và nhóm bạn.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:highlands-coffee-vincom-thu-duc-thu-duc": {
+    "id": "real:highlands-coffee-vincom-thu-duc-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Highlands Coffee - Vincom Thủ Đức",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Café/Dessert",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "216 Võ Văn Ngân, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 37000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.5,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 60,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 570,
+        "close_min": 1305,
+        "overnight": false,
+        "raw": "09:30 - 21:45"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "delivery",
+        "mua mang ve",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": false,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "highlands",
+      "coffee",
+      "vincom",
+      "thu",
+      "duc"
+    ],
+    "known_entities": {
+      "names": [
+        "highlands coffee - vincom thu duc"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Chi nhánh Highlands Coffee nằm trong trung tâm thương mại, phục vụ cà phê phin và các loại trà.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:quan-f2-com-chien-mi-xao-lau-nuong-thu-duc": {
+    "id": "real:quan-f2-com-chien-mi-xao-lau-nuong-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Quán F2 - Cơm Chiên, Mì Xào & Lẩu Nướng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "27F2 Công Lý, P. Bình Thọ, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 107500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.45,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 50,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 660,
+        "close_min": 1380,
+        "overnight": false,
+        "raw": "11:00 - 23:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "cho ngoi ngoai troi",
+        "dat ban",
+        "delivery",
+        "hut thuoc",
+        "loi di nguoi khuyet tat",
+        "mua mang ve",
+        "the thanh vien",
+        "wifi",
+        "xuat hoa don"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "quan",
+      "f2",
+      "com",
+      "chien",
+      "mi",
+      "xao",
+      "lau",
+      "nuong"
+    ],
+    "known_entities": {
+      "names": [
+        "quan f2 - com chien, mi xao & lau nuong"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Nhà hàng chuyên phục vụ cơm chiên, mì xào và các loại lẩu nướng, phù hợp cho nhóm đông người.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:ga-ran-va-mi-y-jollibee-coop-mart-xa-lo-ha-noi-thu-duc": {
+    "id": "real:ga-ran-va-mi-y-jollibee-coop-mart-xa-lo-ha-noi-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Gà rán và Mì Ý - Jollibee - Coop Mart Xa Lộ Hà Nội",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "cuisine_type": {
+      "value": "Philippines",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Tầng Trệt Coop Mart, 191 Quang Trung, P. Hiệp Phú, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 32500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "rating": {
+      "value": 3.4,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "review_count": {
+      "value": 48,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 540,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "09:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "delivery",
+        "khu vui choi tre em",
+        "mua mang ve",
+        "wi-fi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "ga",
+      "ran",
+      "va",
+      "mi",
+      "y",
+      "jollibee",
+      "coop",
+      "mart",
+      "xa",
+      "lo",
+      "ha",
+      "noi"
+    ],
+    "known_entities": {
+      "names": [
+        "ga ran va mi y - jollibee - coop mart xa lo ha noi"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Cửa hàng thức ăn nhanh phục vụ gà rán và mì Ý, nằm trong siêu thị Coop Mart.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:36:52.795706+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-nga-4-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:36:52.795706+00:00"
+  },
+  "real:mekong-quan-am-thuc-song-thu-duc": {
+    "id": "real:mekong-quan-am-thuc-song-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Mekong Quán - Ẩm Thực Sông",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "36 Đường Số 10, KP. 5, P. Hiệp Bình Chánh, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 160000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.6,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 1436,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 600,
+        "close_min": 1380,
+        "overnight": false,
+        "raw": "10:00 - 23:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "ban ngoai troi",
+        "delivery",
+        "giu xe may mien phi",
+        "mua mang ve",
+        "private_room",
+        "reservation",
+        "wifi",
+        "xuat hoa don do"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "mekong",
+      "quan",
+      "am",
+      "thuc",
+      "song"
+    ],
+    "known_entities": {
+      "names": [
+        "mekong quan - am thuc song"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Nhà hàng ven sông thoáng mát, chuyên món Việt, phù hợp họp mặt gia đình, bạn bè và tổ chức tiệc BBQ ngoài trời.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:banh-sau-rieng-9-sach-hoang-dieu-2-thu-duc": {
+    "id": "real:banh-sau-rieng-9-sach-hoang-dieu-2-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Bánh Sầu Riêng 9 Sạch - Hoàng Diệu 2",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Ăn vặt - Ăn nhẹ, Trái cây",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "29 Hoàng Diệu 2, P. Linh Trung, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 88500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.95,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 1408,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 450,
+        "close_min": 1380,
+        "overnight": false,
+        "raw": "07:30 - 23:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "cho choi cho tre em",
+        "delivery",
+        "giu xe may mien phi",
+        "mua mang ve",
+        "reservation",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "banh",
+      "sau",
+      "rieng",
+      "9",
+      "sach",
+      "hoang",
+      "dieu",
+      "2"
+    ],
+    "known_entities": {
+      "names": [
+        "banh sau rieng 9 sach - hoang dieu 2"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Nổi tiếng với các loại bánh sầu riêng tươi ngon và thực đơn ăn vặt phong phú.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:com-tam-cali-vincom-mega-mall-thao-dien-thu-duc": {
+    "id": "real:com-tam-cali-vincom-mega-mall-thao-dien-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Cơm Tấm Cali - Vincom Mega Mall Thảo Điền",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Tầng 4 Vincom Mega Mall Thảo Điền, 159 Xa Lộ Hà Nội, P. Thảo Điền, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 60000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.45,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 354,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 600,
+        "close_min": 1305,
+        "overnight": false,
+        "raw": "10:00 - 21:45"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "cho dau oto",
+        "delivery",
+        "mua mang ve",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "com",
+      "tam",
+      "cali",
+      "vincom",
+      "mega",
+      "mall",
+      "thao",
+      "dien"
+    ],
+    "known_entities": {
+      "names": [
+        "com tam cali - vincom mega mall thao dien"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Chuỗi cơm tấm nổi tiếng với không gian hiện đại trong trung tâm thương mại, phục vụ các món cơm tấm truyền thống.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:kichi-kichi-lau-bang-chuyen-vincom-thu-duc-thu-duc": {
+    "id": "real:kichi-kichi-lau-bang-chuyen-vincom-thu-duc-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Kichi Kichi Lẩu Băng Chuyền - Vincom Thủ Đức",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Á, Món Nhật, Lẩu",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Tầng 3, Vincom Thủ Đức, 216 Võ Văn Ngân, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 200000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 4.4,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 320,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 540,
+        "close_min": 1260,
+        "overnight": false,
+        "raw": "09:00 - 21:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "cho choi cho tre em",
+        "reservation",
+        "wifi",
+        "xuat hoa don do"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "kichi",
+      "kichi",
+      "lau",
+      "bang",
+      "chuyen",
+      "vincom",
+      "thu",
+      "duc"
+    ],
+    "known_entities": {
+      "names": [
+        "kichi kichi lau bang chuyen - vincom thu duc"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Nhà hàng lẩu băng chuyền phong cách Nhật Bản với đa dạng các loại đồ nhúng tươi ngon.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:sumo-bbq-gigamall-buffet-nuong-lau-thu-duc": {
+    "id": "real:sumo-bbq-gigamall-buffet-nuong-lau-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Sumo BBQ - Gigamall - Buffet Nướng & Lẩu",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng, Buffet",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Nhật, Món Á",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Gian Hàng 05 - 16, 05 - 17, Tầng 5 Giga Mall, 240 - 242 Phạm Văn Đồng, P. Hiệp Bình Chánh, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "premium",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 353500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 4.8,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 275,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 660,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "11:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "card",
+        "nen dat truoc",
+        "the thanh vien",
+        "wifi",
+        "xuat hoa don do"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "sumo",
+      "bbq",
+      "gigamall",
+      "buffet",
+      "nuong",
+      "lau"
+    ],
+    "known_entities": {
+      "names": [
+        "sumo bbq - gigamall - buffet nuong & lau"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Buffet nướng và lẩu phong cách Nhật Bản (Yakiniku) cao cấp nằm trong trung tâm thương mại Gigamall.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:a-xin-chan-ga-rut-xuong-ngam-sa-tac-duong-35-thu-duc": {
+    "id": "real:a-xin-chan-ga-rut-xuong-ngam-sa-tac-duong-35-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "A Xìn - Chân Gà Rút Xương Ngâm Sả Tắc - Đường 35",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Quán ăn, Shop Online",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Thịt Gà, Ăn vặt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "52 Đường 35, P. Linh Đông, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 125000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 4.95,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 208,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 480,
+        "close_min": 1350,
+        "overnight": false,
+        "raw": "08:00 - 22:30"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "ban ngoai troi",
+        "chieu bong da",
+        "cho dau oto",
+        "delivery",
+        "mua mang ve",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "a",
+      "xin",
+      "chan",
+      "ga",
+      "rut",
+      "xuong",
+      "ngam",
+      "sa",
+      "tac",
+      "duong",
+      "35"
+    ],
+    "known_entities": {
+      "names": [
+        "a xin - chan ga rut xuong ngam sa tac - duong 35"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Chuyên các món chân gà rút xương ngâm sả tắc và đồ ăn vặt, được đánh giá rất cao về chất lượng.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:nha-hang-mix-cafe-com-ga-nuong-steak-thu-duc": {
+    "id": "real:nha-hang-mix-cafe-com-ga-nuong-steak-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Nhà Hàng Mix Cafe - Cơm Gà Nướng & Steak",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Thịt Bò, Cơm",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "36 Đường Số 2, P. An Phú, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 60000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.05,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 197,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 420,
+        "close_min": 1320,
+        "overnight": false,
+        "raw": "07:00 - 22:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "card",
+        "cho dau oto",
+        "delivery",
+        "karaoke",
+        "mua mang ve",
+        "private_room",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "nha",
+      "hang",
+      "mix",
+      "cafe",
+      "com",
+      "ga",
+      "nuong",
+      "steak"
+    ],
+    "known_entities": {
+      "names": [
+        "nha hang mix cafe - com ga nuong & steak"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Phục vụ các món cơm gà nướng, steak và đa dạng thực đơn cafe, cơm văn phòng.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:chickita-ga-nuong-lua-hong-nguyen-van-huong-thu-duc": {
+    "id": "real:chickita-ga-nuong-lua-hong-nguyen-van-huong-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Chickita - Gà Nướng Lửa Hồng - Nguyễn Văn Hưởng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Nhà hàng",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "230 Nguyễn Văn Hưởng, P. Thảo Điền, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 232500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.95,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 196,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 630,
+        "close_min": 1245,
+        "overnight": false,
+        "raw": "10:30 - 20:45"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "reservation",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": true,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "chickita",
+      "ga",
+      "nuong",
+      "lua",
+      "hong",
+      "nguyen",
+      "van",
+      "huong"
+    ],
+    "known_entities": {
+      "names": [
+        "chickita - ga nuong lua hong - nguyen van huong"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Gà nướng lửa hồng theo phong cách hiện đại, sử dụng gà nuôi tự nhiên, không gian sang trọng tại Thảo Điền.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:cheesecake-ngon-le-van-mien-thu-duc": {
+    "id": "real:cheesecake-ngon-le-van-mien-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Cheesecake Ngon - Lê Văn Miến",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Tiệm bánh",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Âu",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "23B Lê Văn Miến, P. Thảo Điền, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "budget",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 37500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.8,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 233,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": null,
+        "close_min": null,
+        "overnight": null,
+        "raw": "Đang cập nhật"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "delivery",
+        "giu xe may mien phi",
+        "mua mang ve",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "cheesecake",
+      "ngon",
+      "le",
+      "van",
+      "mien"
+    ],
+    "known_entities": {
+      "names": [
+        "cheesecake ngon - le van mien"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Chuyên các loại bánh cheesecake và tráng miệng kiểu Âu, đặc biệt là passion fruit cheesecake.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:union-jack-s-fish-chips-thu-duc": {
+    "id": "real:union-jack-s-fish-chips-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Union Jack's - Fish & Chips",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Âu",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "Tầng 1, 10 Nguyễn Bá Lân, P. Thảo Điền, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "mid",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 179500,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 2.95,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 186,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 660,
+        "close_min": 1350,
+        "overnight": false,
+        "raw": "11:00 - 22:30"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "air_con",
+        "delivery",
+        "giu xe may mien phi",
+        "mua mang ve",
+        "reservation",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "union",
+      "jack",
+      "s",
+      "fish",
+      "chips"
+    ],
+    "known_entities": {
+      "names": [
+        "union jack's - fish & chips"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Phục vụ món cá tẩm bột chiên và khoai tây chiên (Fish & Chips) đúng chuẩn phong cách Anh Quốc.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  },
+  "real:ga-bo-xoi-doremon-quan-an-gia-dinh-thu-duc": {
+    "id": "real:ga-bo-xoi-doremon-quan-an-gia-dinh-thu-duc",
+    "restaurant_id": null,
+    "name": {
+      "value": "Gà Bó Xôi Doremon - Quán Ăn Gia Đình",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "category": {
+      "value": "Quán ăn",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "cuisine_type": {
+      "value": "Món Việt",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "city": "TP. Hồ Chí Minh",
+    "district": "Thủ Đức",
+    "address": {
+      "value": "44/11/38 Đường Số 12, Khu Phố 9, P. Trường Thọ, Tp. Thủ Đức, TP. HCM",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lat": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "lon": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "price_level": {
+      "value": "premium",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "avg_price_vnd": {
+      "value": 350000,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "rating": {
+      "value": 3.2,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "review_count": {
+      "value": 167,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "popularity": null,
+    "opening": {
+      "value": {
+        "open_min": 420,
+        "close_min": 1260,
+        "overnight": false,
+        "raw": "07:00 - 21:00"
+      },
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "segments": [],
+    "amenities": {
+      "value": [
+        "delivery",
+        "mua mang ve",
+        "reservation",
+        "wifi"
+      ],
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "car_parking": {
+      "value": null,
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "diet": [],
+    "dishes": [],
+    "strengths": [],
+    "weaknesses": [],
+    "quality": null,
+    "quality_completeness": null,
+    "ai_summary": null,
+    "sentiment": null,
+    "cuisine_classification": null,
+    "dining_occasions": [],
+    "tokens": [
+      "ga",
+      "bo",
+      "xoi",
+      "doremon",
+      "quan",
+      "an",
+      "gia",
+      "dinh"
+    ],
+    "known_entities": {
+      "names": [
+        "ga bo xoi doremon - quan an gia dinh"
+      ],
+      "dishes": []
+    },
+    "raw_ocr_text": null,
+    "reviews": [],
+    "description_raw": {
+      "value": "Quán ăn gia đình chuyên món gà bó xôi đặc sản, phù hợp đặt tiệc nhỏ hoặc mua về.",
+      "source": "tinyfish:foody",
+      "confidence": 0.6,
+      "fetched_at": "2026-07-11T20:43:16.233162+00:00"
+    },
+    "source": "tinyfish:foody",
+    "source_url": "https://www.foody.vn/ho-chi-minh/khu-vuc-tp-thu-duc",
+    "verified": false,
+    "created_at": "2026-07-11T20:43:16.233162+00:00"
+  }
+}

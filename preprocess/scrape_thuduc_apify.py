@@ -56,15 +56,18 @@ def write_output(pois: dict, out_path: pathlib.Path) -> None:
     print(f"wrote {len(pois)} POIs -> {out_path}")
 
 
-def run(limit: int, force: bool, max_reviews: int, out_path: pathlib.Path, search_terms: list[str]) -> None:
+def run(limit: int, force: bool, max_reviews: int, out_path: pathlib.Path, search_terms: list[str],
+        timeout_s: int) -> None:
     load_dotenv(pathlib.Path(__file__).parent.parent / ".env")
 
     existing = {} if force else load_existing(out_path)
     print(f"starting with {len(existing)} existing POI(s) in {out_path.name}")
 
     per_search = max(1, (limit // len(search_terms)) + 2)  # small overfetch, dedupe handles overlap
-    print(f"calling Apify Google Places actor: {search_terms} x{per_search} each, max_reviews={max_reviews}")
-    places = run_google_places(search_terms, LOCATION_QUERY, max_per_search=per_search, max_reviews=max_reviews)
+    print(f"calling Apify Google Places actor: {search_terms} x{per_search} each, "
+          f"max_reviews={max_reviews}, timeout={timeout_s}s")
+    places = run_google_places(search_terms, LOCATION_QUERY, max_per_search=per_search,
+                                max_reviews=max_reviews, timeout_s=timeout_s)
     print(f"received {len(places)} raw place(s) from Apify")
 
     fetched_at = datetime.now(timezone.utc).isoformat()
@@ -103,13 +106,16 @@ def main() -> None:
     parser.add_argument("--search-terms", type=str, default=None,
                          help="comma-separated override of the default search terms (for splitting work "
                               "across parallel processes)")
+    parser.add_argument("--timeout", type=int, default=300,
+                         help="Apify actor wait timeout in seconds (default 300; raise for bigger batches)")
     args = parser.parse_args()
 
     limit = args.sample if args.sample is not None else args.limit
     out_path = DATA_DIR / args.out if args.out else ENRICHMENT_PATH
     search_terms = [t.strip() for t in args.search_terms.split(",")] if args.search_terms else SEARCH_TERMS
     try:
-        run(limit=limit, force=args.force, max_reviews=args.max_reviews, out_path=out_path, search_terms=search_terms)
+        run(limit=limit, force=args.force, max_reviews=args.max_reviews, out_path=out_path,
+            search_terms=search_terms, timeout_s=args.timeout)
     except RuntimeError as e:
         print(f"error: {e}", file=sys.stderr)
         sys.exit(1)
