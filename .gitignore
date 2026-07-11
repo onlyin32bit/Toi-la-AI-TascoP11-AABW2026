@@ -3,6 +3,7 @@ node_modules/
 .pnp
 .pnp.js
 .yarn/install-state.gz
+.pnpm-store/
 
 # Build outputs
 dist/
@@ -13,6 +14,10 @@ out/
 .nuxt/
 .svelte-kit/
 *.tsbuildinfo
+
+# Rust / Tauri (defense in depth — src-tauri/.gitignore also covers)
+target/
+**/target/
 
 # Vite / bundler caches
 .vite/
@@ -42,6 +47,7 @@ lerna-debug.log*
 *.pem
 *.key
 secrets.json
+secrets.local.json
 
 # Editor / IDE
 .vscode/*
@@ -49,9 +55,15 @@ secrets.json
 !.vscode/extensions.json
 !.vscode/launch.json
 .idea/
+.vs/
 *.swp
 *.swo
 *~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # OS files
 .DS_Store
@@ -60,14 +72,14 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
-# Claude / agent local state
+# Claude / agent local state (any depth — was `/.claude` which only matched root)
+.claude
 .agents/
 skills-lock.json
 
-# Misc
+# Local scratch / temp
 *.tgz
 *.tar.gz
 tmp/
 temp/
-
-/.claude
+*.local
