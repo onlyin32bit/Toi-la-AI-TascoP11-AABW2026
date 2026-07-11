@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: Tasco P11 Restaurant Intelligence — Map API
+  version: "1.0.0"
+  description: |
+    Restaurant search/ranking engine, exposing the map-service surface defined by
+    resources/data/tasco_maps_hackathon_api_documentation.md. Domain is restaurants
+    only (30+ POIs, Vietnam) — no general street/address database and no
+    road-network routing graph. Endpoints are honest about that scope:
+      - search / autocomplete / nearby-search / POI detail are fully real, backed
+        by the same retrieve→rerank pipeline as this engine's own /v1/recommend.
+      - geocoding / reverse-geocoding are best-effort against this engine's own
+        POI corpus (address/name/coordinates), not a general street geocoder.
+      - route returns an honest straight-line (haversine) distance/duration
+        estimate (`approximate: true`) — there is no routing engine behind it,
+        so it never fabricates turn-by-turn directions or street names.
+    See README.md's "Ranking methodology" and "Honesty & anti-hallucination"
+    sections for provenance/fallback notes not captured in this contract.
+  contact:
+    name: tascop11/engine
+servers:
+  - url: http://localhost:8000
+    description: Local dev (default; configurable via PORT env)
+  - url: https://hackathon.example.com/v1
+    description: Recommended hackathon facade base (per the Tasco Maps API doc)
+
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+  - {}  # every endpoint below also accepts unauthenticated requests
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: health
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  pois: { type: integer }
+                  ugc: { type: integer }
+                  db: { type: boolean, description: "Postgres layer connected (optional)" }
+
+  /v1/search:
+    get:
+      summary: Free-text search for restaurants
+      description: Aliases `GET /search`, `GET /v1/geocode-search` (identical handler).
+      operationId: search
+      parameters:
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/Lat"
+        - $ref: "#/components/parameters/Lon"
+        - $ref: "#/components/parameters/RadiusMeters"
+        - $ref: "#/components/parameters/BBox"
+        - $ref: "#/components/parameters/Category"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query: { type: string }
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlaceResult" }
+                  meta:
+                    type: object
+                    properties:
+                      limit: { type: integer }
+                      lang: { type: string }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /v1/autocomplete:
+    get:
+      summary: Low-latency partial-query suggestions
+      description: Alias `GET /autocomplete`. Prefix match on POI name/tokens, not full free-text parsing.
+      operationId: autocomplete
+      parameters:
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/Lat"
+        - $ref: "#/components/parameters/Lon"
+        - name: limit
+          in: query
+          schema: { type: integer, default: 5 }
+        - name: sessionId
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query: { type: string }
+                  suggestions:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlaceResult" }
+                  meta:
+                    type: object
+                    properties:
+                      limit: { type: integer }
+                      sessionId: { type: string }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /v1/poi/{id}:
+    get:
+      summary: POI detail by path parameter
+      description: |
+        Alias `GET /poi/{id}`. Doc-shaped lean subset (id/type/name/label/address/
+        category/coordinates/rating/openingHours/aiSummary/source). The full
+        restaurant record (menu, reviews, sentiment, ...) is available at the
+        engine's own `GET /v1/poi?id=...` (query-param form, richer shape).
+      operationId: getPoiByPath
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          example: "poi:res001"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  poi: { $ref: "#/components/schemas/POIDetail" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /v1/reverse-geocoding:
+    get:
+      summary: Nearest known POI to a coordinate
+      description: |
+        Aliases `GET /reverse-geocoding`, `GET /v1/reverse` (also accepts
+        Pelias-style `point.lat`/`point.lon`). Best-effort against this
+        engine's own POI corpus, not a general street/address reverse
+        geocoder — a coordinate far from any known restaurant honestly
+        returns an empty `results[]`, never an invented address.
+      operationId: reverseGeocode
+      parameters:
+        - name: lat
+          in: query
+          schema: { type: number }
+        - name: lon
+          in: query
+          schema: { type: number }
+        - name: point.lat
+          in: query
+          schema: { type: number }
+          description: Pelias-compatible alias for `lat`
+        - name: point.lon
+          in: query
+          schema: { type: number }
+          description: Pelias-compatible alias for `lon`
+        - $ref: "#/components/parameters/RadiusMeters"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlaceResult" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /v1/nearby-search:
+    get:
+      summary: Restaurants within a radius of a point
+      description: Alias `GET /nearby-search`. `radiusMeters` is a HARD cutoff, not a soft ranking signal.
+      operationId: nearbySearch
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema: { type: number }
+        - name: lon
+          in: query
+          required: true
+          schema: { type: number }
+        - $ref: "#/components/parameters/RadiusMeters"
+        - $ref: "#/components/parameters/Category"
+        - name: openNow
+          in: query
+          schema: { type: boolean }
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  center: { $ref: "#/components/schemas/Coordinates" }
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlaceResult" }
+                  meta:
+                    type: object
+                    properties:
+                      radiusMeters: { type: number }
+                      limit: { type: integer }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /v1/geocoding:
+    get:
+      summary: Resolve address text to known POIs
+      description: |
+        Alias `GET /geocoding`. Token-overlap match against this engine's own
+        POI addresses (not a general street geocoder) — `score` is the
+        fraction of query tokens matched, so callers can judge match quality
+        rather than receiving a false-precision single "best" coordinate.
+      operationId: geocode
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: district
+          in: query
+          schema: { type: string }
+        - $ref: "#/components/parameters/Lat"
+        - $ref: "#/components/parameters/Lon"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query: { type: string }
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlaceResult" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /v1/route:
+    post:
+      summary: Straight-line route estimate between locations
+      description: |
+        Alias `POST /route`. **No road-network routing engine backs this
+        endpoint.** Returns an honest haversine straight-line distance/duration
+        estimate (`routes[].approximate: true`), with a single maneuver that
+        says exactly that — never fabricated turn-by-turn directions or
+        street names. Always returns exactly 1 route regardless of the
+        requested `alternates` count (no fake route diversity).
+      operationId: route
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RouteRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RouteResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: "Authorization: Bearer <access_token>"
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  parameters:
+    Q:
+      name: q
+      in: query
+      required: true
+      schema: { type: string }
+    Lat:
+      name: lat
+      in: query
+      schema: { type: number }
+    Lon:
+      name: lon
+      in: query
+      schema: { type: number }
+    RadiusMeters:
+      name: radiusMeters
+      in: query
+      schema: { type: number }
+    BBox:
+      name: bbox
+      in: query
+      schema: { type: string }
+      description: "minLon,minLat,maxLon,maxLat"
+    Category:
+      name: category
+      in: query
+      schema: { type: string }
+      description: Best-effort match against cuisine_type/category/segments (restaurant domain only).
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, default: 10 }
+    Lang:
+      name: lang
+      in: query
+      schema: { type: string, default: vi }
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  schemas:
+    Coordinates:
+      type: object
+      properties:
+        lat: { type: number, format: double, description: WGS84 latitude }
+        lon: { type: number, format: double, description: WGS84 longitude }
+
+    PlaceResult:
+      type: object
+      description: Stable across every endpoint in this API — id is a stable string identifier, never reused/reassigned.
+      properties:
+        id: { type: string, example: "poi:res001" }
+        type: { type: string, example: poi }
+        name: { type: string }
+        label: { type: string }
+        address: { type: string }
+        category: { type: string }
+        coordinates: { $ref: "#/components/schemas/Coordinates" }
+        distanceMeters: { type: integer, nullable: true }
+        score: { type: number, format: double }
+        source: { type: string, example: tasco_csv }
+        tags:
+          type: array
+          items: { type: string }
+        meta:
+          type: object
+          description: Engine-specific ranking breakdown (additive — not part of the base doc contract).
+
+    POIDetail:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string }
+        name: { type: string }
+        label: { type: string }
+        address: { type: string }
+        category: { type: string }
+        coordinates: { $ref: "#/components/schemas/Coordinates" }
+        rating: { type: number }
+        openingHours: { type: string }
+        aiSummary: { type: string }
+        source: { type: string }
+
+    RouteRequest:
+      type: object
+      required: [locations]
+      properties:
+        locations:
+          type: array
+          minItems: 2
+          items:
+            type: object
+            required: [lat, lon]
+            properties:
+              lat: { type: number }
+              lon: { type: number }
+        mode: { type: string, enum: [auto, pedestrian, bicycle], default: auto }
+        alternates: { type: integer, default: 2 }
+        language: { type: string, default: vi-VN }
+        units: { type: string, default: kilometers }
+        avoidTolls: { type: boolean }
+        avoidHighways: { type: boolean }
+
+    RouteResponse:
+      type: object
+      properties:
+        routes:
+          type: array
+          items:
+            type: object
+            properties:
+              routeId: { type: string }
+              sourceIndex: { type: integer }
+              summary:
+                type: object
+                properties:
+                  distanceMeters: { type: number }
+                  durationSeconds: { type: number }
+              geometry:
+                type: object
+                properties:
+                  type: { type: string, example: LineString }
+                  coordinates:
+                    type: array
+                    items:
+                      type: array
+                      items: { type: number }
+                      minItems: 2
+                      maxItems: 2
+              maneuvers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    instruction: { type: string }
+                    distanceMeters: { type: number }
+                    durationSeconds: { type: number }
+                    beginShapeIndex: { type: integer }
+                    endShapeIndex: { type: integer }
+                    streetNames:
+                      type: array
+                      items: { type: string }
+              approximate:
+                type: boolean
+                description: Always true — straight-line haversine estimate, not road-network routing.
+        meta:
+          type: object
+          properties:
+            mode: { type: string }
+            alternates: { type: integer }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum: [invalid_request, unauthorized, forbidden, not_found, timeout, rate_limited, internal_error, service_unavailable]
+            message: { type: string }
+            details: { type: object, nullable: true }
+        requestId: { type: string }
