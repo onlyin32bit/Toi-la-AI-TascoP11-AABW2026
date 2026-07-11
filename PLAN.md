@@ -1,360 +1,624 @@
-# BUILD PLAN — Tasco P11: AI-Powered Restaurant & Menu Intelligence
+# BUILD PLAN — Tasco P11 AI-Powered Restaurant & Menu Intelligence
 
-> **Bản final 11/7** — refine theo **PROBLEM STATEMENT.md** (đề chính thức) + **api/tasco_maps_hackathon_api_documentation.md** (API doc Tasco Maps).
+> **Repo làm việc:** `Toi-la-AI-TascoP11-AABW2026/`.
+> **Kiến trúc:** **Go engine (online) + Python (offline preprocessing/ML)** — build mới, KHÔNG dùng `api/` (CF Workers) làm backend chính.
 > **Team 5 người: 1 UI · 3 dev · 1 business/pitch** — phân công ở §10.5.
-> **Trạng thái repo:** backend `api/` (Cloudflare Workers) và UI prototype `ui/` (T Maps clone) **đã tồn tại** — plan này là plan **hoàn thiện + tích hợp**, không phải build from scratch.
+> **Mục tiêu:** sản phẩm **chạy được + trông cool**, phủ đủ scope P11 chính thức (§1) — không chỉ recommender.
+> **Trạng thái:** plan final, chưa code engine.
 
 ---
 
-## ⚠️ QUYẾT ĐỊNH KIẾN TRÚC (thay đổi so với bản trước)
+## 0. Ta đang có gì / cần gì
 
-**Bỏ Go engine.** Bản plan trước chốt "Go online + Python offline" khi repo chưa có code. Thực tế repo **đã có** `api/` — một backend Cloudflare Workers hoàn chỉnh (D1 + R2 + Queues + Vectorize + Workers AI) tự nhận cover: import POI/menu/review, OCR text → structured claims, provenance/claim review, search + dish search + recommendations + comparison + assistant có trích nguồn, quality scoring, và **Tasco-compatible `/v1/search` facade** + OpenAPI spec.
+**Đã có:**
+- `ui/` — T Maps UI prototype (React 19 + Vite + Leaflet + Tauri), phone-frame, search/bottom-sheet/route/nav HUD. **Toàn bộ data mock trong `App.tsx`, chưa gọi backend nào.** Đây là base UI, không phải scaffold trống.
+- `api/` (CF Workers) — tồn tại trong repo nhưng **không dùng làm backend chính** (team không quen/không muốn maintain CF stack); có thể tham khảo OpenAPI/schema nếu tiện, không phụ thuộc.
+- `data/` — 5 CSV: POI (30 quán, 7 tỉnh), Menu (179 món), OCR Menu (18 quán, raw text), Reviews (150), Public Evaluation (15 câu chấm).
+- `PROBLEM STATEMENT.md` — đề chính thức P11 (scope đầy đủ, §1).
+- `api/tasco_maps_hackathon_api_documentation.md` — API doc Tasco Maps (DTO, compatibility requirements, §8).
+- Qwen DashScope key (hết hạn **14/7**) — LLM chính; Gemini free tier dự phòng.
+- A40 48GB (optional, self-host embedding/LLM nếu cần).
 
-Build thêm 1 backend Go song song = 2 backend cho 3 dev trong ~3 ngày → tự sát. Thay vào đó:
+**Cần build:**
+1. **Backend engine** (Go, zero-dep core) — load data → index → recommend theo query + vị trí + personalize + assistant + dish recognition + OCR.
+2. **Preprocess offline** (Python) — CSV→kb.json, embed, NER, enrich, batch AI summary.
+3. **Frontend** — nối `ui/` (T Maps prototype có sẵn) vào Go engine qua HTTP, thay dần mock data.
 
-- **Backend of record = `api/`** (TypeScript/CF Workers). Mọi năng lực online build tiếp vào đây.
-- **Python chỉ còn 1 làn offline optional:** `preprocess/enrich.py` (scraping/enrichment, cache-first, §6.5).
-- **Việc đầu tiên của Phase 0 = verify `api/` chạy thật** (`pnpm install && pnpm typecheck && pnpm test && pnpm dev` + seed 5 CSV). Nếu verify FAIL nặng → họp lại, fallback mới là bàn chuyện khác.
+**Chốt stack:**
 
-Toàn bộ thuật toán ranking (§7), bẫy chống hallucination, enrichment principles (§6.5) của plan cũ **giữ nguyên giá trị** — chỉ đổi chỗ implement (vào `api/src/search/ranking.ts` thay vì `rerank.go`).
-
----
-
-## 0. Ta đang có gì
-
-| Tài sản | Trạng thái | Ghi chú |
+| Layer | Chọn | Lý do |
 |---|---|---|
-| `api/` — CF Workers backend | ✅ có code + test + OpenAPI | endpoints: `/api/v1/search`, `/search/dishes`, `/recommendations`, `/restaurants/{id}`, `/restaurants/{id}/menu`, `/restaurants/compare`, `/assistant/messages`, `/admin/imports/*`, `/admin/claims/*`, upload nguồn, health. Facade Tasco `GET /v1/search`, `GET /search` |
-| `ui/` — T Maps UI prototype | ✅ chạy được, **data mock 100%** | React 19 + Leaflet + Tauri, iPhone frame, search/bottom-sheet/route/nav HUD. Toàn bộ trong 1 file `App.tsx`, chưa gọi backend nào |
-| `data/` — 5 CSV | ✅ | POI (30 quán, 7 tỉnh), Menu (179 món), OCR Menu (18 quán, raw text), Reviews (150), Public Evaluation (15 câu chấm) |
-| PROBLEM STATEMENT.md | ✅ mới nhận | scope THẬT của P11 — rộng hơn "recommender" (xem §1) |
-| API doc Tasco Maps | ✅ mới nhận | DTO `PlaceResult`, `ErrorResponse`, compatibility requirements (§8) |
-| Qwen DashScope key | ⏳ hết hạn **14/7** | LLM chính; Gemini free tier dự phòng |
-| Sample Food Image Dataset | ❌ **chưa có trong repo** | đề nói có — **hỏi BTC ngay**; fallback: tự chụp/lấy ảnh món VN để demo dish recognition |
+| Backend online | **Go** — serve HTTP / retrieve / rerank / geo / vision-call / OCR-call → 1 binary tĩnh, nhanh, offline-safe | production-ready; ranh giới ở §3.3 |
+| Preprocess offline | **Python** — CSV→kb.json, embed, NER, enrich, batch summary (chạy 1 lần) | hệ sinh thái ML ở Python; output là file, Go đọc |
+| Data | 5 CSV trong `data/` (đã có) | ground truth |
+| Semantic (core) | lexical token-match | zero-dep, chạy chắc, không cần ML runtime |
+| Semantic (nâng cao) | **Qwen `text-embedding-v3` (API)** hoặc `dangvantuan/vietnamese-embedding` (offline) | Go gọi API được; hoặc precompute offline. *Nếu còn giờ* |
+| Vision (dish recognition, OCR ảnh) | **Qwen-VL / Gemini Flash Vision** qua HTTP từ Go, kết quả cache đĩa | zero-shot, không train, cache-first cho demo |
+| NER / tách từ VN | **HuTieuBERT** (Python, offline/sidecar) | phát hiện tên quán/món → chống hallucination; KHÔNG dùng làm embedding |
+| LLM | **Qwen** (DashScope OpenAI-compatible) chính; Gemini Flash dự phòng — **cache-first ra đĩa** | query parse + rerank + assistant + AI summary; demo sống khi mất mạng |
+| Enrichment / scraping | **Apify** (Google Places/FB/TikTok actors) + TinyFish/AgentQL (agentic) + ZenRows (anti-bot HTML) → LLM structure | offline, cache-first, tier riêng — §6.5 |
+| Frontend | `ui/` có sẵn — React 19 + Vite + Leaflet + Tauri | đã có phone-frame + map, chỉ cần nối API thật |
+| Desktop wrap | Tauri (đã có trong `ui/src-tauri/`) | chạy `vite dev` trong browser đủ demo; Tauri là bonus có sẵn |
 
 ---
 
-## 1. Scope P11 — coverage matrix (đề yêu cầu gì, ta có gì, ai làm)
+## 1. Scope P11 — coverage matrix (đề yêu cầu gì, ai làm)
 
-Đề KHÔNG phải "food recommender". Đề là **Restaurant & Menu Intelligence platform**: enrich POI + hiểu menu + OCR + nhận diện món từ ảnh + search + assistant + recommend + quality score. Submission bắt buộc demo đủ **7 cảnh**:
+Đề KHÔNG phải chỉ "food recommender" — là **Restaurant & Menu Intelligence platform**: enrich POI + hiểu menu + OCR + nhận diện món từ ảnh + search + assistant + recommend + quality score. Submission bắt buộc demo đủ **7 cảnh** cuối bài.
 
-| # | Deliverable đề yêu cầu | Backend `api/` | Việc còn lại | Owner |
-|---|---|---|---|---|
-| 1 | **Restaurant POI Enrichment** | claims + provenance + quality có sẵn | seed 5 CSV; làn scraping POI thật (§6.5); cảnh demo quality 0.6→0.9 | DEV1 |
-| 2 | **Menu Extraction + OCR** | OCR text → structured claims có sẵn; ảnh/PDF chờ `OcrProvider` | nối vision LLM làm OcrProvider (ảnh menu, cache-first); demo từ `raw_ocr_text` CSV là đường chắc nhất | DEV1 (pipeline) + DEV3 (vision) |
-| 3 | **Dish Recognition từ ảnh món** | ❌ **chưa có gì** | build mới: ảnh → vision LLM → tên món → `/search/dishes` → quán gần đó (§5.3) | DEV3 |
-| 4 | **Food Search / semantic search** | search + dish search + filters + Vectorize có sẵn | verify chất lượng tiếng Việt; bật `ENABLE_AI_SEARCH`; giữ HARD gate trung thực (bẫy §11) | DEV2 |
-| 5 | **AI Restaurant Assistant** (Q&A có nguồn) | assistant grounded có sẵn | prompt VN + chống bịa (bẫy Crystal BBQ); cache-first cho demo | DEV3 |
-| 6 | **AI Summary + sentiment + strengths/weaknesses + cuisine class** | dữ liệu có trong CSV (strengths/weaknesses/cuisine); aggregates một phần | endpoint/field summary sinh bằng LLM + sentiment reviews, ghi vào restaurant detail | DEV3 |
-| 7 | **Recommendation Engine** (personalize + localize) | `/recommendations` + deterministic rules có sẵn | port công thức SOFT score + `why{}` breakdown (§7) vào `ranking.ts` — đây là differentiator "vì sao gợi ý" | DEV2 |
-| 8 | **POI Quality Scoring** | quality tables có sẵn | công thức completeness (điền được bao nhiêu field chuẩn) + hiển thị badge | DEV1 |
-| 9 | **Restaurant Comparison** | `/restaurants/compare` có sẵn | UI màn so sánh 2 quán | UI |
-| 10 | **UI khám phá + assistant** | — | nối `ui/` vào API thật, thêm màn theo §9 | UI |
-| 11 | **Deck + video + README + methodology** | — | §10.5 BIZ + mỗi owner viết phần methodology của mình | BIZ |
-
----
-
-## 2. Method — chốt 1 dòng (giữ nguyên)
-
-> **Retrieve-then-rerank cold-start** (KALM4Rec, Kieu et al., [arXiv:2405.19612](https://arxiv.org/abs/2405.19612)): recall → **HARD gate** loại ràng buộc cứng (trung thực, không tự nới) → **SOFT score** (§7, personalize + localize + anti-luxury) → optional LLM rerank + giải thích tiếng Việt.
-
-Vì sao không train deep model: 30 POI + 150 review → overfit (GETNext/LightGCN/SASRec cite làm scaling path, §12).
+| # | Deliverable đề yêu cầu | Việc cần build | Owner |
+|---|---|---|---|
+| 1 | **Restaurant POI Enrichment** | build_kb.py (structured profile từ CSV) + làn scraping POI thật (§6.5) → cảnh demo quality 0.6→0.9 | DEV2 |
+| 2 | **Menu Extraction + OCR** | đường chắc: `raw_ocr_text` (OCR Menu CSV) → parse có cấu trúc trong `build_kb.py`; đường ăn điểm: ảnh menu → vision LLM → structured, cache-first | DEV2 (parse) + DEV3 (vision) |
+| 3 | **Dish Recognition từ ảnh** | mới hoàn toàn: ảnh món → vision LLM → tên món → match dish index → quán gần đó (§5.5) | DEV3 |
+| 4 | **Food Search / semantic search** | `retrieve.go` — lexical token-match core + optional embedding | DEV1 |
+| 5 | **AI Restaurant Assistant** (Q&A có nguồn) | `assistant.go` RAG, chống bịa, cache-first | DEV3 |
+| 6 | **AI Summary + sentiment + strengths/weaknesses + cuisine class + dining occasions** | batch Python script chạy 1 lần cho 30 quán, ghi vào kb.json (§5.6) | DEV3 |
+| 7 | **Recommendation Engine** (personalize + localize + "vì sao gợi ý") | `rerank.go` SOFT score + `why{}` breakdown (§7) — differentiator chính | DEV1 |
+| 8 | **POI Quality Scoring** | completeness score trong `build_kb.py`, hiển thị badge | DEV2 |
+| 9 | **Restaurant Comparison** | `GET /v1/compare?ids=...` trong Go + màn so sánh UI | DEV1 + UI |
+| 10 | **UI khám phá + assistant** | nối `ui/` (T Maps prototype có sẵn) vào Go engine (§9) | UI |
+| 11 | **Deck + video + README + methodology** | §10.5 BIZ + mỗi owner viết phần methodology của mình | BIZ |
 
 ---
 
-## 3. Kiến trúc (đã tồn tại trong `api/` — mô tả để cả team hiểu chung)
+## 2. Method — chốt 1 dòng
+
+> **Retrieve-then-rerank cold-start** (KALM4Rec paradigm, Kieu et al., [arXiv:2405.19612](https://arxiv.org/abs/2405.19612), 2024): rule-based recall → **HARD gate** loại ràng buộc cứng → **SOFT score** cộng điểm mềm (personalize + localize + anti-luxury) → (optional) **LLM rerank + giải thích**.
+
+Vì sao không deep model: 30 POI + 150 review = quá nhỏ để train (GETNext/LightGCN/SASRec sẽ overfit). Cite chúng ở "Future Work / scaling". Chi tiết lý do ở §12.
+
+---
+
+## 3. Kiến trúc: OFFLINE preprocessing vs ONLINE query (trả lời câu hỏi latency)
+
+**Đúng — muốn query nhanh thì phải preprocess trước.** Chia mọi việc theo *"cái gì không đổi giữa các query"* (làm sẵn 1 lần) vs *"cái gì đổi theo query"* (làm lúc query, giữ nhẹ).
+
+### 3.1 OFFLINE — build 1 lần lúc khởi động (`python -m engine.build_kb`)
 
 ```
-[ONLINE — api/ CF Workers]
-HTTP API → D1 (canonical) / R2 (artifacts) → Queue
-Queue → deterministic extraction / OcrProvider → candidate claims
-Claim review → canonical menu/profile → search documents
-Search docs → Workers AI embeddings → Vectorize
-Search → Vectorize (hoặc D1 fallback) → HARD filters → ranking → response
-Assistant → search → bounded context → answer + citations
-
-[OFFLINE — làn phụ, cache-first]
-preprocess/enrich.py → scrape POI THẬT (Apify/TinyFish/ZenRows) → enrichment import (provenance riêng)
-Vision LLM (Qwen-VL / Gemini) → OcrProvider + dish recognition — kết quả demo cache sẵn ra đĩa
+CSV (5 file)
+  → parse + join (POI ⋈ Menu ⋈ Reviews theo restaurant_id)
+  → normalize: amenities_raw/segments text VN → taxonomy chuẩn
+                price_level → {bình dân, trung bình, cao cấp}
+                opening_hours → (open_min, close_min, qua_đêm?)
+  → precompute: token index (cho lexical search)
+                [optional] embedding vector mỗi POI
+                poi_quality_score, popularity đã có sẵn
+                AI summary/sentiment/cuisine_class/dining_occasions (batch LLM, 1 lần)
+  → dump build/kb.json  (+ build/vectors.npy nếu có embedding)
 ```
 
-**Nguyên tắc sống còn cho demo:** mọi call LLM/vision đều **cache-first ra storage** — demo phải chạy được khi mất mạng/hết quota. Deterministic search (D1) là fallback khi Vectorize/AI tắt — có sẵn trong api.
+Nặng nhất = embed corpus + batch LLM summary (nếu bật). Làm 1 lần, lưu đĩa. **Cache-first: có `kb.json` thì load thẳng, không parse lại.**
 
-**Latency:** search/rec thuần deterministic = tức thời với 30 POI. Bottleneck duy nhất = LLM (assistant/summary/vision) → cache theo hash(prompt).
+### 3.2 ONLINE — mỗi query, phải nhẹ (`GET /v1/recommend`)
+
+```
+query + user_ctx (lat/lon, segment, diet, price, time)
+  → parse_query → FilterSpec        (regex, <1ms)
+  → recall: token match trên index đã build   (30 POI → tức thời)
+  → HARD gate: loại quán fail ràng buộc cứng
+  → SOFT score: công thức §7 trên vài chục ứng viên   (<1ms)
+  → [optional] LLM rerank top-10     (0.5–2s, có CACHE)
+  → trả JSON
+```
+
+**Kết luận latency:**
+- Core (không LLM) = **gần như tức thời** với 30 POI, vì tính nặng đã đẩy sang offline.
+- Bottleneck duy nhất = LLM/vision call (nếu bật). Giảm bằng: **cache theo query** (câu lặp → 0 latency) + **bỏ được LLM** (SOFT score thuần Go vẫn ra kết quả tốt).
+- A40 chỉ giúp nếu **self-host embedding/LLM**; nếu gọi API thì A40 vô dụng cho latency. → Core không phụ thuộc A40.
+
+### 3.3 Phân chia ngôn ngữ — Go (online) + Python (offline ML)
+
+Ranh giới sạch: **cái gì cần ML runtime → Python offline; cái gì chạy mỗi query → Go**.
+
+| | Ngôn ngữ | Chạy khi | Làm gì |
+|---|---|---|---|
+| **Online serving** | **Go** | mỗi query | serve HTTP · parse_query · recall · HARD gate · SOFT score · geo · gọi Qwen/vision/Apify (HTTP) |
+| **Offline preprocess** | **Python** | 1 lần (build) | CSV→kb.json · normalize · embed corpus (Qwen/ST) · NER tag (HuTieuBERT) · batch AI summary · scrape enrich |
+
+- Go **không chạy model local** — embedding/NER/summary làm sẵn offline (ghi vào kb.json), hoặc query-time gọi **Qwen/vision API** (Go gọi được vì là HTTP).
+- Nếu bỏ hẳn ML (core lexical) → **chỉ cần Go**, không cần Python runtime lúc chạy. Đây là đường an toàn nhất.
+- Lợi: 1 binary Go tĩnh, khởi động tức thì, offline-safe, "production-ready".
 
 ---
 
-## 4. Cấu trúc repo (final)
+## 4. Cấu trúc repo (build vào đây)
 
 ```
 Toi-la-AI-TascoP11-AABW2026/
-├── api/                    ← BACKEND (CF Workers, đã có) — DEV1/DEV2/DEV3 build tiếp vào đây
-│   ├── src/{restaurants,menus,sources,claims,search,ai,routes,shared}/
-│   ├── scripts/            ← seed 5 CSV (import-tasco/menus/reviews), evaluate-search
-│   └── openapi/openapi.json  ← CONTRACT cho UI — nguồn sự thật duy nhất
-├── ui/                     ← FRONTEND (T Maps prototype, đã có) — UI owner
-│   └── src/App.tsx         ← đang mock; tách dần: api.ts + components + màn mới (§9)
-├── preprocess/             ← OFFLINE optional (Python) — DEV1
-│   └── enrich.py           ← scraping POI thật, cache-first (§6.5)
-├── data/                   ← 5 CSV ground truth
-├── PROBLEM STATEMENT.md    ← đề chính thức
-├── api/tasco_maps_hackathon_api_documentation.md ← API doc Tasco
+├── engine/                      ← BACKEND online (Go)
+│   ├── main.go                  ← HTTP :8000, /v1/recommend, /v1/compare ...
+│   ├── kb.go                    ← load kb.json, norm(), is_open_at(), haversine()
+│   ├── retrieve.go              ← parse_query + recall + HARD gate
+│   ├── rerank.go                ← SOFT score (personalize/localize/anti-luxury) + why{}
+│   ├── llm.go                   ← Qwen client (HTTP), cache-first ra đĩa      [optional]
+│   ├── assistant.go             ← RAG trả lời Q&A, trích nguồn                [optional]
+│   ├── vision.go                ← dish recognition + OCR ảnh (Qwen-VL/Gemini) [§5.5]
+│   ├── compare.go               ← so sánh 2+ quán
+│   └── build/                   ← kb.json, enrichment.json, cache (git-ignored)
+├── preprocess/                  ← OFFLINE (Python, chạy 1 lần)
+│   ├── data/                    ← copy 5 CSV vào đây (từ `data/` gốc)
+│   ├── build_kb.py              ← CSV → build/kb.json (normalize, embed, NER, quality)
+│   ├── embed.py                 ← Qwen/ST embedding corpus            [optional]
+│   ├── ner_hutieubert.py        ← HuTieuBERT tag tên quán/món         [optional, §5.4]
+│   ├── summarize.py             ← batch AI summary/sentiment/cuisine/dining_occasions [§5.6]
+│   └── enrich.py                ← scrape POI thật → enrichment.json  [§6.5, optional]
+├── ui/                          ← FRONTEND (T Maps prototype có sẵn)
+│   └── src/
+│       ├── App.tsx              ← thay dần mock bằng API thật
+│       ├── api.ts               ← fetch engine Go (mới)
+│       ├── components/
+│       │   ├── MapView / SearchBar / FilterChips / ResultCard (có sẵn, mở rộng)
+│       │   ├── CompareView.tsx  ← so sánh quán               [mới]
+│       │   ├── AssistantBox.tsx ← chat Q&A                    [mới]
+│       │   └── DishPhoto.tsx    ← upload ảnh nhận diện món     [mới]
+│       └── types.ts
+├── data/                        ← 5 CSV gốc (đã có)
+├── PROBLEM STATEMENT.md
+├── api/tasco_maps_hackathon_api_documentation.md
 ├── PLAN.md
-└── README.md               ← submission: setup + technical overview + AI approach (BIZ tổng hợp)
+└── README.md                    ← methodology + setup
 ```
-
-~~`engine/` (Go)~~ — **không tạo nữa.**
 
 ---
 
-## 5. Việc phải build (gap so với đề) — I/O rõ ràng
+## 5. Backend — từng module (I/O rõ ràng)
 
-### 5.1 Seed + verify pipeline dữ liệu (DEV1, việc đầu tiên)
-- **Input:** 5 CSV trong `data/`.
-- Làm: `pnpm dev` → chạy `seed:tasco`, `seed:menus`, `seed:reviews`, `index:all` (scripts có sẵn). Map cột CSV → schema import (taxonomy VN §6: amenities, segments, price_level, opening_hours qua đêm "10:00-02:00").
-- **Output/DoD:** `GET /api/v1/restaurants/{id}` trả đủ 30 quán, menu 179 món, review 150; `/search` trả kết quả tiếng Việt có dấu đúng.
+### 5.0 Data flow — mỗi phần output ra cái gì
 
-### 5.2 SOFT score + `why{}` trong ranking (DEV2)
-- Port công thức §7 vào `api/src/search/ranking.ts` (đã có deterministic rules — mở rộng, đừng viết lại).
-- **Output:** mỗi result kèm `meta.why = {semantic, geo_decay, quality, persona, localness, luxury_penalty, final}` + `reasoning` tiếng Việt ("Cách bạn 1.2km · phù hợp gia đình · giá bình dân · còn mở tới 02:00").
-- HARD gate giữ trung thực: rỗng → `not_found` + suggestions nới lỏng **có nhãn**, không tự nới (bẫy Halal-HCM).
-
-### 5.3 Dish recognition từ ảnh (DEV3 — build mới hoàn toàn)
 ```
-POST /api/v1/dishes/recognize  (multipart ảnh hoặc R2 key)
-  → vision LLM (qwen-vl-plus / Gemini Flash): {dish_name, cuisine, confidence, alternatives[]}
-  → match /search/dishes (fuzzy, bỏ dấu)
+[Python OFFLINE — chạy 1 lần]                    [Go ONLINE — mỗi query]
+ 5 CSV
+   │ build_kb.py                                   HTTP request
+   ▼                                                  │ main.go
+ build/kb.json ────────────┐                          ▼
+   │ embed.py    [opt]      │                     parseQuery() → FilterSpec
+   ▼                        │                          │ retrieve.go
+ build/vectors.json [opt]   ├──► kb.Load() ──► recall() → []ứng viên
+   │ ner_hutieubert.py [opt]│                          │ HARD gate
+   │ summarize.py           │                          ▼
+   ▼                        │                     rerank.go → top-K + why{}
+ (kb.json đầy đủ)           │                          │ llm.go/assistant.go/vision.go [opt]
+                            │                          ▼
+ enrich.py [opt] ──► build/enrichment.json ───────────┤
+                                                       ▼
+                                                  JSON response (§8)
+```
+
+Ranh giới: `build_kb / embed / ner / summarize / enrich` = **Python offline** (output = file JSON). `kb / retrieve / rerank / llm / assistant / vision / compare / main` = **Go online** (đọc file, không chạy model).
+
+---
+
+### 5.1 `build_kb.py` (Python, OFFLINE)
+- **Input:** 5 CSV trong `preprocess/data/`.
+- **Xử lý:** join POI ⋈ Menu ⋈ Reviews theo `restaurant_id`; normalize text VN → taxonomy tag; parse `opening_hours` → phút; tokenize tên+món cho lexical; tính `quality_completeness` (điền được bao nhiêu field chuẩn / tổng field kỳ vọng).
+- **Output:** `engine/build/kb.json` — list 30 POI, mỗi POI:
+  ```json
+  {
+    "id": "poi:res001", "restaurant_id": "RES001",
+    "name": "Phở Bếp Nhà", "category": "Nhà hàng", "cuisine_type": "Việt Nam",
+    "city": "Hà Nội", "district": "Hoàn Kiếm", "address": "2 Trần Phú, Hoàn Kiếm, Hà Nội",
+    "lat": 21.040388, "lon": 105.844615,
+    "price_level": "budget", "avg_price_vnd": 68289,
+    "rating": 3.8, "review_count": 608, "popularity": 55,
+    "opening": {"open_min": 540, "close_min": 1380, "overnight": false, "raw": "09:00-23:00"},
+    "segments": ["family","fastfood","travel","budget"],
+    "amenities": ["nice_view","reservation","wifi","music","parking","kid_friendly"],
+    "diet": [], "dishes": [{"name":"Phở bò tái","price_vnd":68289,"tags":[]}],
+    "strengths": ["thực đơn đa dạng","phù hợp gia đình"],
+    "weaknesses": ["ồn vào buổi tối"],
+    "quality": 0.88, "quality_completeness": 0.92,
+    "ai_summary": "...", "sentiment": {"pos":0.7,"neu":0.2,"neg":0.1,"aspects":["service","taste"]},
+    "cuisine_classification": "Việt Nam - Miền Bắc",
+    "dining_occasions": ["Family","Casual"],
+    "tokens": ["pho","bep","nha","bo","tai"],
+    "known_entities": {"names":["pho bep nha"],"dishes":["pho bo tai"]},
+    "reviews": [{"text":"...","sentiment":"pos","aspects":["service","taste"]}]
+  }
+  ```
+- **Bảng normalize** (hằng số trong code):
+  - amenity: `Bãi đỗ xe→parking`, `Phù hợp trẻ em→kid_friendly`, `Có ghế trẻ em→baby_chair`, `Máy lạnh→air_con`, `Wi-Fi miễn phí→wifi`, `View đẹp→nice_view`, `Mở cửa khuya→late_night`, `Đặt bàn trước→reservation`, `Giao hàng→delivery`, `Phòng riêng→private_room`, `Không gian ngoài trời→outdoor`, `Thanh toán thẻ→card`, `Nhạc nhẹ→music`.
+  - segment: `Gia đình→family`, `Hẹn hò→romantic`, `Ăn nhanh→fastfood`, `Du lịch→travel`, `Tiết kiệm→budget`, `Cao cấp→premium`.
+  - price: `Bình dân→budget`, `Trung bình→mid`, `Cao cấp`/`Sang trọng→premium`.
+  - diet: suy ra `vegetarian` nếu `cuisine_type="Chay"` hoặc `category="Nhà hàng chay"` hoặc có món `dietary_tags` chứa chay.
+
+### 5.2 `kb.go` (Go, ONLINE — nền)
+- **Output:** package cung cấp cho các module khác.
+  - `Load() ([]POI, error)` — đọc kb.json 1 lần lúc start vào slice struct.
+  - `norm(s string) string` — bỏ dấu + lowercase (`"Phở Bò"→"pho bo"`).
+  - `isOpenAt(o Opening, minute int) bool` — true/false, xử lý qua đêm (10:00-02:00 → mở lúc 00:30).
+  - `haversine(lat1,lon1,lat2,lon2 float64) float64` — trả mét.
+
+### 5.3 `retrieve.go` (Go, ONLINE)
+- `parseQuery(q string) FilterSpec` —
+  - **Input:** `"quán chay ở Hà Nội dưới 100k"`
+  - **Output:** `{"city":"Hà Nội","diet":["vegetarian"],"max_price":100000,"segments":[],"dish":[],"tokens":["quan","chay"]}`
+- `recall(kb, f) []Candidate` — token match tên+món+review → danh sách thô.
+- **HARD gate** → lọc: dish đích danh không có / sai city / thiếu diet / giá>max / rating<min / không mở → **loại**.
+  - **Output khi có kết quả:** `[]Candidate` đã qua gate (input cho rerank).
+  - **Output khi rỗng:** `{"status":"not_found","reason":"Không có quán Halal ở TP.HCM","suggestions":["Bỏ lọc Halal","Mở rộng sang Hà Nội/Đà Lạt"]}` (bẫy Halal-HCM).
+
+### 5.4 NER chống hallucination (`ner_hutieubert.py`) + `rerank.go`
+- **`ner_hutieubert.py` (Python, offline):**
+  - **Input:** tên 30 quán + 179 món.
+  - **Output:** ghi `known_entities` vào kb.json (đã thấy ở 5.1). Query-time Go chỉ **tra bảng**, không chạy model.
+  - Query nhắc tên KHÔNG có trong bảng → `{"status":"not_found","query_entity":"Crystal BBQ","message":"Không tìm thấy 'Crystal BBQ' trong dữ liệu"}` (bẫy Crystal BBQ). Fallback: rule-based nếu bỏ HuTieuBERT.
+- **`rerank.go` — SOFT score (§7):**
+  - **Input:** `[]Candidate` qua gate + `user_ctx{lat,lon,segment,diet,price,time}`.
+  - **Output:** top-K sắp xếp, mỗi item có `why{}` (điểm từng factor) + `reasoning` tiếng Việt (xem response §8).
+
+### 5.5 Dish recognition + OCR ảnh — `vision.go` (Go, ONLINE, mới)
+```
+POST /v1/dishes/recognize  (multipart ảnh)
+  → vision LLM (qwen-vl-plus / Gemini Flash Vision): {dish_name, cuisine, confidence, alternatives[]}
+  → match dish index trong kb.json (fuzzy, bỏ dấu)
   → kết hợp lat/lon user → quán gần đó có món này
-  → {recognized: {...}, matches: [{restaurant, dish, price, distanceMeters}]}
+  → {recognized: {...}, matches: [{restaurant_id, dish, price_vnd, distanceMeters}]}
+
+POST /v1/menu/ocr  (multipart ảnh menu)  [stretch]
+  → vision LLM đọc ảnh → text/structured → cùng schema build_kb menu items
+  → không merge vào kb.json benchmark; ghi build/ocr_uploads.json (tách namespace)
 ```
-- Ảnh demo chọn trước (5–10 món VN phổ biến trùng với 179 món trong menu dataset: phở, bún chả, cơm tấm...), **kết quả vision cache sẵn** → demo không phụ thuộc mạng.
-- Không train classifier (không có dataset ảnh + không kịp) — zero-shot vision LLM, ghi rõ trong methodology.
+- Ảnh demo chọn trước (5–10 món VN phổ biến trùng 179 món trong menu dataset: phở, bún chả, cơm tấm...), **kết quả vision cache sẵn ra đĩa** → demo không phụ thuộc mạng.
+- Không train classifier (không có dataset ảnh sẵn + không kịp) — zero-shot vision LLM, ghi rõ trong methodology.
+- Đường chắc ăn cho "Menu OCR" đề yêu cầu vẫn là `raw_ocr_text` từ OCR Menu CSV → parse trong `build_kb.py` (§5.1) — không phụ thuộc vision, luôn demo được.
 
-### 5.4 AI Summary + sentiment (DEV3)
-- **Input:** restaurant + menu + 5 review/quán (CSV có sẵn `known_strengths/weaknesses`).
-- LLM sinh: `ai_summary` (2–3 câu VN), `review_sentiment {pos/neu/neg ratio, aspects}`, `strengths[]`, `weaknesses[]`, `cuisine_classification`, `dining_occasions[]` (Family/Business/Romantic/Casual/FastFood — đề yêu cầu đúng list này).
-- Chạy **1 lần batch cho 30 quán** → ghi vào D1, serve tĩnh trong restaurant detail. Không sinh lúc query.
+### 5.6 AI Summary + Sentiment (`summarize.py`, Python, offline batch)
+- **Input:** 30 POI + review CSV (5 review/quán) + `known_strengths/weaknesses` có sẵn.
+- **Xử lý:** LLM sinh 1 lần cho mỗi quán: `ai_summary` (2–3 câu VN), `sentiment{pos/neu/neg ratio, aspects}`, `cuisine_classification`, `dining_occasions` (đúng list đề: Family/Business/Romantic/Casual/FastFood).
+- **Output:** ghi thẳng vào `kb.json` (§5.1) — Go chỉ serve tĩnh, không gọi LLM lúc query cho phần này.
 
-### 5.5 OCR image → menu (DEV3 vision + DEV1 pipeline)
-- Đường chắc ăn (bắt buộc): `raw_ocr_text` từ OCR Menu CSV → deterministic extraction → claims → review → canonical menu (api có sẵn) — demo được ngay "OCR extraction methodology".
-- Đường ăn điểm (nếu kịp): implement `OcrProvider` = vision LLM đọc ảnh menu thật → cùng pipeline claims. 2–3 ảnh menu demo, cache kết quả.
+### 5.7 `llm.go` + `assistant.go` (Go, ONLINE, optional — cắt được)
+- **`llm.go`:** HTTP client → **Qwen/DashScope** (OpenAI-compatible), `base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, model `qwen-plus` (xác nhận tên theo docs). Dự phòng Gemini.
+  - Key qua env `DASHSCOPE_API_KEY`, **không hardcode/commit**; `.env` vào `.gitignore`; key hết hạn 14/7.
+  - `hash(model+prompt)→cache đĩa`; mất mạng/hết quota → đọc cache.
+- **`assistant.go`:** RAG.
+  - **Input:** `q="Bún Chả Phố Cổ có món gì đáng thử?"`
+  - **Output:** `{"answer":"Bún Chả Phố Cổ nổi bật món Bún chả (99.797đ)...","sources":[{"field":"menu","source":"tasco_csv"}],"poi_id":"poi:res002"}`
+  - Bẫy Crystal BBQ: không có trong KB → `{"answer":"not_found","message":"..."}`, cấm bịa.
 
-### 5.6 Assistant chống bịa (DEV3)
-- Prompt: chỉ trả lời từ context truy xuất; quán/món không có trong KB → trả `not_found` + message VN, **cấm bịa** (bẫy Crystal BBQ trong 15 câu eval).
-- Cache Q&A của các câu demo + 15 câu eval.
+### 5.8 `compare.go` (Go, ONLINE, mới)
+- **Input:** `GET /v1/compare?ids=RES001,RES002`
+- **Output:** bảng so sánh side-by-side: price/rating/quality/segments/diet/distance (nếu có user lat/lon)/top dishes — dùng cho màn Comparison đề yêu cầu.
 
-### 5.7 UI nối API thật (UI owner) — chi tiết §9
+### 5.9 `main.go` (Go, ONLINE)
+- **Output:** HTTP server :8000, CORS `*`. Route theo §8. `go build` → 1 binary tĩnh chạy độc lập.
 
 ---
 
-## 6. Ánh xạ field CSV → tín hiệu (giữ nguyên, đã verify)
+## 6. Ánh xạ field thật → tín hiệu (đã verify trong CSV)
 
-| Tín hiệu | Field CSV | Ghi chú |
+| Tín hiệu | Field CSV thật | Ghi chú |
 |---|---|---|
-| segment | `recommended_segments` ("Gia đình, Ăn nhanh...") | text VN → tag: family/romantic/fastfood/travel/budget/premium |
-| diet | `cuisine_type`="Chay" / `category`="Nhà hàng chay" / Menu `dietary_tags` | không có cột diet riêng — suy đa nguồn |
-| price | `price_level` (Bình dân/Trung bình/Cao cấp) + `avg_price_vnd` | |
-| time | `opening_hours` ("09:00-23:00", "10:00-02:00" qua đêm) | |
-| geo | `latitude`, `longitude` | haversine → geo_decay |
-| city | `city` (7 tỉnh) | |
-| anti-luxury | `price_level`="Cao cấp" → penalty; "Bình dân" + quality cao → boost | yêu cầu riêng TASCO |
-| trust | `poi_quality_score` (0.86–0.99), `rating`, `popularity_score` | |
-| amenity | `amenities_raw`: Bãi đỗ xe→parking, Phù hợp trẻ em→kid_friendly, Máy lạnh→air_con, Wi-Fi miễn phí→wifi, View đẹp→nice_view, Đặt bàn trước→reservation, Giao hàng→delivery, Không gian ngoài trời→outdoor, Nhạc nhẹ→music... | bảng hằng số trong import |
+| **Personalize: segment** | `recommended_segments` = "Gia đình, Ăn nhanh, Du lịch, Tiết kiệm" | text VN → tag |
+| **Personalize: diet** | `cuisine_type`="Chay" / `category`="Nhà hàng chay" / Menu `dietary_tags` / amenities | không có cột diet riêng ở POI → suy từ nhiều nguồn |
+| **Personalize: price** | `price_level` = Bình dân/Trung bình/Cao cấp + `avg_price_vnd` | |
+| **Personalize: time** | `opening_hours` = "09:00-23:00", "10:00-02:00" (qua đêm) | |
+| **Localize: geo** | `latitude`, `longitude` | haversine → geo_decay |
+| **Localize: city** | `city` (7 tỉnh) | city_match |
+| **Anti-luxury** | `price_level`="Cao cấp" → penalty; "Bình dân"+quality cao → boost | yêu cầu riêng TASCO |
+| **Trust** | `poi_quality_score` (0.86–0.99), `rating`, `popularity_score` | có sẵn |
 
 ---
 
-## 6.5 Enrichment & Scraping (differentiator — làn offline, DEV1)
+## 6.5 Enrichment & Social Scraping (differentiator, offline)
 
-Nguyên tắc **giữ nguyên từ plan cũ** (đầy đủ lý do xem git history):
+Ta có tool scrape (TinyFish/AgentQL, ZenRows...). Đây là **deliverable "enrichment" đề bài yêu cầu** + câu chuyện "map tech scale được". Nhưng phải đặt đúng chỗ, nếu không sẽ tự bắn vào chân.
 
-1. **30 POI benchmark là data BỊA** → **KHÔNG scrape theo tên benchmark** (sẽ match nhầm quán thật = hallucination). Benchmark answers chỉ từ CSV. Scraping nhắm **POI thật** (Phở Thìn Lò Đúc...) để chứng minh engine enrich được data thật.
-2. **Offline + cache-first:** scrape trước, import vào api với provenance/confidence riêng (hệ claims có sẵn — khớp hoàn hảo). Demo replay từ data đã import, không scrape live.
-3. **Provenance hiển thị:** UI badge "nguồn: Google Places / Foody / TikTok" + confidence — thứ Google Maps không show.
-4. **Consensus:** ≥2 nguồn đồng thuận mới thành fact (giờ mở, giá); social buzz chỉ là signal mềm.
+### ⚠️ Cạm bẫy phải biết trước
+**30 POI benchmark là dữ liệu BỊA** (tên generated, dùng để chấm 15 câu + gài bẫy chống hallucination). → Scrape social theo tên 30 quán này sẽ **tìm không ra** hoặc **match nhầm quán thật khác** = đúng lỗi hallucination đề bài trừ điểm.
 
-Tool: **Apify** (Google Places/FB/TikTok actors) → **TinyFish/AgentQL** (trang schema động Foody/Riviu) → **ZenRows** (anti-bot) → LLM structure → import.
+**Hệ quả thiết kế:**
+- Scraping **KHÔNG nhắm** 30 quán benchmark. Benchmark answers luôn **chỉ từ CSV**.
+- Scraping nhắm **POI thật** (OSM Overpass / tên quán thật ở VN) → chứng minh engine **làm giàu được data thật**, tách hẳn khỏi benchmark.
 
-**Cảnh demo hero:** quán thật quality 0.6 → bấm enrich → 0.9, gaps_closed=["opening_hours","menu"], có badge nguồn. Chạy từ cache, rút mạng vẫn sống. **Cắt được hoàn toàn nếu thiếu giờ** — core không phụ thuộc.
+### 4 nguyên tắc bắt buộc
+1. **Offline + cache-first.** Scrape trước, lưu `engine/build/enrichment.json`. Query online **không** gọi scrape. Demo replay từ cache → sống khi mất mạng.
+2. **Tách tier.** Data scrape có namespace riêng, **không đè** field CSV benchmark. Mỗi field enrich mang `{value, source, confidence<1.0, fetched_at}`.
+3. **Provenance hiển thị.** UI badge rõ "nguồn: Foody / TikTok / web", confidence — thứ Google Maps không show.
+4. **Consensus trước khi tin.** 1 nguồn social đơn lẻ không thắng; cần ≥2 nguồn đồng thuận cho fact (giờ mở, giá). Social buzz chỉ là signal mềm, không phải fact.
+
+### `preprocess/enrich.py` (Python, làn offline, chạy tách khỏi core)
+```
+input: [POI thật: name + address + city]
+  → Apify actors: Google Places (title, rating, reviews, openingHours,
+                  popularTimes, price, parking...) · FB Page · TikTok
+  → ZenRows lấy HTML trang có anti-bot · TinyFish/AgentQL query trang schema-động
+    (Foody/Riviu) · Tavily/search tìm URL website/menu
+  → LLM (Qwen/Gemini) structure → JSON
+  → resolver: gộp nguồn + confidence + consensus
+  → build/enrichment.json  (KHÔNG merge vào kb.json benchmark)
+```
+**Output `enrichment.json`** (namespace riêng, key = POI thật, mỗi field có provenance):
+```json
+{
+  "real:pho-thin-lo-duc": {
+    "name": "Phở Thìn Lò Đúc",
+    "fields": {
+      "opening_hours": {"value":"06:00-21:00","source":"google_places","confidence":0.9,"fetched_at":"2026-07-11T09:00+07"},
+      "parking":       {"value":false,"source":"foody","confidence":0.6,"fetched_at":"..."},
+      "buzz_score":    {"value":0.82,"source":"tiktok","confidence":0.5,"mentions":37,"fetched_at":"..."}
+    },
+    "quality_before": 0.61, "quality_after": 0.90, "gaps_closed": ["opening_hours","menu"]
+  }
+}
+```
+Ưu tiên tool: **Apify** cho nguồn có actor sẵn (Google/FB/TikTok — nhanh, ổn định); **TinyFish/AgentQL** cho trang schema-động không actor; **ZenRows** khi bị chặn bot.
+
+### 2 cách dùng
+- **(a) Gap-fill:** POI thật thiếu menu/giờ/amenity → scrape lấp → `quality_score` tăng. **Demo hero:** bấm nút → quán 0.6 → 0.9 (chạy từ cache).
+- **(b) Social buzz signal:** mention TikTok/Threads → `buzz_score` (decay theo tuần) → 1 factor mềm nhỏ khi rerank. Chỉ *reinforce*, không tạo fact. → **Optional / Future**.
+
+### Rủi ro
+| Rủi ro | Đối sách |
+|---|---|
+| Scrape benchmark POI → match nhầm | KHÔNG scrape benchmark; chỉ POI thật |
+| ToS / rate-limit / block | pre-scrape offline, cache; không scrape lúc demo |
+| Schema trang đổi | dùng agentic (TinyFish) cho trang động; Gemini structure chịu được nhiễu |
+| Latency / mất mạng lúc demo | cache-first tuyệt đối; demo không phụ thuộc network |
+| Tốn credit | giới hạn số POI enrich (vài chục để demo), không quét cả VN |
+
+> **Vị trí trong build:** làn offline **song song**, thuộc nhóm should-have. Cắt được hoàn toàn mà core vẫn chạy. Xem §10 và Future Work (§12).
 
 ---
 
-## 7. Công thức xếp hạng — HARD gate → SOFT score (giữ nguyên, implement trong `ranking.ts`)
+## 7. Công thức xếp hạng — HARD gate → SOFT score
 
 ### 7.1 HARD gate (loại, không cho điểm)
 ```
-fail nếu: dish đích danh không có · sai city · thiếu diet bắt buộc
+fail nếu: dish yêu cầu mà không có · sai city · thiếu diet bắt buộc
           · giá > max · rating < min · không mở lúc yêu cầu
-→ danh sách rỗng = not_found + suggestions nới lỏng CÓ NHÃN (không tự nới)
+→ fail = loại khỏi danh sách
+→ danh sách rỗng = trả not_found + đề xuất nới lỏng CÓ NHÃN (không tự nới)
 ```
 
-### 7.2 SOFT score
+### 7.2 SOFT score (chỉ trên quán qua gate)
 ```
-score = 0.30·semantic      # khớp query↔(tên+món+review): D1 lexical hoặc Vectorize
+score = 0.30·semantic     # khớp query↔(tên+món+review), token/embedding
       + 0.20·geo_decay     # exp(-d/2km); THIẾU lat/lon → bỏ factor, renormalize
       + 0.15·quality       # poi_quality_score
       + 0.15·persona       # khớp segment+diet+price (0..1)
       + 0.10·rating_pop    # (rating/5 + popularity/100)/2
-      + 0.10·localness     # bình dân + quality≥0.9 → +; family-run → +
+      + 0.10·localness      # bình dân + quality≥0.9 → +; family-run → +
       − 0.25·luxury_penalty # price_level=cao cấp → trừ
 ```
-**Renormalize:** factor thiếu data → bỏ hẳn, chia lại trọng số (`wᵢ' = wᵢ/Σw_có_data`), không điền 0 giả. Tune tay trên 15 câu eval + 8 câu B/C (§11). Cite: LM-Prior (Ju et al., [arXiv:2411.09065](https://arxiv.org/abs/2411.09065)).
+
+**Luật renormalize (mượn từ SYSTEM_FLOW — quan trọng):** factor nào **thiếu data** (vd user không gửi vị trí → không có geo_decay) thì **bỏ hẳn và chia lại trọng số các factor còn lại** (`wᵢ' = wᵢ/Σw_có_data`), **không** điền 0 giả (điền 0 sẽ dìm oan quán).
+
+**Tune tay** trên 15 câu eval + 8 câu B/C (§11), không train. Cite: LM-Prior (Ju et al., [arXiv:2411.09065](https://arxiv.org/abs/2411.09065)) — semantic làm prior, các factor là adjustment.
 
 ### 7.3 LLM rerank (optional, cắt đầu tiên)
-Top-10 → Qwen structured JSON → thứ tự cuối + `reasoning`. Bỏ được: SOFT order vẫn tốt.
+Top-10 → Qwen structured JSON → thứ tự cuối + `reasoning` tiếng Việt. Cite KALM4Rec. Bỏ được: SOFT order vẫn tốt.
 
 ---
 
 ## 8. API contract — align với Tasco Maps API doc
 
-`api/openapi/openapi.json` là contract nội bộ UI↔backend. Thêm lớp align với doc Tasco:
+```
+GET /v1/recommend
+  q       optional  câu tự nhiên (giữ dấu). Rỗng = "gợi ý quanh đây"
+  lat,lon optional  vị trí user
+  segment optional  family|romantic|business|group|fastfood
+  diet    optional  vegetarian|halal
+  price   optional  budget|mid|premium
+  time    optional  HH:MM (default server now, Asia/Ho_Chi_Minh)
+  limit   optional  default 12
 
-**Đã có:** facade `GET /v1/search` + `GET /search` (Tasco-compatible), trả `PlaceResult`.
+GET /v1/poi?id=RES001            chi tiết 1 quán (đủ aiSummary, sentiment, dining_occasions)
+GET /v1/compare?ids=RES001,RES002  so sánh nhiều quán
+GET /v1/assistant?q=...          Q&A RAG (optional)
+POST /v1/dishes/recognize        multipart ảnh → dish + quán gần
+POST /v1/menu/ocr                multipart ảnh menu → structured [stretch]
+GET /health                      status + số POI
+```
 
-**Checklist compatibility (từ API doc — BTC chấm "integration-ready"):**
-- [ ] `PlaceResult`: `id, type, name, label, address, category, coordinates{lat,lon}, distanceMeters, score, source` — map được vào `SearchSuggestion` của app Flutter (bảng mapping trong doc).
+Response `/v1/recommend`:
+```json
+{
+  "results": [{
+    "id":"poi:res002","name":"Bún Chả Phố Cổ","cuisine_type":"Việt Nam",
+    "city":"TP. Hồ Chí Minh","address":"...","coordinates":{"lat":10.76,"lon":106.71},
+    "distanceMeters":1240,"score":0.78,
+    "tags":["family","parking"],
+    "meta":{
+      "why":{"semantic":0.8,"geo_decay":0.6,"quality":0.97,"persona":0.75,
+             "localness":0.15,"luxury_penalty":0.0,"final":0.78},
+      "reasoning":"Cách bạn 1.2km · phù hợp gia đình · giá bình dân · còn mở tới 02:00",
+      "quality":0.97,"matched_dishes":[{"dish":"Bún chả","price_vnd":99797}]
+    }
+  }],
+  "meta":{"query":"...","filters":{...},"count":1},
+  "requestId":"..."
+}
+```
+
+**Checklist compatibility với API doc Tasco Maps** (BTC chấm "integration-ready"):
+- [ ] `PlaceResult`-tương thích: `id, type, name, label, address, category, coordinates{lat,lon}, distanceMeters, score, source` cho các field overlap (dùng khi trả `/v1/search` alias nếu cần).
 - [ ] `ErrorResponse`: `{error:{code,message,details}, requestId}` + đúng bảng mã lỗi (400 `invalid_request`, 404 `not_found`, 429 `rate_limited`...).
 - [ ] Stable IDs; WGS84 lat/lon; **giữ tiếng Việt có dấu**.
-- [ ] Auth pluggable: `Authorization: Bearer` hoặc `X-API-Key`; base URL configurable; không hardcode key.
+- [ ] Auth pluggable: `Authorization: Bearer` hoặc `X-API-Key` (dù mock chấp nhận không auth); base URL configurable qua flag/env; không hardcode key.
 - [ ] Headers khuyến nghị: `X-Request-Id`, `X-Locale: vi-VN`, `X-Timezone: Asia/Ho_Chi_Minh`.
-- [ ] Deterministic mock data cho test/demo.
-- [ ] Submission kèm: OpenAPI spec (✅ có), REST examples, notes về ranking/enrichment/latency/fallback/provenance (BIZ gom vào README).
-
-**Endpoint bổ sung (mới):** `POST /api/v1/dishes/recognize` (§5.3). Cân nhắc thêm alias `GET /v1/poi/{id}` → restaurant detail (khớp POI API trong doc, có `aiSummary`).
+- [ ] Deterministic mock data cho test/demo (kb.json chính là mock deterministic).
+- [ ] Submission kèm: OpenAPI/contract note, REST examples, ghi chú ranking/enrichment/latency/fallback/provenance (BIZ gom vào README).
 
 ---
 
-## 9. Frontend — từ T Maps prototype → sản phẩm demo (UI owner)
+## 9. Frontend — nối `ui/` (T Maps prototype có sẵn) vào Go engine
 
-Prototype đã có phone-frame + map + bottom sheet + search + route + nav HUD (mock). Việc còn lại theo thứ tự:
+`ui/` đã có phone-frame + map (Leaflet) + bottom sheet + search + route + nav HUD, nhưng **100% mock trong `App.tsx`**. Việc là thay dần mock bằng gọi engine Go, không build lại từ đầu.
 
-1. **Tách `api.ts`** — client typed theo `openapi.json`: `search(q, filters)`, `recommend(params)`, `getRestaurant(id)`, `getMenu(id)`, `compare(ids)`, `assistant(msg)`, `recognizeDish(file)`. Base URL qua env (`VITE_API_BASE`, mặc định `http://localhost:5173`).
-2. **Thay mock bằng API thật** cho search + place details (menu thật, giá thật, giờ mở thật).
-3. **FilterChips** — Segment (Gia đình/Hẹn hò/Nhóm/Ăn nhanh) · Diet (Chay/Halal) · Price (Bình dân/TB/Cao cấp) · "Mở cửa bây giờ". Bấm → gọi lại API → marker + list update (personalize NHÌN THẤY ĐƯỢC).
-4. **ResultCard + "Vì sao gợi ý?"** — xổ `meta.why` thành bar từng factor + `reasoning` VN + badge quality. Differentiator số 1.
-5. **Màn theo demo scene:** AssistantBox (chat + citations); Compare (2 quán cạnh nhau); Dish-photo (upload ảnh → món nhận diện → quán gần); badge provenance/confidence trên field enrich; empty-state `not_found` hiển thị message + suggestions dạng chip bấm được.
-6. Layout giữ ngôn ngữ thiết kế T Maps sẵn có; desktop = map trái + list phải.
+1. **`api.ts`** — client mới: `recommend(params): Promise<RecommendResponse>` GET `http://localhost:8000/v1/recommend`, `getPoi(id)`, `compare(ids)`, `assistant(q)`, `recognizeDish(file)`. Base URL qua env, mặc định `http://localhost:8000`.
+2. **Thay mock search/place-details** trong `App.tsx` bằng data thật từ engine (menu thật, giờ mở thật, giá thật).
+3. **`FilterChips.tsx`** (mới) — 4 nhóm chip: Segment (Gia đình/Hẹn hò/Nhóm/Ăn nhanh) · Diet (Chay/Halal) · Price (Bình dân/TB/Cao cấp) · Time (giờ hiện tại/ăn khuya). Bấm → gọi lại `recommend` → marker + list update (personalize NHÌN THẤY ĐƯỢC).
+4. **`ResultCard.tsx`** (mở rộng có sẵn hoặc mới) — tên, cuisine, khoảng cách, giá, badge `quality`, chip tags; nút **"Vì sao gợi ý?"** xổ `meta.why` (bar mỗi factor) + `reasoning`. Differentiator số 1.
+5. **Màn mới theo 7 cảnh demo:** `CompareView.tsx` (2 quán cạnh nhau), `AssistantBox.tsx` (chat + citations), `DishPhoto.tsx` (upload ảnh → món nhận diện → quán gần), badge provenance/confidence trên field enrich (§6.5), empty-state `not_found` hiển thị `message` + `suggestions` dạng chip bấm được.
+6. Giữ nguyên ngôn ngữ thiết kế T Maps đã có (phone-frame, dark/clean); desktop layout map trái + list phải nếu mở rộng ngoài khung phone.
 
-**Chốt sớm với DEV2/DEV3:** shape `why{}`, shape assistant citations, shape recognize response — lấy từ openapi.json, không tự bịa.
-
----
-
-## 10. Timeline — 3 ngày (key Qwen hết hạn 14/7)
-
-### Phase 0 — Verify + seed (T6 11/7 tối, cả team) ★ GATE
-- `api/`: `pnpm install && pnpm typecheck && pnpm test && pnpm dev` — **PASS/FAIL công khai trong nhóm**.
-- DEV1 seed 5 CSV + index; DEV2 bắn 5 query search thử; UI chạy `npm run dev`; DEV3 test 1 call Qwen + 1 call vision sống.
-- `.env`/`.dev.vars`: `DASHSCOPE_API_KEY` — **không commit key** (`.dev.vars` đã trong .gitignore của api).
-- BIZ: đọc kỹ PROBLEM STATEMENT + dựng khung deck (problem/solution/architecture/business value/impact) + **hỏi BTC về Food Image Dataset**.
-
-### Phase 1 — Core sống (T7 12/7) ★ MVP
-- DEV1: taxonomy normalize chuẩn (§6) + quality completeness score.
-- DEV2: SOFT score + `why{}` + not_found trung thực trong ranking.ts; facade Tasco checklist (§8).
-- DEV3: batch AI summary + sentiment 30 quán ghi vào D1; assistant prompt VN chống bịa.
-- UI: api.ts + search/details chạy data thật + FilterChips.
-- **DoD:** cảnh demo lõi chạy end-to-end: gõ "quán chay gần đây" → map update → card có why → mở detail thấy menu + summary.
-
-### Phase 2 — Đủ 7 cảnh demo (CN 13/7)
-- DEV3: dish recognition endpoint + cache ảnh demo; OCR image provider (nếu kịp — không kịp thì demo OCR từ raw text CSV, vẫn đạt đề).
-- DEV1: enrichment lane — scrape 10–20 POI thật, import với provenance, cảnh 0.6→0.9.
-- DEV2: chạy eval A/B/C (§11), tune weights, fix bẫy.
-- UI: Compare + AssistantBox + dish-photo + provenance badge + polish (animation marker, empty-state đẹp).
-- BIZ: deck draft đủ slide + demo script 7 cảnh + quay thử video.
-- **DoD:** chạy thử toàn bộ demo script, rút mạng giữa chừng vẫn sống (cache).
-
-### Phase 3 — Đóng gói (T2 14/7)
-- Freeze code sáng 14/7. Eval lần cuối, số liệu chốt cho BIZ.
-- README submission: setup + technical overview + AI approach + 5 methodology (enrichment/OCR/dish recognition/recommendation/quality — mỗi owner viết phần mình, BIZ biên tập).
-- Video demo final + deck final + deploy (CF Workers deploy có sẵn lệnh) hoặc chạy local ổn định.
-
-**Đường cắt nếu cháy giờ (cắt theo thứ tự):** LLM rerank (7.3) → enrichment scraping (6.5, thay bằng slide) → OCR image provider (giữ OCR-from-text) → Tauri packaging. **KHÔNG cắt:** 7 cảnh demo tối thiểu, `why{}`, chống bịa, seed data đúng.
+**Chốt sớm giữa UI ↔ DEV1/DEV3:** shape `why{}`, shape assistant citations, shape recognize response — theo §8, không tự bịa field.
 
 ---
 
-## 10.5 Phân công 5 người — 1 UI · 3 dev · 1 business (theo sở hữu file, zero conflict)
+## 10. Timeline — chỉ còn ~12 giờ, chạy song song theo owner, không chia ngày
 
-Nguyên tắc: mỗi người sở hữu 1 nhóm file, không sửa file người khác. **Contract chung duy nhất = `api/openapi/openapi.json`** — đổi response shape phải cập nhật spec trước, báo trong nhóm.
+Không đủ giờ để chia phase tuần tự — 5 người chạy **song song ngay từ phút đầu** theo §10.5, chỉ đồng bộ ở 2 interface (`kb.json`, API contract §8). Danh sách việc dưới đây xếp theo **must-have (không có không nộp được) → should-have (đề yêu cầu, cắt được nếu cháy giờ) → nice-to-have (cắt đầu tiên)**. Mỗi người tự chạy list của mình, tick xong việc nào báo ngay để người phụ thuộc bắt đầu.
 
-| Ai | Vai trò | Sở hữu (file/thư mục) | Deliverable chấm được |
+### Setup — làm trước, chặn mọi người (10–15 phút, cả team làm song song luôn phần của mình)
+- [ ] Copy 5 CSV từ `data/` → `preprocess/data/`. `go mod init` trong `engine/`. Skeleton `preprocess/*.py`.
+- [ ] `.gitignore`: `engine/build/`, `.env`, `node_modules/`, `preprocess/__pycache__/`. **Không commit key.**
+- [ ] `.env`: `DASHSCOPE_API_KEY=...`, đọc bằng `os.getenv`/`os.Getenv`, không hardcode.
+- [ ] UI: verify `npm run dev` chạy từ prototype có sẵn.
+- [ ] DEV1: verify `go run .` chạy skeleton HTTP.
+- [ ] DEV3: 1 call Qwen text test sống + 1 call vision test sống.
+- [ ] BIZ: đọc kỹ PROBLEM STATEMENT, hỏi BTC về Food Image Dataset ngay (đề nói có, repo chưa thấy), dựng khung deck.
+- [ ] **Chốt 2 interface trước khi ai code sâu:** schema `kb.json` (DEV2↔DEV1), API contract §8 (DEV1↔UI/DEV3).
+
+### MUST-HAVE — không có thì không thể nộp
+- [ ] **DEV2** — `build_kb.py`: CSV → `kb.json` (normalize taxonomy segment/diet/price/opening_hours).
+- [ ] **DEV1** — `kb.go` + `retrieve.go`: load kb.json, parseQuery, recall, HARD gate (kể cả bẫy Crystal BBQ / Halal-HCM).
+- [ ] **DEV1** — `rerank.go`: SOFT score + geo_decay + renormalize + anti-luxury + `why{}`.
+- [ ] **DEV1** — `main.go`: `/v1/recommend`, `/v1/poi`, `/health`. **DoD:** `curl /v1/recommend?q=quán chay&lat=..&lon=..` trả JSON đúng, có `why`.
+- [ ] **UI** — `api.ts` + nối search/recommend thật vào `ui/` có sẵn (thay mock), FilterChips, ResultCard hiện `why` breakdown.
+- [ ] **DEV3** — `assistant.go` RAG chống bịa (không có trong KB → not_found, cấm bịa).
+- [ ] **DEV3** — `summarize.py` batch AI summary + sentiment + cuisine_classification + dining_occasions cho 30 quán, ghi vào kb.json.
+- [ ] **DEV2** — `quality_completeness` score trong `build_kb.py` + badge hiển thị.
+- [ ] **BIZ** — demo script đủ đường đi cho các cảnh must-have; chạy thử end-to-end ngay khi UI+DEV1 xong phần recommend.
+
+### SHOULD-HAVE — đề yêu cầu tường minh, ưu tiên cao nhưng cắt được nếu cháy giờ
+- [ ] **DEV3** — `vision.go` dish recognition (`POST /v1/dishes/recognize`) + cache sẵn kết quả cho 5–10 ảnh demo.
+- [ ] **DEV1** — `compare.go` (`GET /v1/compare?ids=...`) + **UI** `CompareView.tsx`.
+- [ ] **UI** — `AssistantBox.tsx` (chat + citations), `DishPhoto.tsx` (upload ảnh).
+- [ ] **DEV2** — `enrich.py`: scrape 10–20 POI thật → `enrichment.json` (provenance/confidence), cảnh demo quality 0.6→0.9.
+- [ ] **UI** — badge provenance/confidence trên card; empty-state `not_found` hiện `message` + `suggestions` dạng chip.
+- [ ] **DEV3/DEV1** — chạy eval A/B/C (§11), tune weights SOFT score dựa trên kết quả.
+
+### NICE-TO-HAVE — cắt đầu tiên khi thiếu giờ
+- [ ] LLM rerank top-10 (§7.3).
+- [ ] `POST /v1/menu/ocr` ảnh menu thật (giữ đường chắc: OCR-from-CSV-text trong `build_kb.py`, không cần cái này).
+- [ ] Social buzz signal (§6.5b).
+- [ ] Embedding semantic search (giữ lexical token-match).
+- [ ] Tauri desktop packaging (`ui/src-tauri/` đã có sẵn, build nếu còn giờ).
+- [ ] Style polish nâng cao: animation marker, transition đẹp.
+
+### 30 phút cuối — chốt nộp (cả team)
+- [ ] Freeze code. Eval lần cuối, số liệu chốt cho BIZ.
+- [ ] README (methodology §13 + setup) — mỗi dev viết 3–5 gạch đầu dòng phần mình, BIZ biên tập.
+- [ ] Video demo + deck final. Kiểm tra lại: không commit API key.
+
+**Đường cắt nếu cháy giờ (theo thứ tự):** LLM rerank (§7.3) → OCR ảnh (`/v1/menu/ocr`, giữ OCR-from-CSV-text) → social buzz signal (§6.5b) → Tauri packaging. **KHÔNG cắt:** 7 cảnh demo tối thiểu, `why{}`, chống bịa (Crystal BBQ / Halal-HCM), seed data đúng, quality scoring, dish recognition (đề yêu cầu tường minh).
+
+---
+
+## 10.5 Phân công 5 người — 1 UI · 3 dev · 1 business (theo sở hữu file → zero conflict)
+
+Nguyên tắc: **mỗi người sở hữu 1 nhóm file, không ai sửa file người khác.** Chỉ có 2 interface phải chốt chung sớm: **(i) schema `kb.json`** (DEV2↔DEV1), **(ii) API contract §8** (DEV1↔UI/DEV3). Chốt xong 2 cái đó, cả team chạy độc lập.
+
+| Ai | Vai trò | Sở hữu (file/thư mục) | Giao cho ai |
 |---|---|---|---|
-| **UI** (1 người) | Frontend & Demo surface | toàn bộ `ui/` (`api.ts`, components, màn Compare/Assistant/DishPhoto, why-breakdown, provenance badge) | app demo "trông cool": map + chips + why + 7 cảnh có mặt trên màn hình |
-| **DEV1** | Data · Ingestion · Enrichment · Quality | `api/scripts/*` (seed), `api/src/{sources,claims,menus}/` phần import/taxonomy, `preprocess/enrich.py`, quality score | 30 POI + 179 món + 150 review sạch trong D1; OCR-text→menu pipeline chạy; cảnh enrich 0.6→0.9 + provenance |
-| **DEV2** | Search · Ranking · Recommendation · Eval | `api/src/search/*` (query-parser, ranking, filter-merge, geo), facade `routes/tasco.ts`, `scripts/evaluate-search.mjs` | SOFT score + `why{}` + not_found trung thực; personalize/localize verify bằng eval §11; Tasco compatibility checklist ✅ |
-| **DEV3** | AI: LLM · Vision · Assistant | `api/src/ai/*` (prompts, schemas, embeddings), assistant route, endpoint `dishes/recognize`, OcrProvider, batch summary/sentiment | assistant Q&A có nguồn + không bịa; dish recognition demo; AI summary 30 quán; cache-first mọi call |
-| **BIZ** (1 người) | Business · Pitch · Demo production | deck (Canva/Figma), demo script + video, `README.md` submission, roadmap slide (§12), bibliography (§14) | deck đủ problem/solution/architecture/business value/impact; video; demo script 7 cảnh chạy trơn; submission checklist ✅ |
+| **UI** (1 người) | Frontend & Demo surface | toàn bộ `ui/` (`api.ts`, `FilterChips`, `ResultCard` why-breakdown, `CompareView`, `AssistantBox`, `DishPhoto`, provenance badge) | dùng `/v1/*` của DEV1/DEV3; giữ ngôn ngữ thiết kế T Maps có sẵn |
+| **DEV1** | Backend core — Retrieval, Ranking, Serving | `retrieve.go`, `rerank.go`, `kb.go`, `compare.go`, `main.go` — parse query, HARD gate, SOFT score, geo, `why{}`, routing/CORS | dùng kb.json của DEV2; cấp `/v1/recommend`, `/v1/compare` cho UI |
+| **DEV2** | Data, Preprocessing & Enrichment | `build_kb.py`, `embed.py`, taxonomy normalize, schema `kb.json`, `enrich.py` (Apify/TinyFish/ZenRows), `enrichment.json`, quality_completeness, demo 0.6→0.9 | kb.json → DEV1; enrichment.json → UI (badge) |
+| **DEV3** | AI: LLM, Vision, Assistant, Ngôn ngữ VN | `llm.go`, `assistant.go`, `vision.go` (dish recognition + OCR ảnh), `summarize.py` (AI summary/sentiment/cuisine/dining_occasions), `ner_hutieubert.py`, eval A/B/C | ghép vào `/v1/*` của DEV1; số eval → BIZ |
+| **BIZ** (1 người) | Business, Pitch, Demo production | deck (problem/solution/architecture/business value/impact), demo script 7 cảnh, video, `README.md` submission, roadmap slide (§12), bibliography (§14) | chạy demo thử mỗi tối, phát hiện cảnh gãy sớm nhất; hỏi BTC Food Image Dataset |
 
-**Phối hợp chéo (chốt trong Phase 0):**
-- UI ↔ DEV2/DEV3: shape `why{}`, citations, recognize response (qua openapi.json).
-- DEV1 → DEV2: taxonomy tag chuẩn (segment/diet/price) để ranking dùng.
-- DEV3 → DEV1: OcrProvider cắm vào pipeline claims của DEV1.
-- Mỗi dev viết 3–5 gạch đầu dòng methodology phần mình → BIZ biên tập vào deck/README (đề bắt nộp đủ 5 methodology).
-- BIZ là **người chạy demo thử mỗi tối** — phát hiện cảnh gãy sớm nhất.
+**Vì sao chia thế này:**
+- DEV1 giữ lõi (điểm số + gate + serving) — thứ quyết định chất lượng và là điểm chạm của mọi module khác, gom về 1 người để tránh conflict trên `main.go`.
+- DEV2 tách hẳn vì offline preprocessing + enrichment là interface (kb.json/enrichment.json) — làm xong là DEV1/UI chạy được ngay; scraping là làn độc lập, không chặn ai.
+- DEV3 gom mọi thứ "AI" (LLM + vision + NER + prompt + eval) vì cùng họ kỹ năng và đều cần cache-first; sở hữu eval vì họ lo chất lượng câu trả lời.
+- UI là người ráp cuối trên nền T Maps prototype có sẵn — không cần build từ đầu, chỉ thay mock bằng thật + thêm 3 màn mới.
+- BIZ là role mới so với bản plan cũ — tách hẳn khỏi code, lo deck/pitch/demo, đồng thời làm QA "trông cool" hằng đêm.
 
-**Nếu hụt người/giờ:** enrichment (DEV1) và OCR-image (DEV3) là 2 mảng co được; UI có thể mượn BIZ làm asset hình + copywriting cho card/empty-state.
+**Nếu team yếu Go:** DEV1 cần biết Go chắc nhất; DEV2/DEV3 thuần Python + prompt, không cần Go. Nếu cả DEV2/DEV3 không biết Go → DEV1 gánh cả `main.go`/`compare.go`, DEV3 chỉ viết Python + gọi API HTTP từ ngoài, tích hợp vào Go sau qua interface JSON đơn giản.
 
----
-
-## 11. Eval plan (DEV2 own, chạy bằng `scripts/evaluate-search.mjs` mở rộng)
-
-- **Nhóm A — 15 câu Public Evaluation CSV:** đủ loại task (rec, menu OCR, dish...). Không được sai bẫy: **Crystal BBQ → not_found** (cấm bịa), **Halal ở HCM → trả trung thực + suggestions**, không nhầm city.
-- **Nhóm B — personalize (5 câu tự đặt):** Romantic → loại fastfood; vegetarian → 100% có món chay; time=00:30 → chỉ quán qua đêm; Family → ưu tiên parking+kid_friendly; budget → loại Cao cấp.
-- **Nhóm C — localize (3 câu):** lat/lon HN → top-3 HN không lẫn HCM; đổi vị trí → kết quả đổi; "bún chả HCM" khi đang ở HN → override theo query.
-
-**DoD:** A không sai bẫy; B/C ≥ 7/8 pass. Số pass/fail đưa vào deck (slide "evaluation").
+**Nếu thiếu người (4 người):** gộp DEV2 vào DEV3 (data lo cả preprocess + enrich + AI), giữ DEV1 + UI + BIZ; cắt scraping trước.
 
 ---
 
-## 12. Future Work (slide Roadmap — không build)
+## 11. Eval plan
 
-- Embedding semantic search full (Qwen text-embedding-v3 / vietnamese-embedding) thay lexical fallback.
-- HuTieuBERT NER/POS cho entity tiếng Việt (đã chuyển từ scope chính xuống đây — api dùng fuzzy match + known-entity list là đủ cho 30 POI).
-- Route-aware recommend dọc hành trình (Valhalla — khớp Route API trong doc Tasco, differentiator VETC).
-- Behavior ranking từ dữ liệu di chuyển thật VETC.
-- Enrichment scale toàn VN (agentic scraping + OCR menu ảnh hàng loạt).
-- Social buzz reranking (TikTok/Threads mention → signal mềm, decay theo tuần).
-- 5-tier source registry (CSV → licensed API → agentic-facts → social → business-verified).
-- Deep recommenders (LightGCN/GETNext/SASRec) khi POI lên 10⁴–10⁶.
-- Tauri desktop / tích hợp SDK Flutter cho app T Maps thật (client adapter như doc yêu cầu).
+`engine/eval.go` hoặc `preprocess/eval.py` chạy 3 nhóm, in bảng pass/fail. Owner: **DEV3** (chạy), **DEV1** (tune dựa trên kết quả).
+
+- **Nhóm A — 15 câu Public Evaluation** (không personalize): sanity, không được sai bẫy (Crystal BBQ→not_found, Halal-HCM→trung thực).
+- **Nhóm B — personalize (5 câu):** segment=Romantic→loại fast food; diet=vegetarian→100% có món chay; time=00:30→chỉ quán qua đêm; segment=Family→ưu tiên có parking+kid; price=budget→loại cao cấp.
+- **Nhóm C — localize (3 câu):** lat/lon HN→top-3 ở HN, không lẫn HCM; đổi vị trí→kết quả đổi; query "bún chả HCM" khi user ở HN→override, trả HCM.
+
+**DoD:** A không sai bẫy + B/C ≥ 7/8 pass. Số pass/fail đưa vào deck (slide "evaluation").
+
+---
+
+## 12. Future Work (đánh dấu rõ — không build hackathon)
+
+Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải làm:
+
+- **Embedding semantic search** (thay token-match) — Qwen `text-embedding-v3` (API) hoặc `vietnamese-embedding` (local A40). Tăng chất lượng NL query. *Đã chừa chỗ trong rerank.*
+- **HuTieuBERT fine-tune SBERT-style** — hiện HuTieuBERT chỉ dùng cho NER/POS (thế mạnh). Muốn dùng làm embedding retrieval thì phải fine-tune contrastive (SBERT), ngoài phạm vi hackathon.
+- **Route-aware / along-route recommend** — cần Valhalla; gợi ý quán dọc hành trình liên tỉnh (differentiator VETC, khớp Route API trong doc Tasco). Cite SYSTEM_FLOW draft.
+- **Behavior ranking** (Tire-Wear/Repeat kiểu Amap) — cần dữ liệu di chuyển thật từ VETC.
+- **Enrichment pipeline mở rộng** (§6.5) — scrape social/web quy mô lớn cho POI thật toàn VN (TinyFish/ZenRows), OCR menu ảnh hàng loạt. Hackathon chỉ demo vài chục POI từ cache.
+- **Social buzz reranking** — TikTok/Threads mention → `buzz_score` factor mềm. Cần pipeline phương ngữ VN (slang → aspect → sentiment).
+- **Dish recognition fine-tune** — thay zero-shot vision LLM bằng classifier train trên dataset ảnh món VN thật (khi có).
+- **Provenance + confidence từng field** — 5-tier source registry (CSV → licensed API → agentic-facts → social-signals → business/driver-verified).
+- **Deep recommenders** (GETNext/LightGCN/SASRec/LightFM) — chỉ có nghĩa khi POI DB lên 10^4–10^6; với 30 POI sẽ overfit. Cite làm "scaling path".
+- **Tích hợp SDK Flutter/T Maps thật** — client adapter theo doc Tasco (`PeliasClient`/`RoutingClient` boundary).
+- **Tauri desktop packaging** — wrap thành app cài được (đã có `ui/src-tauri/`, chỉ cần build).
 
 ---
 
 ## 13. Methodology narrative (dán vào README + deck)
 
-> The system ingests fragmented restaurant data (POIs, unstructured menus, OCR text, reviews) into a **claims-based knowledge pipeline**: every extracted fact carries provenance, confidence, and review state before it materializes into the canonical profile — turning unstructured input into *trustworthy* restaurant intelligence, per the P11 design principle. Menu intelligence combines deterministic Vietnamese price/dish parsing with a vision-LLM OCR provider. Dish recognition uses zero-shot vision LLM inference linked to the dish index. The recommender follows the **retrieve-then-rerank cold-start paradigm** (KALM4Rec, Kieu et al., 2024): hard-constraint gates (dietary, city, price, opening hours) that reject rather than silently relax — queried entities absent from the knowledge base return not_found, never a fabrication — then a linear soft score combining lexical/semantic relevance, geographic decay (exp(-d/2km), GeoMF, Lian et al., KDD 2014), POI quality, persona match, and an anti-luxury term favoring small local eateries per the TASCO brief. Missing signals are dropped and weights renormalized rather than zero-filled. The assistant answers only from retrieved, cited context. We deliberately avoid training deep recommenders on 30 POIs (overfitting); they are the scaling roadmap.
+> The recommender follows the **retrieve-then-rerank cold-start paradigm** of KALM4Rec (Kieu et al., 2024), built for restaurant recommendation with no user history. Stage 1 does rule-based candidate recall then a **hard-constraint gate** (dietary, city, price, opening hours) that rejects rather than silently relaxes — this is where we handle honesty traps (a queried restaurant absent from the knowledge base returns not_found, never a fabrication). Stage 2 ranks survivors with a linear **soft score** combining lexical relevance, geographic decay (`exp(-d/2km)`), POI quality, persona match (segment/diet/price), and an anti-luxury term that favors small local eateries per the TASCO brief. Missing signals are dropped and weights renormalized rather than zero-filled. An optional LLM stage re-ranks the top candidates and generates a Vietnamese explanation. Dish recognition and image-based menu OCR use zero-shot vision-LLM inference, cached to disk so the live demo never depends on network availability. Restaurant summaries, sentiment, cuisine classification, and dining-occasion tags are generated once per POI in an offline batch pass, not at query time.
+>
+> Geographic weighting follows GeoMF (Lian et al., KDD 2014); using LLM/semantic similarity as a prior over classical ranking follows the Language-Model Prior framework (Ju et al., 2024). We deliberately avoid training deep recommenders (LightGCN, GETNext, SASRec, LightFM) because 30 POIs and 150 reviews cause overfitting; these are cited as the scaling roadmap once the POI base grows.
 
 ---
 
 ## 14. Citations (deck bibliography)
 
 **Core:**
-1. Kieu, D. et al. **KALM4Rec** — cold-start retrieve-then-rerank. [arXiv:2405.19612](https://arxiv.org/abs/2405.19612), 2024.
-2. Lian, D. et al. **GeoMF.** [KDD 2014](https://dl.acm.org/doi/10.1145/2623330.2623638).
-3. Ju, J. et al. **Language-Model Prior for Cold-Start.** [arXiv:2411.09065](https://arxiv.org/abs/2411.09065), 2024.
-4. Reimers & Gurevych. **Sentence-BERT.** EMNLP 2019.
-5. Cormack et al. **Reciprocal Rank Fusion.** [SIGIR 2009](https://dl.acm.org/doi/10.1145/1571941.1572114).
+1. Kieu, D. et al. **KALM4Rec** — Keyword-driven Retrieval-Augmented LLMs for Cold-start User Recommendations. [arXiv:2405.19612](https://arxiv.org/abs/2405.19612), 2024.
+2. Lian, D. et al. **GeoMF** — Joint Geographical Modeling and MF for POI Recommendation. [KDD 2014](https://dl.acm.org/doi/10.1145/2623330.2623638).
+3. Ju, J. et al. **Language-Model Prior Overcomes Cold-Start Items.** [arXiv:2411.09065](https://arxiv.org/abs/2411.09065), 2024.
+4. Reimers, N., Gurevych, I. **Sentence-BERT.** EMNLP 2019. *(vì sao dùng sentence-transformer, không dùng BERT thô, cho embedding)*
+5. Cormack, G.V. et al. **Reciprocal Rank Fusion.** [SIGIR 2009](https://dl.acm.org/doi/10.1145/1571941.1572114). *(nếu dùng nhiều recall channel)*
+6. Dinh, A.T.D., Vo, K.H.N. et al. **HuTieuBERT — Morpheme-Aware Transformer for Vietnamese.** ACL 2026. *(dùng cho NER tên quán/món chống hallucination + POS tiếng Việt)*
 
-**Related / Future:**
-6. Li, P. et al. **LLMs for Next POI Recommendation.** [arXiv:2404.17591](https://arxiv.org/abs/2404.17591), SIGIR 2024.
-7. He, X. et al. **LightGCN.** [arXiv:2002.02126](https://arxiv.org/abs/2002.02126), SIGIR 2020.
-8. Yang, S. et al. **GETNext.** SIGIR 2022. · 9. Kang & McAuley. **SASRec.** ICDM 2018. · 10. Kula. **LightFM.** RecSys 2015.
-11. **LLMTreeRec.** [arXiv:2404.00702](https://arxiv.org/abs/2404.00702). · 12. **POI Recommendation Survey.** [arXiv:2410.02191](https://arxiv.org/abs/2410.02191).
-13. Li, Y. et al. **Personalized Query Auto-Completion at Baidu Maps.** [ACM 2020](https://dl.acm.org/doi/10.1145/3394137). *(paper BTC đưa)*
+**Related / Future (why not deep models):**
+7. Li, P. et al. **LLMs for Next POI Recommendation.** [arXiv:2404.17591](https://arxiv.org/abs/2404.17591), SIGIR 2024.
+8. He, X. et al. **LightGCN.** [arXiv:2002.02126](https://arxiv.org/abs/2002.02126), SIGIR 2020.
+9. Yang, S. et al. **GETNext.** [SIGIR 2022](https://dl.acm.org/doi/10.1145/3477495.3531983).
+10. Kang & McAuley. **SASRec.** ICDM 2018.
+11. Kula, M. **LightFM.** RecSys 2015.
+12. **LLMTreeRec** — LLMs for Cold-Start. [arXiv:2404.00702](https://arxiv.org/abs/2404.00702), 2024.
+13. **A Survey on POI Recommendation.** [arXiv:2410.02191](https://arxiv.org/abs/2410.02191), 2024.
+
+**Problem motivation (paper TASCO đưa):**
+14. Li, Y. et al. **Personalized Query Auto-Completion at Baidu Maps.** [ACM 2020](https://dl.acm.org/doi/10.1145/3394137).
 
 ---
 
-## 15. Submission checklist (từ PROBLEM STATEMENT — BIZ track, mỗi mục có owner)
+## 15. Submission checklist (từ PROBLEM STATEMENT — mỗi mục có owner)
 
 - [ ] Presentation deck: problem, solution, architecture, business value, impact — **BIZ**
 - [ ] Live demo + recorded video — **BIZ** (script) + cả team (chạy)
-- [ ] Source repo + README setup/technical overview/AI approach — **BIZ** biên tập, dev viết phần mình
-- [ ] Data enrichment workflow — **DEV1**
-- [ ] OCR & extraction methodology — **DEV1+DEV3**
+- [ ] Source repo + README setup/technical overview/AI approach — **BIZ** biên tập, mỗi dev viết phần mình
+- [ ] Data enrichment workflow — **DEV2**
+- [ ] OCR & extraction methodology — **DEV2 + DEV3**
 - [ ] Dish recognition approach — **DEV3**
-- [ ] Recommendation methodology — **DEV2**
-- [ ] POI quality evaluation approach — **DEV1**
+- [ ] Recommendation methodology — **DEV1**
+- [ ] POI quality evaluation approach — **DEV2**
 - [ ] Demo đủ 7 cảnh: enrichment · menu OCR extraction · dish recognition · AI summary · comparison · personalized recommendation · assistant Q&A — **cả team, BIZ điểm danh từng cảnh**
-
-**Trước khi code (tối 11/7):** Phase 0 verify `api/` PASS → phân vai theo §10.5 → chốt contract openapi.json → hỏi BTC food image dataset → **không commit API key**.
 
 ---
 
-*Refined 11/7 theo problem statement chính thức + Tasco API doc. Kiến trúc chốt: build tiếp trên `api/` (CF Workers) + `ui/` (T Maps prototype); Go engine bỏ. Bản plan trước xem git history.*
+## 16. Trước khi code — chốt 4 việc (làm trong Setup, §10)
+
+1. **Copy 5 CSV** từ `data/` → `Toi-la-AI-TascoP11-AABW2026/preprocess/data/`.
+2. **Chốt 5 vai trò (§10.5)** + 2 interface: schema `kb.json` (DEV2↔DEV1), API contract §8 (DEV1↔UI/DEV3).
+3. **Chốt LLM/vision:** key Qwen (`DASHSCOPE_API_KEY`) đưa vào `.env`, test 1 call sống (text + vision). Key hết hạn 14/7 — build xong trong 12 giờ trước hạn. Không có LLM → bỏ nhóm should-have AI (dish recognition/assistant/summary), core recommend + search vẫn đủ demo.
+4. **Hỏi BTC** về Sample Food Image Dataset (đề nói có, repo chưa thấy) — quyết định sớm ảnh hưởng scope dish recognition demo.
+
+Xong 4 việc (≤15 phút) → cả team chạy song song theo §10. Không code trước khi copy data. **Nhắc lại: không commit API key vào git.**
+
+---
+
+*Plan build mới trong repo `Toi-la-AI-TascoP11-AABW2026`, dùng Go engine + Python offline; `ui/` T Maps prototype có sẵn là base frontend; `api/` (CF Workers) không dùng làm backend chính. Refined 11/7 theo problem statement chính thức + Tasco API doc, team 1 UI · 3 dev · 1 business.*
