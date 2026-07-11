@@ -28,7 +28,9 @@
 | Data | 5 CSV copy vào `engine/data/` | ground truth |
 | Semantic (core) | lexical token-match (như draft) | zero-dep, chạy chắc |
 | Semantic (nâng cao) | embedding `dangvantuan/vietnamese-embedding` cache ra đĩa | *Future Work* / nếu còn giờ |
-| LLM | Gemini Flash, **cache-first ra đĩa** | assistant + rerank; demo sống khi mất mạng |
+| LLM | **Qwen** (DashScope OpenAI-compatible) chính; Gemini Flash dự phòng — **cache-first ra đĩa** | query parse nâng cao + rerank + assistant; demo sống khi mất mạng |
+| Embedding (nâng cao) | Qwen `text-embedding-v3` (DashScope) hoặc `vietnamese-embedding` local | *Future Work* / nếu còn giờ |
+| Enrichment / scraping | **Apify** (Google Places/FB/TikTok actors) + TinyFish/AgentQL (agentic) + ZenRows (anti-bot HTML) → LLM structure | **offline, cache-first, tier riêng** — xem §6.5 |
 | Frontend | React 19 + Vite (có sẵn) + `react-leaflet` | map "cool", localize trực quan |
 | Desktop wrap | Tauri | *Future Work* — chạy `vite dev` trong browser là đủ demo |
 
@@ -104,8 +106,9 @@ Toi-la-AI-TascoP11-AABW2026/
 │   ├── rerank.py                ← SOFT score (personalize/localize/anti-luxury)
 │   ├── llm.py                   ← Gemini client, cache-first ra đĩa   [optional]
 │   ├── assistant.py             ← RAG trả lời Q&A, trích nguồn          [optional]
+│   ├── enrich.py                ← OFFLINE: scrape POI thật → enrichment.json  [§6.5, optional]
 │   ├── serve.py                 ← HTTP :8000, /v1/recommend ...
-│   └── build/                   ← kb.json, cache LLM (git-ignored)
+│   └── build/                   ← kb.json, enrichment.json, cache LLM (git-ignored)
 ├── ui/                          ← FRONTEND (scaffold có sẵn)
 │   └── src/
 │       ├── App.tsx              ← thay demo greet bằng app thật
@@ -167,8 +170,12 @@ Toi-la-AI-TascoP11-AABW2026/
 - **Ra:** top-K sắp xếp, mỗi item kèm `why{}` breakdown từng factor + `reasoning` tiếng Việt.
 
 ### 5.5 `llm.py` + `assistant.py` (optional, cắt được)
-- `llm.py`: gọi Gemini, **hash query → cache ra đĩa**; mất mạng → đọc cache.
-- `assistant.py`: RAG — lấy top POI + evidence → prompt Gemini → trả lời **có trích provenance**. Bẫy Crystal BBQ: không có trong KB → trả `not_found`, cấm bịa.
+- `llm.py`: client dùng chung, **OpenAI-compatible** → đổi provider chỉ bằng env, không sửa code.
+  - Provider chính: **Qwen / DashScope** — `base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, model `qwen-plus` (hoặc model theo docs QwenCloud), dùng `openai` SDK.
+  - Dự phòng: Gemini Flash.
+  - **Key qua env `DASHSCOPE_API_KEY`, KHÔNG hardcode, KHÔNG commit.** Thêm `.env` vào `.gitignore`. Key build-week hết hạn 14/7.
+  - `hash(model+prompt) → cache ra đĩa`; mất mạng / hết quota → đọc cache.
+- `assistant.py`: RAG — lấy top POI + evidence → prompt LLM → trả lời **có trích provenance**. Bẫy Crystal BBQ: không có trong KB → trả `not_found`, cấm bịa.
 
 ### 5.6 `serve.py`
 - stdlib HTTP :8000, CORS mở (`*`) cho React gọi. Endpoints ở §8.
@@ -187,6 +194,53 @@ Toi-la-AI-TascoP11-AABW2026/
 | **Localize: city** | `city` (7 tỉnh) | city_match |
 | **Anti-luxury** | `price_level`="Cao cấp" → penalty; "Bình dân"+quality cao → boost | yêu cầu riêng TASCO |
 | **Trust** | `poi_quality_score` (0.86–0.99), `rating`, `popularity_score` | có sẵn |
+
+---
+
+## 6.5 Enrichment & Social Scraping (differentiator, offline)
+
+Ta có tool scrape (TinyFish/AgentQL, ZenRows...). Đây là **deliverable "enrichment" đề bài yêu cầu** + câu chuyện "map tech scale được". Nhưng phải đặt đúng chỗ, nếu không sẽ tự bắn vào chân.
+
+### ⚠️ Cạm bẫy phải biết trước
+**30 POI benchmark là dữ liệu BỊA** (tên generated, dùng để chấm 15 câu + gài bẫy chống hallucination). → Scrape social theo tên 30 quán này sẽ **tìm không ra** hoặc **match nhầm quán thật khác** = đúng lỗi hallucination đề bài trừ điểm.
+
+**Hệ quả thiết kế:**
+- Scraping **KHÔNG nhắm** 30 quán benchmark. Benchmark answers luôn **chỉ từ CSV**.
+- Scraping nhắm **POI thật** (OSM Overpass / tên quán thật ở VN) → chứng minh engine **làm giàu được data thật**, tách hẳn khỏi benchmark.
+
+### 4 nguyên tắc bắt buộc
+1. **Offline + cache-first.** Scrape trước, lưu `engine/build/enrichment.json`. Query online **không** gọi scrape. Demo replay từ cache → sống khi mất mạng.
+2. **Tách tier.** Data scrape có namespace riêng, **không đè** field CSV benchmark. Mỗi field enrich mang `{value, source, confidence<1.0, fetched_at}`.
+3. **Provenance hiển thị.** UI badge rõ "nguồn: Foody / TikTok / web", confidence — thứ Google Maps không show.
+4. **Consensus trước khi tin.** 1 nguồn social đơn lẻ không thắng; cần ≥2 nguồn đồng thuận cho fact (giờ mở, giá). Social buzz chỉ là signal mềm, không phải fact.
+
+### `engine/enrich.py` (làn offline, chạy tách khỏi core)
+```
+input: [POI thật: name + address + city]
+  → Apify actors: Google Places (title, rating, reviews, openingHours,
+                  popularTimes, price, parking...) · FB Page · TikTok
+  → ZenRows lấy HTML trang có anti-bot · TinyFish/AgentQL query trang schema-động
+    (Foody/Riviu) · Tavily/search tìm URL website/menu
+  → LLM (Qwen/Gemini) structure → JSON
+  → resolver: gộp nguồn + confidence + consensus
+  → build/enrichment.json  (KHÔNG merge vào kb.json benchmark)
+```
+Ưu tiên tool: **Apify** cho nguồn có actor sẵn (Google/FB/TikTok — nhanh, ổn định); **TinyFish/AgentQL** cho trang schema-động không actor; **ZenRows** khi bị chặn bot.
+
+### 2 cách dùng
+- **(a) Gap-fill:** POI thật thiếu menu/giờ/amenity → scrape lấp → `quality_score` tăng. **Demo hero:** bấm nút → quán 0.6 → 0.9 (chạy từ cache).
+- **(b) Social buzz signal:** mention TikTok/Threads → `buzz_score` (decay theo tuần) → 1 factor mềm nhỏ khi rerank (giống tier 4b SYSTEM_FLOW). Chỉ *reinforce*, không tạo fact. → **Optional / Future**.
+
+### Rủi ro
+| Rủi ro | Đối sách |
+|---|---|
+| Scrape benchmark POI → match nhầm | KHÔNG scrape benchmark; chỉ POI thật |
+| ToS / rate-limit / block | pre-scrape offline, cache; không scrape lúc demo |
+| Schema trang đổi | dùng agentic (TinyFish) cho trang động; Gemini structure chịu được nhiễu |
+| Latency / mất mạng lúc demo | cache-first tuyệt đối; demo không phụ thuộc network |
+| Tốn credit | giới hạn số POI enrich (vài chục để demo), không quét cả VN |
+
+> **Vị trí trong build:** làn offline **song song**, ưu tiên sau MVP. Cắt được hoàn toàn mà core vẫn chạy. Xem Phase 4 (§10) và Future Work (§12).
 
 ---
 
@@ -278,8 +332,10 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 
 ### Phase 0 — Setup (1h)
 - Copy 5 CSV vào `engine/data/`. Tạo skeleton `engine/*.py`.
+- Tạo `.gitignore`: `engine/build/`, `.env`, `node_modules/`. **Không commit key.**
+- `.env`: `DASHSCOPE_API_KEY=...` (Qwen). Đọc bằng `os.getenv`, không hardcode.
 - `npm install` + thêm `react-leaflet leaflet` vào ui.
-- Verify `vite dev` chạy + Python `http.server` chạy.
+- Verify `vite dev` chạy + Python `http.server` chạy + 1 call Qwen test sống.
 
 ### Phase 1 — Backend core, KHÔNG LLM (3–4h) ★ MVP
 - `build_kb.py`: CSV → kb.json (normalize taxonomy).
@@ -301,6 +357,12 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 ### Phase 4 — LLM assistant + rerank (2h) *(cắt được)*
 - `llm.py` cache-first + `assistant.py` RAG + `AssistantBox`.
 - LLM rerank top-10.
+
+### Phase 4b — Enrichment/scraping lane (offline, song song, cắt được) *(§6.5)*
+- Chạy **tách khỏi core**, bất cứ lúc nào sau Phase 0. Không chặn MVP.
+- `enrich.py`: scrape vài chục **POI thật** (không phải benchmark) → `build/enrichment.json` (cache).
+- UI: badge nguồn + confidence trên card; nút demo "làm giàu" quán gap (chạy từ cache).
+- **DoD:** 1 cảnh demo quality 0.6→0.9 có provenance, chạy được khi rút mạng.
 
 ### Phase 5 — Đóng gói (1–2h)
 - README (methodology §13 + setup), video demo, (optional) build Tauri desktop.
@@ -328,8 +390,9 @@ Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải l
 - **Embedding semantic search** (thay token-match) — `vietnamese-embedding` trên A40 hoặc Gemini embedding. Tăng chất lượng NL query. *Dễ thêm sau, đã chừa chỗ trong rerank.*
 - **Route-aware / along-route recommend** — cần Valhalla; gợi ý quán dọc hành trình liên tỉnh (differentiator VETC). Cite SYSTEM_FLOW draft.
 - **Behavior ranking** (Tire-Wear/Repeat kiểu Amap) — cần dữ liệu di chuyển thật từ VETC.
-- **Enrichment pipeline** (web/OCR bù data cho quán thiếu) — cite draft ENGINE_PROPOSAL.
-- **Provenance + confidence từng field** — 5-tier source registry.
+- **Enrichment pipeline mở rộng** (§6.5) — scrape social/web quy mô lớn cho POI thật toàn VN (TinyFish/ZenRows), OCR menu ảnh. Hackathon chỉ demo vài chục POI từ cache.
+- **Social buzz reranking** — TikTok/Threads mention → `buzz_score` factor mềm (tier 4b). Cần pipeline phương ngữ VN (slang → aspect → sentiment).
+- **Provenance + confidence từng field** — 5-tier source registry (CSV → licensed API → agentic-facts → social-signals → business/driver-verified).
 - **Deep recommenders** (GETNext/LightGCN/SASRec/LightFM) — chỉ có nghĩa khi POI DB lên 10^4–10^6; với 30 POI sẽ overfit. Cite làm "scaling path".
 - **Tauri desktop packaging** — wrap thành app cài được.
 
@@ -370,9 +433,9 @@ Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải l
 
 1. **Copy 5 CSV** từ draft `tasco-map-food-intelligence/` → `Toi-la-AI-TascoP11-AABW2026/engine/data/`.
 2. **Chốt team/giờ:** ai làm backend (Phase 1), ai làm frontend (Phase 2)? 2 làn chạy song song sau Phase 0.
-3. **Chốt LLM:** có key Gemini sống không? Không → bỏ Phase 4, core vẫn đủ demo.
+3. **Chốt LLM:** key Qwen (`DASHSCOPE_API_KEY`) đưa vào `.env`, test 1 call sống. Hết hạn 14/7 → build xong trước hạn. Không có LLM → bỏ Phase 4, core vẫn đủ demo.
 
-Xong 3 việc → chạy Phase 0. Không code trước khi copy data.
+Xong 3 việc → chạy Phase 0. Không code trước khi copy data. **Nhắc lại: không commit API key vào git.**
 
 ---
 
