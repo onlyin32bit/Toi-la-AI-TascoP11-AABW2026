@@ -121,6 +121,20 @@ Ranh giới sạch: **cái gì cần ML runtime → Python offline; cái gì ch�
 - Nếu bỏ hẳn ML (core lexical) → **chỉ cần Go**, không cần Python runtime lúc chạy. Đây là đường an toàn nhất.
 - Lợi: 1 binary Go tĩnh, khởi động tức thì, offline-safe, "production-ready".
 
+### 3.4 Deploy — server thường (không serverless/CF)
+
+Thứ tự: **preprocess 1 lần → deploy binary + static + kb.json**.
+
+1. **Offline (1 lần, máy dev hoặc A40):** `python build_kb.py` (+ embed/summarize/enrich nếu bật) → sinh `engine/build/kb.json` (+ cache). scp kèm khi deploy — server **không** cần Python lúc chạy.
+2. **Backend:** `go build` → 1 binary `engine`. Chạy trên server (systemd / pm2 / `nohup`), lắng nghe `:8000`. Kèm thư mục `build/` (kb.json + cache) cạnh binary.
+3. **Frontend:** `npm run build` → static (`ui/dist`). 2 lựa chọn:
+   - **Đơn giản nhất (khuyến nghị):** cho Go serve luôn `ui/dist` ở `/` → **cùng origin, khỏi CORS**, 1 process duy nhất.
+   - Hoặc nginx/Caddy serve static + reverse-proxy `/v1/*` → `:8000`.
+4. **Config:** `DASHSCOPE_API_KEY` + base URL đặt qua **env trên server** (không commit). `api.ts` đọc base URL từ env Vite (`VITE_API_BASE`), mặc định `localhost:8000` lúc dev.
+5. **Offline-safe:** kb.json + cache LLM/vision đi kèm binary → demo/deploy chạy được cả khi rớt mạng.
+
+> Vì mọi thứ nặng đã precompute ra file, deploy = copy 1 binary + `build/` + `dist/`. Không DB, không runtime ML trên server.
+
 ---
 
 ## 4. Cấu trúc repo (build vào đây)
