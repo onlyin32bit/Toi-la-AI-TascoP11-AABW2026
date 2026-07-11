@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasco P11 — System Graphs & Models v2 (EN)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+  :root{
+    --ink:#1a1c1a; --paper:#f6f4ee; --card:#ffffff; --line:#d8d5cc; --muted:#7a7870;
+    --green:#0f6e56; --green-soft:#e1f5ee;
+    --red:#b23a34; --red-soft:#fbeae7;
+    --amber:#b5730f; --amber-soft:#faeeda;
+    --blue:#1f5c96; --blue-soft:#e7f0fa;
+    --purple:#534ab7; --purple-soft:#eeedfe;
+    --coral:#c04f28; --coral-soft:#faece7;
+    --slate:#8a8880;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.6;padding:48px 24px 80px}
+  .wrap{max-width:980px;margin:0 auto}
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:8px}
+  .masthead h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;letter-spacing:-0.02em}
+  .masthead p{color:var(--muted);font-size:14px;margin-top:4px}
+  .toc{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 24px;margin:18px 0 30px;font-size:13px;color:var(--muted)}
+  .toc a{color:var(--blue);text-decoration:none}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin:0 0 36px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+  .slide{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 30px 32px;margin-bottom:34px}
+  .eyebrow{font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+  .slide h2{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;letter-spacing:-0.01em;margin-bottom:4px}
+  .slide .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  svg{display:block;width:100%;height:auto;font-family:'Inter',sans-serif}
+  .cap{font-size:12.5px;color:var(--muted);margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+  .cap b{color:var(--ink);font-weight:600}
+  .ph{color:var(--amber);font-weight:600}
+  .t-title{font-family:'Space Grotesk',sans-serif;font-weight:600}
+  table.cmp{width:100%;border-collapse:collapse;font-size:14px}
+  table.cmp th{text-align:center;padding:10px 12px;border-bottom:2px solid var(--ink);font-family:'Space Grotesk';font-size:14px}
+  table.cmp td{padding:11px 12px;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>Tasco P11 — System Graphs & Models · v2</h1>
+    <p>11 figures: 5 pitch-deck graphs + 6 system diagrams. All numbers pulled from the engine spec and business case docs.</p>
+  </div>
+
+  <div class="toc">
+    <span>G1 · Data decay vs manual curation (Slide 2)</span>
+    <span>G2 · Full architecture S0→S7</span>
+    <span>G3 · Agentic loop Plan→Verify (Slide 3)</span>
+    <span>G4 · 5-tier cascade + Resolver</span>
+    <span>G5 · SOFT scoring model (weights)</span>
+    <span>G6 · Trigger points T1–T6</span>
+    <span>G7 · Google side-by-side (Slide 4)</span>
+    <span>G8 · Data flywheel MISA × VETC × Agent</span>
+    <span>G9 · Cost model at scale (Slide 5)</span>
+    <span>G10 · Evaluation matrix 15+8+2</span>
+    <span>G11 · Demo timeline 60s (Slide 6)</span>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--green)"></span> measured / real data (cited)</span>
+    <span><span class="dot" style="background:var(--amber)"></span> placeholder — fill before code freeze</span>
+    <span><span class="dot" style="background:var(--red)"></span> risk / disqualifying case</span>
+    <span><span class="dot" style="background:var(--purple)"></span> model / formula</span>
+  </div>
+
+  <!-- ============ G1 : DECAY ============ -->
+  <div class="slide" id="g1">
+    <div class="eyebrow">G1 · Slide 2 · Problem Insight</div>
+    <h2>Manual curation can't outrun data decay</h2>
+    <p class="sub">323,010 outlets (iPOS 2024) · ≥30,000 closed in H1 2024 → churn ~10%/half-year · one manual pass ≈ 80,750 hours ≈ 40 person-years</p>
+    <svg viewBox="0 0 900 430" role="img" aria-label="Data decay line versus manual curation line">
+      <line x1="110" y1="60" x2="110" y2="330" stroke="#c9c6bd" stroke-width="1"/>
+      <line x1="110" y1="330" x2="820" y2="330" stroke="#c9c6bd" stroke-width="1"/>
+      <text x="98" y="64" text-anchor="end" font-size="13" fill="#7a7870">100%</text>
+      <text x="98" y="199" text-anchor="end" font-size="13" fill="#7a7870">50%</text>
+      <text x="98" y="334" text-anchor="end" font-size="13" fill="#7a7870">0</text>
+      <text x="66" y="200" text-anchor="middle" font-size="12" fill="#7a7870" transform="rotate(-90 66 200)">accurate data coverage</text>
+      <text x="110" y="352" text-anchor="middle" font-size="13" fill="#7a7870">T0</text>
+      <text x="465" y="352" text-anchor="middle" font-size="13" fill="#7a7870">6 months</text>
+      <text x="820" y="352" text-anchor="middle" font-size="13" fill="#7a7870">12 months</text>
+      <!-- decay 100 -> 90 -> 81 -->
+      <polyline points="110,60 465,87 820,111" fill="none" stroke="#b23a34" stroke-width="3"/>
+      <circle cx="110" cy="60" r="4.5" fill="#b23a34"/><circle cx="465" cy="87" r="4.5" fill="#b23a34"/><circle cx="820" cy="111" r="4.5" fill="#b23a34"/>
+      <text x="560" y="76" font-size="13" fill="#b23a34" font-weight="600">correct data remaining: 100% → 90% → 81%</text>
+      <!-- manual -->
+      <polyline points="110,330 270,240 430,225 590,285 750,275 820,315" fill="none" stroke="#8a8880" stroke-width="3" stroke-dasharray="8 5"/>
+      <text x="290" y="222" font-size="13" fill="#6a6860" font-weight="600">manual curation climbs slowly…</text>
+      <text x="510" y="310" font-size="13" fill="#6a6860">…then the source has already decayed again</text>
+      <line x1="465" y1="98" x2="465" y2="222" stroke="#b7b4ab" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="475" y="158" font-size="12" fill="#7a7870">gap that never closes</text>
+      <!-- boxes -->
+      <rect x="110" y="374" width="330" height="44" rx="8" fill="#fbeae7"/>
+      <text x="126" y="392" font-size="13" font-weight="600" fill="#b23a34">Naive LLM: scales, but FABRICATES</text>
+      <text x="126" y="409" font-size="12" fill="#8a3b36">one hallucinated fact at launch = brand damage</text>
+      <rect x="470" y="374" width="350" height="44" rx="8" fill="#e1f5ee"/>
+      <text x="486" y="392" font-size="13" font-weight="600" fill="#0f6e56">Agent: scales AND verifies, re-runs continuously</text>
+      <text x="486" y="409" font-size="12" fill="#0d5a47">coverage becomes a compute budget, not a hiring plan</text>
+    </svg>
+    <div class="cap">To fill before freeze: <span class="ph">X% of POIs in Tasco's dataset missing menu/hours/dietary fields</span> (DEV2 audit). Landing line: <b>"Tasco's bottleneck isn't map tech — it's trustworthy depth per POI, at national scale, continuously."</b></div>
+  </div>
+
+  <!-- ============ G2 : ARCHITECTURE S0-S7 ============ -->
+  <div class="slide" id="g2">
+    <div class="eyebrow">G2 · Appendix A2 · Full architecture</div>
+    <h2>S0 → S7: offline enrichment is decoupled from online serving</h2>
+    <p class="sub">Left = runs offline (agent, spends API credits). Right = online (single binary, cache-first, survives dead wifi).</p>
+    <svg viewBox="0 0 900 560" role="img" aria-label="Architecture S0 through S7 split into offline and online">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8880" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- offline zone -->
+      <rect x="30" y="40" width="400" height="480" rx="14" fill="none" stroke="#c9c6bd" stroke-dasharray="7 5"/>
+      <text x="50" y="68" font-size="13" font-weight="600" fill="#7a7870" class="t-title">OFFLINE · agent run (batch)</text>
+      <!-- online zone -->
+      <rect x="470" y="40" width="400" height="480" rx="14" fill="none" stroke="#0f6e56" stroke-dasharray="7 5"/>
+      <text x="490" y="68" font-size="13" font-weight="600" fill="#0f6e56" class="t-title">ONLINE · one binary, cache-first</text>
+
+      <!-- S0 -->
+      <rect x="60" y="90" width="340" height="52" rx="9" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="230" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5c96">S0 · Source Registry — 5 trust tiers</text>
+      <text x="230" y="130" text-anchor="middle" font-size="11.5" fill="#3f6a92">CSV · OSM · Places · Foody/FB · TikTok · OCR · VETC</text>
+      <!-- S1 -->
+      <rect x="60" y="158" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="230" y="178" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S1 · Entity Resolution → canonical_id</text>
+      <text x="230" y="196" text-anchor="middle" font-size="11.5" fill="#6a63b8">geo &lt;50m + name embedding + LLM tie-break</text>
+      <!-- S2 -->
+      <rect x="60" y="222" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="230" y="242" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S2 · Extraction</text>
+      <text x="230" y="260" text-anchor="middle" font-size="11.5" fill="#6a63b8">OCR vision · review→aspect · web→structured</text>
+      <!-- S3 -->
+      <rect x="60" y="286" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="230" y="306" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S3 · Normalization — closed taxonomy</text>
+      <text x="230" y="324" text-anchor="middle" font-size="11.5" fill="#6a63b8">slang/dialect ("banging", "on point") → standard aspect</text>
+      <!-- RESOLVER -->
+      <rect x="60" y="350" width="340" height="56" rx="9" fill="#faeeda" stroke="#b5730f" stroke-width="2"/>
+      <text x="230" y="372" text-anchor="middle" font-size="14" font-weight="700" fill="#b5730f">RESOLVER · highest tier wins · N≥3 consensus</text>
+      <text x="230" y="392" text-anchor="middle" font-size="11.5" fill="#8a5a10">0 sources = field ABSENT, no fabrication · keeps provenance</text>
+      <!-- S4 -->
+      <rect x="60" y="422" width="163" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="141" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#534ab7">S4 · Quality</text>
+      <text x="141" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">complete×agree×fresh</text>
+      <!-- S5 -->
+      <rect x="237" y="422" width="163" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="318" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#534ab7">S5 · Index</text>
+      <text x="318" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">BM25·vector·geo·corridor</text>
+
+      <!-- KB handoff -->
+      <rect x="415" y="256" width="90" height="60" rx="9" fill="#e1f5ee" stroke="#0f6e56"/>
+      <text x="460" y="281" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f6e56">KB file</text>
+      <text x="460" y="299" text-anchor="middle" font-size="10.5" fill="#0d5a47">provenance-tagged</text>
+
+      <!-- S6 -->
+      <rect x="530" y="90" width="310" height="150" rx="9" fill="#e1f5ee" stroke="#9fe1cb"/>
+      <text x="685" y="114" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f6e56">S6 · Query path</text>
+      <text x="685" y="138" text-anchor="middle" font-size="12" fill="#0d5a47">① HARD gate (halal·allergen·diet·budget)</text>
+      <text x="685" y="158" text-anchor="middle" font-size="12" fill="#0d5a47">② CTX inject (t_arrival = now + ETA)</text>
+      <text x="685" y="178" text-anchor="middle" font-size="12" fill="#0d5a47">③ SOFT Σwᵢ·Sᵢ + renormalize</text>
+      <text x="685" y="198" text-anchor="middle" font-size="12" fill="#0d5a47">④ LLM rerank top-20 + explanation</text>
+      <text x="685" y="224" text-anchor="middle" font-size="11" fill="#5a8a76">NER entity gate: outside KB → not_found</text>
+      <!-- S7 -->
+      <rect x="530" y="262" width="310" height="88" rx="9" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="685" y="286" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5c96">S7 · Serve — Tasco API contract</text>
+      <text x="685" y="308" text-anchor="middle" font-size="11.5" fill="#3f6a92">/v1/search · /v1/poi/{id} · /v1/route/rest-stops</text>
+      <text x="685" y="326" text-anchor="middle" font-size="11.5" fill="#3f6a92">/assistant (RAG, must cite provenance)</text>
+      <!-- UI -->
+      <rect x="530" y="376" width="310" height="52" rx="9" fill="#f1efe8" stroke="#c9c6bd"/>
+      <text x="685" y="398" text-anchor="middle" font-size="13" font-weight="600" fill="#444441">Map UI + agent panel + provenance badges</text>
+      <text x="685" y="416" text-anchor="middle" font-size="11" fill="#7a7870">PlaceResult DTO · WGS84 · Vietnamese diacritics preserved</text>
+      <!-- guard -->
+      <rect x="530" y="452" width="310" height="48" rx="9" fill="#fbeae7" stroke="#e8b4ad"/>
+      <text x="685" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#b23a34">Guard: SIM data is badged, never enters the 15 benchmark queries</text>
+      <text x="685" y="490" text-anchor="middle" font-size="11" fill="#8a3b36">benchmark scores only real data · cache-first survives dead wifi</text>
+
+      <!-- arrows -->
+      <line x1="230" y1="142" x2="230" y2="154" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <line x1="230" y1="206" x2="230" y2="218" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <line x1="230" y1="270" x2="230" y2="282" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <line x1="230" y1="334" x2="230" y2="346" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <line x1="230" y1="406" x2="230" y2="418" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <path d="M400 378 L460 378 L460 320" fill="none" stroke="#0f6e56" stroke-width="1.8" marker-end="url(#a2)"/>
+      <path d="M505 286 L526 286 L526 165" fill="none" stroke="#0f6e56" stroke-width="1.8"/>
+      <line x1="526" y1="165" x2="528" y2="165" stroke="#0f6e56" stroke-width="1.8" marker-end="url(#a2)"/>
+      <line x1="685" y1="240" x2="685" y2="258" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+      <line x1="685" y1="350" x2="685" y2="372" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
+    </svg>
+    <div class="cap">This is the answer to the Q&A "scraping legality" and "how does Tasco integrate": enrichment runs <b>offline</b>, the query path <b>never calls a scraper</b>, and serving matches Tasco's contract exactly. One binary + one KB file = integration is pointing their gateway at our endpoint.</div>
+  </div>
+
+  <!-- ============ G3 : AGENT LOOP ============ -->
+  <div class="slide" id="g3">
+    <div class="eyebrow">G3 · Slide 3 · THE slide — rubric #1</div>
+    <h2>The agentic loop: a different plan for every POI</h2>
+    <p class="sub">A pipeline runs fixed steps. An agent decides per-POI, and knows when to refuse.</p>
+    <svg viewBox="0 0 900 400" role="img" aria-label="Agent loop with a source-decision table beneath it">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8880" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="a3g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="a3r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#b23a34" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- Goal -->
+      <rect x="40" y="120" width="130" height="66" rx="10" fill="#f1efe8" stroke="#c9c6bd"/>
+      <text x="105" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1a1c1a">Goal</text>
+      <text x="105" y="167" text-anchor="middle" font-size="11.5" fill="#7a7870">quality ≥ 0.9</text>
+      <!-- Plan -->
+      <rect x="210" y="120" width="140" height="66" rx="10" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="280" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1f5c96">Plan</text>
+      <text x="280" y="167" text-anchor="middle" font-size="11.5" fill="#3f6a92">which gap → which source</text>
+      <!-- Tools -->
+      <rect x="390" y="120" width="140" height="66" rx="10" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="460" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1f5c96">Tools</text>
+      <text x="460" y="167" text-anchor="middle" font-size="11.5" fill="#3f6a92">Apify·AgentQL·OCR·vision</text>
+      <!-- Act -->
+      <rect x="570" y="120" width="130" height="66" rx="10" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="635" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1f5c96">Act</text>
+      <text x="635" y="167" text-anchor="middle" font-size="11.5" fill="#3f6a92">→ structured fields</text>
+      <!-- Verify -->
+      <rect x="730" y="110" width="150" height="86" rx="10" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/>
+      <text x="805" y="137" text-anchor="middle" font-size="14" font-weight="700" class="t-title" fill="#0f6e56">Verify</text>
+      <text x="805" y="156" text-anchor="middle" font-size="11.5" fill="#0d5a47">≥2 sources agree to write</text>
+      <text x="805" y="172" text-anchor="middle" font-size="11.5" fill="#0d5a47">{source·conf·fetched_at}</text>
+      <text x="805" y="188" text-anchor="middle" font-size="11.5" fill="#0d5a47">else → refuse + flag</text>
+      <!-- arrows -->
+      <line x1="170" y1="153" x2="206" y2="153" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a3)"/>
+      <line x1="350" y1="153" x2="386" y2="153" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a3)"/>
+      <line x1="530" y1="153" x2="566" y2="153" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a3)"/>
+      <line x1="700" y1="153" x2="726" y2="153" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a3)"/>
+      <!-- feedback -->
+      <path d="M805 110 L805 62 L280 62 L280 118" fill="none" stroke="#0f6e56" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#a3g)"/>
+      <text x="540" y="52" text-anchor="middle" font-size="12" fill="#0f6e56" font-weight="600">retry: try another source if consensus isn't there yet</text>
+      <path d="M805 196 L805 236 L105 236 L105 188" fill="none" stroke="#b23a34" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#a3r)"/>
+      <text x="455" y="254" text-anchor="middle" font-size="12" fill="#b23a34" font-weight="600">refuse + flag gap: unverifiable = do NOT write</text>
+      <!-- per-gap decision strip -->
+      <text x="60" y="296" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">EXAMPLE DECISIONS PER GAP (a different plan per POI):</text>
+      <rect x="60" y="308" width="255" height="66" rx="8" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="74" y="330" font-size="12" font-weight="600" fill="#1a1c1a">gap: opening hours</text>
+      <text x="74" y="348" font-size="11.5" fill="#7a7870">→ Google Places actor + FB Page</text>
+      <text x="74" y="364" font-size="11.5" fill="#0f6e56">consensus 2/2 → write, conf 0.80</text>
+      <rect x="330" y="308" width="255" height="66" rx="8" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="344" y="330" font-size="12" font-weight="600" fill="#1a1c1a">gap: menu + prices</text>
+      <text x="344" y="348" font-size="11.5" fill="#7a7870">→ Foody (AgentQL) + menu photo (OCR)</text>
+      <text x="344" y="364" font-size="11.5" fill="#0f6e56">price parsed by regex, LLM never guesses price</text>
+      <rect x="600" y="308" width="280" height="66" rx="8" fill="#fbeae7" stroke="#e8b4ad"/>
+      <text x="614" y="330" font-size="12" font-weight="600" fill="#b23a34">gap: dietary — only 1 source says "vegetarian"</text>
+      <text x="614" y="348" font-size="11.5" fill="#8a3b36">consensus 1/2 → NOT written</text>
+      <text x="614" y="364" font-size="11.5" fill="#8a3b36">gap flagged, waiting on a second source</text>
+    </svg>
+    <div class="cap">The three example boxes are ammo for "why agentic, not a pipeline?": different POI → different plan; and the red box proves it knows how to <b>refuse</b>. If only one slide gets a diagram, make it this one.</div>
+  </div>
+
+  <!-- ============ G4 : TIER CASCADE + RESOLVER ============ -->
+  <div class="slide" id="g4">
+    <div class="eyebrow">G4 · Appendix A3 · Trust model</div>
+    <h2>5-tier cascade: a fact is only written if it wins a contest between sources</h2>
+    <p class="sub">Every field is an auction between candidates. Highest tier wins · lower tiers need N≥3 consensus · signals never compete.</p>
+    <svg viewBox="0 0 900 470" role="img" aria-label="Tier cascade with confidence and TTL, feeding into the resolver">
+      <defs>
+        <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8880" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- tier bars: width proportional to confidence -->
+      <text x="60" y="46" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">TIER (wider bar = higher confidence)</text>
+      <!-- T1 0.95 -->
+      <rect x="60" y="60" width="551" height="46" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+      <text x="76" y="79" font-size="13" font-weight="600" fill="#0f6e56">Tier 1 · business-verified — 0.95 · TTL 180d</text>
+      <text x="76" y="96" font-size="11.5" fill="#0d5a47">owner uploads menu photo → real OCR (simulated event, badged)</text>
+      <!-- T2 0.85 -->
+      <rect x="60" y="114" width="493" height="46" rx="8" fill="#e1f5ee" stroke="#5dcaa5"/>
+      <text x="76" y="133" font-size="13" font-weight="600" fill="#0f6e56">Tier 2 · driver-confirmed — 0.85 · TTL 90d · needs N≥3</text>
+      <text x="76" y="150" font-size="11.5" fill="#0d5a47">toll passage + dwell + 1-tap (simulated, badged)</text>
+      <!-- T3 0.80 -->
+      <rect x="60" y="168" width="464" height="46" rx="8" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="76" y="187" font-size="13" font-weight="600" fill="#1f5c96">Tier 3 · licensed-api — 0.80 · TTL 30d</text>
+      <text x="76" y="204" font-size="11.5" fill="#3f6a92">Tasco CSV · OSM · Google Places (Apify)</text>
+      <!-- T4a 0.60 -->
+      <rect x="60" y="222" width="348" height="46" rx="8" fill="#e7f0fa" stroke="#c5d9ef"/>
+      <text x="76" y="241" font-size="13" font-weight="600" fill="#1f5c96">Tier 4a · agentic-facts — 0.60 · TTL 14d · needs N≥3</text>
+      <text x="76" y="258" font-size="11.5" fill="#3f6a92">FB · Foody/Riviu · TripAdvisor · restaurant website</text>
+      <!-- T4b -->
+      <rect x="60" y="276" width="348" height="46" rx="8" fill="#faece7" stroke="#f0997b"/>
+      <text x="76" y="295" font-size="13" font-weight="600" fill="#c04f28">Tier 4b · signals — NEVER enters the resolver</text>
+      <text x="76" y="312" font-size="11.5" fill="#994018">TikTok/Threads → buzz + reinforce only · decays over 2 weeks</text>
+
+      <!-- resolver box -->
+      <rect x="650" y="120" width="230" height="210" rx="10" fill="#faeeda" stroke="#b5730f" stroke-width="2"/>
+      <text x="765" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#b5730f" class="t-title">RESOLVER / field</text>
+      <text x="662" y="172" font-size="12" fill="#8a5a10">1 · drop candidates past TTL</text>
+      <text x="662" y="194" font-size="12" fill="#8a5a10">2 · highest surviving tier wins</text>
+      <text x="662" y="216" font-size="12" fill="#8a5a10">3 · tie → most recent fetched_at</text>
+      <text x="662" y="238" font-size="12" fill="#8a5a10">4 · tier 2/4a overrides lower tier only at N≥3</text>
+      <text x="662" y="260" font-size="12" font-weight="600" fill="#b23a34">5 · 0 candidates → field ABSENT</text>
+      <text x="662" y="278" font-size="11.5" fill="#8a5a10">no guessing, no default value</text>
+      <text x="662" y="304" font-size="12" font-weight="600" fill="#0f6e56">6 · keep the ENTIRE candidate list</text>
+      <text x="662" y="322" font-size="11.5" fill="#0d5a47">= provenance for /assistant</text>
+
+      <!-- arrows into resolver -->
+      <line x1="611" y1="83" x2="700" y2="118" stroke="#8a8880" stroke-width="1.4" marker-end="url(#a4)"/>
+      <line x1="553" y1="137" x2="648" y2="160" stroke="#8a8880" stroke-width="1.4" marker-end="url(#a4)"/>
+      <line x1="524" y1="191" x2="648" y2="200" stroke="#8a8880" stroke-width="1.4" marker-end="url(#a4)"/>
+      <line x1="408" y1="245" x2="648" y2="235" stroke="#8a8880" stroke-width="1.4" marker-end="url(#a4)"/>
+      <!-- 4b bypass -->
+      <path d="M408 299 L560 299 L560 400 L650 400" fill="none" stroke="#c04f28" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#a4)"/>
+      <text x="470" y="390" font-size="11.5" fill="#c04f28" font-weight="600">detours around → SOFT rerank only</text>
+      <rect x="650" y="376" width="230" height="48" rx="9" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="765" y="396" text-anchor="middle" font-size="12.5" font-weight="600" fill="#444441">SOFT rerank (S_buzz 0.05)</text>
+      <text x="765" y="414" text-anchor="middle" font-size="11" fill="#7a7870">reinforces a segment, never edits a fact</text>
+
+      <!-- example duel -->
+      <rect x="60" y="356" width="440" height="92" rx="9" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="76" y="380" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">EXAMPLE · the "car_parking" field for one restaurant:</text>
+      <text x="76" y="402" font-size="12" fill="#7a7870">• Foody says yes (4a, 0.60, 1 source) → not enough for N≥3</text>
+      <text x="76" y="421" font-size="12" fill="#7a7870">• Google Places says yes (tier 3, 0.80, still fresh) → wins for now</text>
+      <text x="76" y="440" font-size="12" fill="#0f6e56" font-weight="600">• 3 drivers 1-tap confirm (tier 2, 0.85, N=3) → WINS, conf 0.85</text>
+    </svg>
+    <div class="cap">This diagram answers "data quality of scraped facts": <b>no single scraped source ever becomes a published fact alone</b>. The duel example shows Tasco's driver data outranking every public source — that's the moat living inside the mechanism, not just on a slide.</div>
+  </div>
+
+  <!-- ============ G5 : SOFT MODEL ============ -->
+  <div class="slide" id="g5">
+    <div class="eyebrow">G5 · Appendix A6 · Ranking model</div>
+    <h2>SOFT score: Σ wᵢ·Sᵢ — 0.35 of total weight comes from signals only Tasco can generate</h2>
+    <p class="sub">7 components, sum to 1.00. Missing data → drop the component + renormalize, never fake a 0.5.</p>
+    <svg viewBox="0 0 900 440" role="img" aria-label="Stacked weight bar for SOFT scoring plus a mode-switch table">
+      <!-- stacked bar: total width 760 for 1.00 -->
+      <text x="60" y="46" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">DEFAULT WEIGHTS (untuned — say so plainly to judges)</text>
+      <!-- semantic 0.30 = 228 -->
+      <rect x="60" y="60" width="228" height="56" fill="#534ab7"/>
+      <text x="174" y="83" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">S_semantic</text>
+      <text x="174" y="102" text-anchor="middle" font-size="12" fill="#dedbf7">0.30</text>
+      <!-- match 0.20 = 152 -->
+      <rect x="288" y="60" width="152" height="56" fill="#7f77dd"/>
+      <text x="364" y="83" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">S_match</text>
+      <text x="364" y="102" text-anchor="middle" font-size="12" fill="#e8e6fb">0.20 ×conf</text>
+      <!-- route 0.15 = 114 -->
+      <rect x="440" y="60" width="114" height="56" fill="#0f6e56"/>
+      <text x="497" y="83" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">S_route</text>
+      <text x="497" y="102" text-anchor="middle" font-size="12" fill="#c9ede0">0.15</text>
+      <!-- behavior 0.15 = 114 -->
+      <rect x="554" y="60" width="114" height="56" fill="#1d9e75"/>
+      <text x="611" y="83" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">S_behavior</text>
+      <text x="611" y="102" text-anchor="middle" font-size="12" fill="#d2f3e6">0.15 SIM</text>
+      <!-- quality 0.10 = 76 -->
+      <rect x="668" y="60" width="76" height="56" fill="#8a8880"/>
+      <text x="706" y="83" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">S_qual</text>
+      <text x="706" y="102" text-anchor="middle" font-size="11.5" fill="#e6e4de">0.10</text>
+      <!-- crowd 0.05 = 38 -->
+      <rect x="744" y="60" width="38" height="56" fill="#5dcaa5"/>
+      <text x="763" y="86" text-anchor="middle" font-size="10.5" font-weight="700" fill="#04342c">crowd</text>
+      <text x="763" y="102" text-anchor="middle" font-size="10.5" fill="#04342c">.05</text>
+      <!-- buzz 0.05 = 38 -->
+      <rect x="782" y="60" width="38" height="56" fill="#f0997b"/>
+      <text x="801" y="86" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a1b0c">buzz</text>
+      <text x="801" y="102" text-anchor="middle" font-size="10.5" fill="#4a1b0c">.05</text>
+      <!-- moat bracket -->
+      <path d="M440 128 L440 140 L668 140 L668 128" fill="none" stroke="#0f6e56" stroke-width="1.6"/>
+      <text x="554" y="160" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f6e56">S_route + S_behavior (+ S_crowd) = 0.35 — map/infrastructure signals</text>
+      <text x="554" y="178" text-anchor="middle" font-size="11.5" fill="#0d5a47">a competitor copying the formula still has no input · share only grows as real VETC data lands</text>
+
+      <!-- formulas -->
+      <rect x="60" y="200" width="395" height="98" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="76" y="224" font-size="12.5" font-weight="600" fill="#534ab7" class="t-title">FORMULAS WORTH REMEMBERING</text>
+      <text x="76" y="248" font-size="12.5" fill="#3d3878" font-family="monospace">S_route = exp(−detour_min / 5)</text>
+      <text x="76" y="266" font-size="11.5" fill="#6a63b8">0' = 1.0 · 5' ≈ 0.37 · smooth decay, no hard cliff</text>
+      <text x="76" y="288" font-size="12.5" fill="#3d3878" font-family="monospace">S_crowd = 1 − occupancy(t_arrival)/100</text>
+      <rect x="475" y="200" width="405" height="98" rx="9" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="491" y="224" font-size="12.5" font-weight="600" fill="#444441" class="t-title">RENORMALIZE (missing data)</text>
+      <text x="491" y="248" font-size="12.5" fill="#5a5850" font-family="monospace">wᵢ' = wᵢ / Σ w_with_data</text>
+      <text x="491" y="268" font-size="11.5" fill="#7a7870">15-query benchmark: S_behavior + every SIM signal is zeroed</text>
+      <text x="491" y="286" font-size="11.5" fill="#7a7870">→ same mechanism handles cold-start in production</text>
+
+      <!-- mode switch -->
+      <text x="60" y="336" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">MODE SWITCH (Meituan RecSys'24: repeat and explore need different recommenders)</text>
+      <rect x="60" y="348" width="395" height="72" rx="9" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="76" y="372" font-size="13" font-weight="600" fill="#1f5c96">repeat — familiar route (≥3 trips/90d)</text>
+      <text x="76" y="392" font-size="12" fill="#3f6a92">semantic 0.25 · behavior 0.25 · buzz 0.00</text>
+      <text x="76" y="410" font-size="11.5" fill="#3f6a92">"your usual place on this route" — behavior is king</text>
+      <rect x="475" y="348" width="405" height="72" rx="9" fill="#faece7" stroke="#f0997b"/>
+      <text x="491" y="372" font-size="13" font-weight="600" fill="#c04f28">explore — holiday / new route</text>
+      <text x="491" y="392" font-size="12" fill="#994018">semantic 0.35 · behavior 0.05 · buzz 0.10</text>
+      <text x="491" y="410" font-size="11.5" fill="#994018">regional specialties + what's trending surface first</text>
+    </svg>
+    <div class="cap">S_match is multiplied by <b>confidence from the resolver</b>: parking confirmed by a driver (0.85) contributes more than an agentic guess (0.60) — ranking <b>inherits the cascade's trust</b>. No other Vietnamese system does this.</div>
+  </div>
+
+  <!-- ============ G6 : TRIGGERS ============ -->
+  <div class="slide" id="g6">
+    <div class="eyebrow">G6 · Appendix A1 · When the system runs itself</div>
+    <h2>6 triggers: a living system, not a dead dataset</h2>
+    <p class="sub">This is the literal meaning of "continuously enriched" in the brief.</p>
+    <svg viewBox="0 0 900 380" role="img" aria-label="Six triggers T1 through T6 on the system's lifetime timeline">
+      <line x1="60" y1="70" x2="840" y2="70" stroke="#c9c6bd" stroke-width="2"/>
+      <!-- T1 -->
+      <circle cx="100" cy="70" r="9" fill="#1f5c96"/>
+      <text x="100" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f5c96" class="t-title">T1</text>
+      <rect x="48" y="94" width="120" height="84" rx="8" fill="#e7f0fa" stroke="#a9c6e6"/>
+      <text x="108" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#1f5c96">Bootstrap</text>
+      <text x="108" y="132" text-anchor="middle" font-size="10.5" fill="#3f6a92">load CSV + OSM</text>
+      <text x="108" y="148" text-anchor="middle" font-size="10.5" fill="#3f6a92">→ ER → index</text>
+      <text x="108" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">REAL</text>
+      <!-- T2 -->
+      <circle cx="240" cy="70" r="9" fill="#b5730f"/>
+      <text x="240" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b5730f" class="t-title">T2</text>
+      <rect x="184" y="94" width="128" height="84" rx="8" fill="#faeeda" stroke="#ecc78a"/>
+      <text x="248" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#b5730f">Gap-detect</text>
+      <text x="248" y="132" text-anchor="middle" font-size="10.5" fill="#8a5a10">score &lt; 0.75 / field empty</text>
+      <text x="248" y="148" text-anchor="middle" font-size="10.5" fill="#8a5a10">→ agent enrich → re-score</text>
+      <text x="248" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">REAL · demo hero</text>
+      <!-- T3 -->
+      <circle cx="380" cy="70" r="9" fill="#b5730f"/>
+      <text x="380" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b5730f" class="t-title">T3</text>
+      <rect x="324" y="94" width="128" height="84" rx="8" fill="#faeeda" stroke="#ecc78a"/>
+      <text x="388" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#b5730f">TTL expiry</text>
+      <text x="388" y="132" text-anchor="middle" font-size="10.5" fill="#8a5a10">t3:30d · 4a:14d · t1:180d</text>
+      <text x="388" y="148" text-anchor="middle" font-size="10.5" fill="#8a5a10">re-fetch that exact source</text>
+      <text x="388" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">REAL · demo fast-forwarded</text>
+      <!-- T4 -->
+      <circle cx="520" cy="70" r="9" fill="#0f6e56"/>
+      <text x="520" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f6e56" class="t-title">T4</text>
+      <rect x="464" y="94" width="128" height="84" rx="8" fill="#e1f5ee" stroke="#9fe1cb"/>
+      <text x="528" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#0f6e56">Business event</text>
+      <text x="528" y="132" text-anchor="middle" font-size="10.5" fill="#0d5a47">owner uploads menu/claims</text>
+      <text x="528" y="148" text-anchor="middle" font-size="10.5" fill="#0d5a47">→ real OCR → tier 1 overrides</text>
+      <text x="528" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#b5730f">SIM event + REAL OCR</text>
+      <!-- T5 -->
+      <circle cx="660" cy="70" r="9" fill="#0f6e56"/>
+      <text x="660" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f6e56" class="t-title">T5</text>
+      <rect x="604" y="94" width="128" height="84" rx="8" fill="#e1f5ee" stroke="#9fe1cb"/>
+      <text x="668" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#0f6e56">Driver event</text>
+      <text x="668" y="132" text-anchor="middle" font-size="10.5" fill="#0d5a47">toll passage + meal window</text>
+      <text x="668" y="148" text-anchor="middle" font-size="10.5" fill="#0d5a47">dwell ≥25' → 1-tap → tier 2</text>
+      <text x="668" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#b5730f">SIM · badged</text>
+      <!-- T6 -->
+      <circle cx="800" cy="70" r="9" fill="#534ab7"/>
+      <text x="800" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="#534ab7" class="t-title">T6</text>
+      <rect x="744" y="94" width="120" height="84" rx="8" fill="#eeedfe" stroke="#c6c2ef"/>
+      <text x="804" y="114" text-anchor="middle" font-size="12" font-weight="600" fill="#534ab7">User query</text>
+      <text x="804" y="132" text-anchor="middle" font-size="10.5" fill="#6a63b8">/search · /rest-stops</text>
+      <text x="804" y="148" text-anchor="middle" font-size="10.5" fill="#6a63b8">/assistant</text>
+      <text x="804" y="168" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">REAL</text>
+
+      <!-- evidence strip -->
+      <rect x="60" y="210" width="800" height="60" rx="9" fill="#f6f4ee" stroke="#d8d5cc"/>
+      <text x="76" y="234" font-size="12" font-weight="600" fill="#444441" class="t-title">SUPPORTING EVIDENCE (use if asked "does a proactive trigger have real value?")</text>
+      <text x="76" y="256" font-size="11.5" fill="#7a7870">Grab: geofence + event triggers measured +3% conversion across SEA · Baidu MST-PAC: 17.9% of users with the same query prefix want a different POI by hour/location</text>
+
+      <!-- loop note -->
+      <rect x="60" y="290" width="800" height="60" rx="9" fill="#e1f5ee" stroke="#9fe1cb"/>
+      <text x="76" y="314" font-size="12" font-weight="600" fill="#0f6e56" class="t-title">CLOSED LOOP: T5 (driver 1-tap) generates tier-2 data → resolver → quality rises → T2 runs less → enrichment cost falls</text>
+      <text x="76" y="336" font-size="11.5" fill="#0d5a47">the more people use it, the cheaper and more accurate the data gets — manual passes never have this property</text>
+    </svg>
+    <div class="cap">T2 (gap-detect) is the <b>demo hero</b>: RES019–030 jump quality 0.6 → 0.9 live on stage. T4/T5 run simulated and badged, never feed the benchmark.</div>
+  </div>
+
+  <!-- ============ G7 : GOOGLE ============ -->
+  <div class="slide" id="g7">
+    <div class="eyebrow">G7 · Slide 4 · Why It Wins</div>
+    <h2>Google wins on breadth — a Vietnamese map wins on depth, trust, and being VN-first</h2>
+    <p class="sub">64% of diners check maps before choosing · 76% of "near me" searches lead to a visit within 24h · food is the #1 "near me" category</p>
+    <table class="cmp">
+      <thead><tr><th style="text-align:left"></th><th style="color:var(--muted)">Google Maps</th><th style="color:var(--green)">Us · on Tasco Maps</th></tr></thead>
+      <tbody>
+        <tr><td>Structured menu with prices</td><td style="text-align:center"><span style="color:var(--red)">✕</span> mostly photos</td><td style="text-align:center"><span style="color:var(--green)">✓</span> OCR + vision, itemized</td></tr>
+        <tr><td>Dietary filter (vegetarian/halal)</td><td style="text-align:center"><span style="color:var(--red)">✕</span></td><td style="text-align:center"><span style="color:var(--green)">✓</span> hard filter, never silently relaxed</td></tr>
+        <tr><td>Why this suggestion?</td><td style="text-align:center"><span style="color:var(--red)">✕</span> black box</td><td style="text-align:center"><span style="color:var(--green)">✓</span> factor-by-factor explanation</td></tr>
+        <tr><td>Field provenance + confidence</td><td style="text-align:center"><span style="color:var(--red)">✕</span></td><td style="text-align:center"><span style="color:var(--green)">✓</span> source · confidence · freshness</td></tr>
+        <tr><td>Ranking favors local eateries</td><td style="text-align:center"><span style="color:var(--red)">✕</span> ad/review-volume driven</td><td style="text-align:center"><span style="color:var(--green)">✓</span> anti-luxury term built into the score</td></tr>
+        <tr><td>Refuses to answer unknowns</td><td style="text-align:center"><span style="color:var(--red)">✕</span> LLM overviews can hallucinate</td><td style="text-align:center"><span style="color:var(--green)">✓</span> not_found by construction</td></tr>
+      </tbody>
+    </table>
+    <div class="cap">Answer to "why won't Google just do this" (≤25s): <b>structural, not technical</b> — Google optimizes one global product; MISA CukCuk's 50k restaurants + VETC's 2.8M vehicles are a data alliance only a local ecosystem can build and monetize. Say "shallow and un-verifiable locally," NOT "Google's data is bad."</div>
+  </div>
+
+  <!-- ============ G8 : FLYWHEEL ============ -->
+  <div class="slide" id="g8">
+    <div class="eyebrow">G8 · Slide 5 strip / Appendix A5 · Three-phase strategy</div>
+    <h2>Data flywheel: MISA × VETC × Agent — a dataset nobody can scrape</h2>
+    <p class="sub">Phase 1 agent fills the map → Phase 2 launch retains users → Phase 3 the partner data alliance compounds.</p>
+    <svg viewBox="0 0 900 460" role="img" aria-label="Four-node data flywheel spinning around a central agent">
+      <defs>
+        <marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- top: deeper data -->
+      <rect x="345" y="40" width="210" height="70" rx="10" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+      <text x="450" y="68" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f6e56" class="t-title">Deep, trustworthy data</text>
+      <text x="450" y="88" text-anchor="middle" font-size="11.5" fill="#0d5a47">menu · price · dietary · provenance</text>
+      <!-- right: users -->
+      <rect x="630" y="190" width="210" height="70" rx="10" fill="#e7f0fa" stroke="#1f5c96" stroke-width="1.5"/>
+      <text x="735" y="218" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f5c96" class="t-title">User opens app hungry</text>
+      <text x="735" y="238" text-anchor="middle" font-size="11.5" fill="#3f6a92">"what's nearby" becomes the map habit</text>
+      <!-- bottom: signals -->
+      <rect x="345" y="340" width="210" height="70" rx="10" fill="#e7f0fa" stroke="#1f5c96" stroke-width="1.5"/>
+      <text x="450" y="368" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f5c96" class="t-title">Behavior signals</text>
+      <text x="450" y="388" text-anchor="middle" font-size="11.5" fill="#3f6a92">VETC 2.8M vehicles · dwell · 1-tap → tier 2</text>
+      <!-- left: merchants -->
+      <rect x="60" y="190" width="210" height="70" rx="10" fill="#faeeda" stroke="#b5730f" stroke-width="1.5"/>
+      <text x="165" y="218" text-anchor="middle" font-size="13.5" font-weight="700" fill="#b5730f" class="t-title">Merchant claims listing</text>
+      <text x="165" y="238" text-anchor="middle" font-size="11.5" fill="#8a5a10">MISA CukCuk 50k+ POS → tier 1</text>
+
+      <!-- circular arrows -->
+      <path d="M560 95 Q680 120 720 186" fill="none" stroke="#0f6e56" stroke-width="2" marker-end="url(#a8)"/>
+      <path d="M720 264 Q680 330 560 365" fill="none" stroke="#0f6e56" stroke-width="2" marker-end="url(#a8)"/>
+      <path d="M340 365 Q220 330 180 264" fill="none" stroke="#0f6e56" stroke-width="2" marker-end="url(#a8)"/>
+      <path d="M180 186 Q220 120 340 95" fill="none" stroke="#0f6e56" stroke-width="2" marker-end="url(#a8)"/>
+
+      <!-- agent at center -->
+      <circle cx="450" cy="225" r="58" fill="#faeeda" stroke="#b5730f" stroke-width="2"/>
+      <text x="450" y="218" text-anchor="middle" font-size="14" font-weight="700" fill="#b5730f" class="t-title">AGENT</text>
+      <text x="450" y="238" text-anchor="middle" font-size="10.5" fill="#8a5a10">verifies every spoke</text>
+
+      <!-- spokes -->
+      <line x1="450" y1="167" x2="450" y2="114" stroke="#b5730f" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <line x1="508" y1="225" x2="626" y2="225" stroke="#b5730f" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <line x1="450" y1="283" x2="450" y2="336" stroke="#b5730f" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <line x1="392" y1="225" x2="274" y2="225" stroke="#b5730f" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+      <!-- moat note -->
+      <text x="450" y="440" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0f6e56">VETC mobility + MISA merchant truth + agent verification = the part of the map Google structurally cannot copy</text>
+    </svg>
+    <div class="cap">4 revenue streams attach to this flywheel: <b>merchant listings</b> (MISA channel) · <b>sponsored placement</b> inside honest ranking · <b>B2B licensing</b> (provenance-tagged data) · <b>VETC cross-sell</b> route-aware dining. No revenue projections shown — just four doors this asset opens (matches the playbook, safe under exec questioning).</div>
+  </div>
+
+  <!-- ============ G9 : COST MODEL ============ -->
+  <div class="slide" id="g9">
+    <div class="eyebrow">G9 · Slide 5 · Money slide</div>
+    <h2>Cost model at scale: linear compute vs person-years</h2>
+    <p class="sub">Left: one POI. Right: nationwide — manual cost scales with headcount, agent cost scales with compute.</p>
+    <svg viewBox="0 0 900 400" role="img" aria-label="Paired bar chart per POI and a cost-versus-POI-count comparison">
+      <!-- left: per-POI bars -->
+      <text x="60" y="46" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">ONE LAUNCH-READY PROFILE</text>
+      <line x1="80" y1="60" x2="80" y2="300" stroke="#c9c6bd" stroke-width="1"/>
+      <line x1="80" y1="300" x2="400" y2="300" stroke="#c9c6bd" stroke-width="1"/>
+      <rect x="120" y="80" width="100" height="220" rx="6" fill="#8a8880"/>
+      <text x="170" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#6a6860" class="t-title">15 minutes</text>
+      <text x="170" y="195" text-anchor="middle" font-size="12" fill="#ffffff" font-weight="600">manual</text>
+      <text x="170" y="318" text-anchor="middle" font-size="11.5" fill="#8a8880">estimated</text>
+      <rect x="270" y="272" width="100" height="28" rx="6" fill="#0f6e56"/>
+      <text x="320" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#0f6e56" class="t-title">X seconds</text>
+      <text x="320" y="318" text-anchor="middle" font-size="11.5" fill="#0f6e56">measured tonight · Xđ</text>
+
+      <!-- right: scaling lines -->
+      <text x="480" y="46" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">NATIONWIDE (323,010 OUTLETS)</text>
+      <line x1="500" y1="60" x2="500" y2="300" stroke="#c9c6bd" stroke-width="1"/>
+      <line x1="500" y1="300" x2="850" y2="300" stroke="#c9c6bd" stroke-width="1"/>
+      <text x="675" y="322" text-anchor="middle" font-size="12" fill="#7a7870"># of POIs →</text>
+      <text x="478" y="180" text-anchor="middle" font-size="12" fill="#7a7870" transform="rotate(-90 478 180)">cost →</text>
+      <!-- manual: steep line -->
+      <line x1="500" y1="300" x2="790" y2="70" stroke="#8a8880" stroke-width="3" stroke-dasharray="8 5"/>
+      <text x="700" y="100" font-size="12.5" fill="#6a6860" font-weight="600">manual: 80,750 hours ≈ 40 person-years</text>
+      <text x="700" y="118" font-size="11.5" fill="#8a8880">one pass, then decays — need to hire to keep scaling</text>
+      <!-- agent: shallow line -->
+      <line x1="500" y1="300" x2="850" y2="250" stroke="#0f6e56" stroke-width="3"/>
+      <text x="668" y="245" font-size="12.5" fill="#0f6e56" font-weight="600">agent: Xđ × 323,010 ≈ [Y]M VND</text>
+      <text x="668" y="263" font-size="11.5" fill="#0d5a47">parallelizes → days, not years · reruns any time</text>
+
+      <!-- headline -->
+      <rect x="60" y="344" width="790" height="44" rx="9" fill="#1a1c1a"/>
+      <text x="455" y="371" text-anchor="middle" font-size="13.5" font-weight="600" fill="#f6f4ee" class="t-title">"15 minutes of human curation, or Xđ and X seconds of agent run — repeatable monthly, for all 323,010 outlets."</text>
+    </svg>
+    <div class="cap">Load-bearing placeholders: <span class="ph">Xđ/POI · X seconds/POI · [Y]M VND total · Xms latency · N gaps closed · [N]/23 eval pass rate</span>. DEV2 measures cost/POI = credits ÷ POIs. Without these, slide 5 is empty — <b>top priority before freeze</b>.</div>
+  </div>
+
+  <!-- ============ G10 : EVAL MATRIX ============ -->
+  <div class="slide" id="g10">
+    <div class="eyebrow">G10 · Appendix A7 · Evaluated (the "E" in Real/Reliable/Controlled/Evaluated)</div>
+    <h2>Evaluation matrix: 15 public + 8 personalization + 2 honesty traps</h2>
+    <p class="sub">Fill in pass/fail before freeze. Both traps must go 2/2 — that's the proof of "never fabricates."</p>
+    <svg viewBox="0 0 900 350" role="img" aria-label="Grid of evaluation categories across three groups">
+      <!-- 15 public -->
+      <text x="60" y="44" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">15 PUBLIC EVALUATION QUERIES</text>
+      <g font-size="10" text-anchor="middle">
+        <rect x="60"  y="56" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="120" y="74" fill="#1f5c96" font-weight="600">Food Search</text><text x="120" y="89" fill="#3f6a92">M1</text>
+        <rect x="190" y="56" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="250" y="74" fill="#1f5c96" font-weight="600">Menu Extraction</text><text x="250" y="89" fill="#3f6a92">M2</text>
+        <rect x="320" y="56" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="380" y="74" fill="#1f5c96" font-weight="600">Family Dining</text><text x="380" y="89" fill="#3f6a92">M1</text>
+        <rect x="450" y="56" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="510" y="74" fill="#1f5c96" font-weight="600">Dietary</text><text x="510" y="89" fill="#3f6a92">M1+M2</text>
+        <rect x="580" y="56" width="120" height="42" rx="7" fill="#faeeda" stroke="#ecc78a"/><text x="640" y="74" fill="#b5730f" font-weight="600">Halal</text><text x="640" y="89" fill="#8a5a10">trap: empty city</text>
+        <rect x="60"  y="108" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="120" y="126" fill="#1f5c96" font-weight="600">Review Analysis</text><text x="120" y="141" fill="#3f6a92">M3</text>
+        <rect x="190" y="108" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="250" y="126" fill="#1f5c96" font-weight="600">Menu QA</text><text x="250" y="141" fill="#3f6a92">M2+M1</text>
+        <rect x="320" y="108" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="380" y="126" fill="#1f5c96" font-weight="600">Comparison</text><text x="380" y="141" fill="#3f6a92">M1+M3+M4</text>
+        <rect x="450" y="108" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="510" y="126" fill="#1f5c96" font-weight="600">POI Quality</text><text x="510" y="141" fill="#3f6a92">M4</text>
+        <rect x="580" y="108" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="640" y="126" fill="#1f5c96" font-weight="600">Budget</text><text x="640" y="141" fill="#3f6a92">M1+M2</text>
+        <rect x="60"  y="160" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="120" y="178" fill="#1f5c96" font-weight="600">Late Night</text><text x="120" y="193" fill="#3f6a92">M1</text>
+        <rect x="190" y="160" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="250" y="178" fill="#1f5c96" font-weight="600">Romantic</text><text x="250" y="193" fill="#3f6a92">M1</text>
+        <rect x="320" y="160" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="380" y="178" fill="#1f5c96" font-weight="600">AI Summary</text><text x="380" y="193" fill="#3f6a92">M3+M1+M4</text>
+        <rect x="450" y="160" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="510" y="178" fill="#1f5c96" font-weight="600">Menu Search</text><text x="510" y="193" fill="#3f6a92">M1+M2</text>
+        <rect x="580" y="160" width="120" height="42" rx="7" fill="#e7f0fa" stroke="#a9c6e6"/><text x="640" y="178" fill="#1f5c96" font-weight="600">Business Dining</text><text x="640" y="193" fill="#3f6a92">M1</text>
+      </g>
+      <!-- traps -->
+      <text x="730" y="44" font-size="12.5" font-weight="600" fill="#b23a34" class="t-title">2 HONESTY TRAPS</text>
+      <rect x="730" y="56" width="150" height="66" rx="8" fill="#fbeae7" stroke="#b23a34" stroke-width="1.5"/>
+      <text x="805" y="80" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b23a34">"Crystal BBQ?"</text>
+      <text x="805" y="98" text-anchor="middle" font-size="10.5" fill="#8a3b36">restaurant doesn't exist</text>
+      <text x="805" y="113" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">→ not_found ✓</text>
+      <rect x="730" y="132" width="150" height="66" rx="8" fill="#fbeae7" stroke="#b23a34" stroke-width="1.5"/>
+      <text x="805" y="156" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b23a34">Halal-in-HCMC</text>
+      <text x="805" y="174" text-anchor="middle" font-size="10.5" fill="#8a3b36">city with 0 halal spots</text>
+      <text x="805" y="189" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f6e56">→ honest empty state ✓</text>
+      <!-- 8 P/L -->
+      <text x="60" y="238" font-size="12.5" font-weight="600" fill="#7a7870" class="t-title">8 PERSONALIZATION & LOCALIZATION SCENARIOS</text>
+      <g font-size="10.5" text-anchor="middle">
+        <rect x="60"  y="250" width="190" height="40" rx="7" fill="#eeedfe" stroke="#c6c2ef"/><text x="155" y="274" fill="#534ab7">diacritics-insensitive VN query</text>
+        <rect x="260" y="250" width="190" height="40" rx="7" fill="#eeedfe" stroke="#c6c2ef"/><text x="355" y="274" fill="#534ab7">VN food taxonomy (dish classes ≠ each other)</text>
+        <rect x="460" y="250" width="190" height="40" rx="7" fill="#eeedfe" stroke="#c6c2ef"/><text x="555" y="274" fill="#534ab7">anti-luxury: local spots rank first</text>
+        <rect x="660" y="250" width="220" height="40" rx="7" fill="#eeedfe" stroke="#c6c2ef"/><text x="770" y="274" fill="#534ab7">recommendations explained by factor + source</text>
+      </g>
+      <text x="60" y="322" font-size="11.5" fill="#7a7870">…+4 more scenarios per DEV3's eval file — full pass/fail table lives in appendix A7. Slide shows only the totals: <tspan font-weight="700" fill="#b5730f">[N]/15 + [N]/8 + 2/2</tspan></text>
+    </svg>
+    <div class="cap">The 15-cell grid matches the module-to-question map already locked (M1 touches 12/15). The Halal cell is amber because it's dual-purpose: both a scored query and a trap. <b>2/2 traps is the one number that's already certain</b> — anchor on it while the others are still being measured.</div>
+  </div>
+
+  <!-- ============ G11 : DEMO TIMELINE ============ -->
+  <div class="slide" id="g11">
+    <div class="eyebrow">G11 · Slide 6 · Demo ≤60s + Close</div>
+    <h2>Demo timeline: live enrichment + honesty trap</h2>
+    <p class="sub">If time runs short: cut to 45–60s only (badge jump + trap). Backup video is mandatory.</p>
+    <svg viewBox="0 0 900 230" role="img" aria-label="Five-beat demo timeline across 60 seconds">
+      <line x1="60" y1="100" x2="840" y2="100" stroke="#c9c6bd" stroke-width="2"/>
+      <g>
+        <circle cx="110" cy="100" r="8" fill="#8a8880"/>
+        <text x="110" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">0–10s</text>
+        <text x="110" y="130" text-anchor="middle" font-size="12" fill="#7a7870">real POI · badge 0.61</text>
+        <text x="110" y="146" text-anchor="middle" font-size="12" fill="#7a7870">missing menu & hours</text>
+      </g>
+      <g>
+        <circle cx="280" cy="100" r="8" fill="#1f5c96"/>
+        <text x="280" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">10–20s</text>
+        <text x="280" y="130" text-anchor="middle" font-size="12" fill="#7a7870">click "Enrich"</text>
+        <text x="280" y="146" text-anchor="middle" font-size="12" fill="#7a7870">agent panel opens</text>
+      </g>
+      <g>
+        <circle cx="450" cy="100" r="8" fill="#1f5c96"/>
+        <text x="450" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">20–45s</text>
+        <text x="450" y="130" text-anchor="middle" font-size="12" fill="#7a7870">plan + tool calls visible</text>
+        <text x="450" y="146" text-anchor="middle" font-size="12" fill="#7a7870">consensus check → badges appear</text>
+      </g>
+      <g>
+        <circle cx="620" cy="100" r="8" fill="#0f6e56"/>
+        <text x="620" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">45–55s</text>
+        <text x="620" y="130" text-anchor="middle" font-size="12" font-weight="600" fill="#0f6e56">badge → 0.90</text>
+        <text x="620" y="146" text-anchor="middle" font-size="12" fill="#7a7870">every field shows its source</text>
+      </g>
+      <g>
+        <circle cx="790" cy="100" r="8" fill="#b23a34"/>
+        <text x="790" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a1c1a" class="t-title">55–60s</text>
+        <text x="790" y="130" text-anchor="middle" font-size="12" font-weight="600" fill="#b23a34">"Is Crystal BBQ any good?"</text>
+        <text x="790" y="146" text-anchor="middle" font-size="12" fill="#b23a34">→ "Not found in our data"</text>
+      </g>
+      <rect x="60" y="176" width="780" height="44" rx="9" fill="#1a1c1a"/>
+      <text x="450" y="203" text-anchor="middle" font-size="13.5" font-weight="600" fill="#f6f4ee" class="t-title">"We don't just enrich data — we make data worth trusting."</text>
+    </svg>
+    <div class="cap">The 20–45s beat is where judges <b>see</b> the agent (plan + tool calls visible on screen) — don't let it run silently and only show the result, or rubric #1 is lost.</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+\begin{thebibliography}{1}
+
+\bibitem{he2020lightgcn}
+Xiangnan He, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
+\newblock Lightgcn: Simplifying and powering graph convolution network for
+  recommendation.
+\newblock In {\em Proceedings of the 43rd International ACM SIGIR Conference on
+  Research and Development in Information Retrieval (SIGIR)}, pages 639--648,
+  2020.
+
+\bibitem{kang2018sasrec}
+Wang-Cheng Kang and Julian McAuley.
+\newblock Self-attentive sequential recommendation.
+\newblock In {\em Proceedings of the IEEE International Conference on Data
+  Mining (ICDM)}, 2018.
+
+\bibitem{kieu2024kalm4rec}
+D.~Kieu et~al.
+\newblock Kalm4rec: Keyword-driven retrieval-augmented llms for cold-start user
+  recommendations.
+\newblock {\em arXiv preprint arXiv:2405.19612}, 2024.
+
+\bibitem{wang2024righttool}
+Shuchao Wang et~al.
+\newblock Right tool, right job: Recommendation for repeat and exploration
+  consumption in food delivery.
+\newblock In {\em Proceedings of the 18th ACM Conference on Recommender Systems
+  (RecSys)}, 2024.
+
+\bibitem{ju2024lmprior}
+J.~Ju et~al.
+\newblock Language-model prior overcomes cold-start items.
+\newblock {\em arXiv preprint arXiv:2411.09065}, 2024.
+
+\bibitem{dinh2026hutieubert}
+A.~T.~D. Dinh, K.~H.~N. Vo, et~al.
+\newblock Hutieubert: Morpheme-aware transformer for vietnamese language
+  processing.
+\newblock In {\em Proceedings of the Annual Meeting of the Association for
+  Computational Linguistics (ACL)}, 2026.
+
+\bibitem{lian2014geomf}
+Defu Lian, Cong Zhao, Xing~Xie Zhou, Ji~Zhou, Kai Zheng, and Yong Rui.
+\newblock Geomf: Joint geographical modeling and matrix factorization for
+  point-of-interest recommendation.
+\newblock In {\em Proceedings of the 20th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining (KDD)}, pages 831--840, 2014.
+
+\bibitem{yang2022getnext}
+S.~Yang et~al.
+\newblock Getnext: Trajectory flow map enhanced transformer for next poi
+  recommendation.
+\newblock In {\em Proceedings of the 45th International ACM SIGIR Conference on
+  Research and Development in Information Retrieval (SIGIR)}, 2022.
+
+\end{thebibliography}
