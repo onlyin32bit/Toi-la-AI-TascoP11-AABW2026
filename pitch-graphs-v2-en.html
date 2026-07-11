@@ -126,58 +126,58 @@
 
       <!-- S0 -->
       <rect x="60" y="90" width="340" height="52" rx="9" fill="#e7f0fa" stroke="#a9c6e6"/>
-      <text x="230" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5c96">S0 · Source Registry — 5 trust tiers</text>
-      <text x="230" y="130" text-anchor="middle" font-size="11.5" fill="#3f6a92">CSV · OSM · Places · Foody/FB · TikTok · OCR · VETC</text>
+      <text x="230" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5c96">S0 · Source Registry — CSV core</text>
+      <text x="230" y="130" text-anchor="middle" font-size="11.5" fill="#3f6a92">5 CSVs (POI·Menu·OCR·Reviews·Eval) · scraping = future</text>
       <!-- S1 -->
       <rect x="60" y="158" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
-      <text x="230" y="178" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S1 · Entity Resolution → canonical_id</text>
-      <text x="230" y="196" text-anchor="middle" font-size="11.5" fill="#6a63b8">geo &lt;50m + name embedding + LLM tie-break</text>
+      <text x="230" y="178" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S1 · NER — known_entities tagging</text>
+      <text x="230" y="196" text-anchor="middle" font-size="11.5" fill="#6a63b8">HuTieuBERT tags names → known_entities (kb.json)</text>
       <!-- S2 -->
       <rect x="60" y="222" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
       <text x="230" y="242" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S2 · Extraction</text>
-      <text x="230" y="260" text-anchor="middle" font-size="11.5" fill="#6a63b8">OCR vision · review→aspect · web→structured</text>
+      <text x="230" y="260" text-anchor="middle" font-size="11.5" fill="#6a63b8">raw_ocr_text parse · batch AI summary/sentiment</text>
       <!-- S3 -->
       <rect x="60" y="286" width="340" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
       <text x="230" y="306" text-anchor="middle" font-size="13.5" font-weight="600" fill="#534ab7">S3 · Normalization — closed taxonomy</text>
-      <text x="230" y="324" text-anchor="middle" font-size="11.5" fill="#6a63b8">slang/dialect ("banging", "on point") → standard aspect</text>
+      <text x="230" y="324" text-anchor="middle" font-size="11.5" fill="#6a63b8">VN text → taxonomy: amenity/segment/price/diet</text>
       <!-- RESOLVER -->
       <rect x="60" y="350" width="340" height="56" rx="9" fill="#faeeda" stroke="#b5730f" stroke-width="2"/>
-      <text x="230" y="372" text-anchor="middle" font-size="14" font-weight="700" fill="#b5730f">RESOLVER · highest tier wins · N≥3 consensus</text>
-      <text x="230" y="392" text-anchor="middle" font-size="11.5" fill="#8a5a10">0 sources = field ABSENT, no fabrication · keeps provenance</text>
+      <text x="230" y="372" text-anchor="middle" font-size="14" font-weight="700" fill="#b5730f">RESOLVER (optional, real-POI enrichment) · N≥2</text>
+      <text x="230" y="392" text-anchor="middle" font-size="11.5" fill="#8a5a10">0 sources = field ABSENT, no fabrication · enrichment.json only</text>
       <!-- S4 -->
       <rect x="60" y="422" width="163" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
       <text x="141" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#534ab7">S4 · Quality</text>
-      <text x="141" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">complete×agree×fresh</text>
+      <text x="141" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">filled ÷ expected fields</text>
       <!-- S5 -->
       <rect x="237" y="422" width="163" height="48" rx="9" fill="#eeedfe" stroke="#c6c2ef"/>
       <text x="318" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#534ab7">S5 · Index</text>
-      <text x="318" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">BM25·vector·geo·corridor</text>
+      <text x="318" y="460" text-anchor="middle" font-size="10.5" fill="#6a63b8">lexical token +[opt] embed</text>
 
       <!-- KB handoff -->
       <rect x="415" y="256" width="90" height="60" rx="9" fill="#e1f5ee" stroke="#0f6e56"/>
       <text x="460" y="281" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f6e56">KB file</text>
-      <text x="460" y="299" text-anchor="middle" font-size="10.5" fill="#0d5a47">provenance-tagged</text>
+      <text x="460" y="299" text-anchor="middle" font-size="10.5" fill="#0d5a47">kb.json + UGC</text>
 
       <!-- S6 -->
       <rect x="530" y="90" width="310" height="150" rx="9" fill="#e1f5ee" stroke="#9fe1cb"/>
       <text x="685" y="114" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f6e56">S6 · Query path</text>
-      <text x="685" y="138" text-anchor="middle" font-size="12" fill="#0d5a47">① HARD gate (halal·allergen·diet·budget)</text>
-      <text x="685" y="158" text-anchor="middle" font-size="12" fill="#0d5a47">② CTX inject (t_arrival = now + ETA)</text>
+      <text x="685" y="138" text-anchor="middle" font-size="12" fill="#0d5a47">① HARD gate (dish·city·diet·price·rating·hours)</text>
+      <text x="685" y="158" text-anchor="middle" font-size="12" fill="#0d5a47">② CTX inject (time=HH:MM, default now)</text>
       <text x="685" y="178" text-anchor="middle" font-size="12" fill="#0d5a47">③ SOFT Σwᵢ·Sᵢ + renormalize</text>
-      <text x="685" y="198" text-anchor="middle" font-size="12" fill="#0d5a47">④ LLM rerank top-20 + explanation</text>
+      <text x="685" y="198" text-anchor="middle" font-size="12" fill="#0d5a47">④ [optional] LLM rerank top-10 + reasoning</text>
       <text x="685" y="224" text-anchor="middle" font-size="11" fill="#5a8a76">NER entity gate: outside KB → not_found</text>
       <!-- S7 -->
       <rect x="530" y="262" width="310" height="88" rx="9" fill="#e7f0fa" stroke="#a9c6e6"/>
       <text x="685" y="286" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5c96">S7 · Serve — Tasco API contract</text>
-      <text x="685" y="308" text-anchor="middle" font-size="11.5" fill="#3f6a92">/v1/search · /v1/poi/{id} · /v1/route/rest-stops</text>
-      <text x="685" y="326" text-anchor="middle" font-size="11.5" fill="#3f6a92">/assistant (RAG, must cite provenance)</text>
+      <text x="685" y="308" text-anchor="middle" font-size="11.5" fill="#3f6a92">/v1/recommend · /v1/poi · /v1/compare</text>
+      <text x="685" y="326" text-anchor="middle" font-size="11.5" fill="#3f6a92">/v1/assistant (RAG) · /v1/contribute (UGC)</text>
       <!-- UI -->
       <rect x="530" y="376" width="310" height="52" rx="9" fill="#f1efe8" stroke="#c9c6bd"/>
-      <text x="685" y="398" text-anchor="middle" font-size="13" font-weight="600" fill="#444441">Map UI + agent panel + provenance badges</text>
+      <text x="685" y="398" text-anchor="middle" font-size="13" font-weight="600" fill="#444441">Map UI + assistant chat + UGC badges</text>
       <text x="685" y="416" text-anchor="middle" font-size="11" fill="#7a7870">PlaceResult DTO · WGS84 · Vietnamese diacritics preserved</text>
       <!-- guard -->
       <rect x="530" y="452" width="310" height="48" rx="9" fill="#fbeae7" stroke="#e8b4ad"/>
-      <text x="685" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#b23a34">Guard: SIM data is badged, never enters the 15 benchmark queries</text>
+      <text x="685" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#b23a34">Guard: UGC data is badged, never enters the 15 benchmark queries</text>
       <text x="685" y="490" text-anchor="middle" font-size="11" fill="#8a3b36">benchmark scores only real data · cache-first survives dead wifi</text>
 
       <!-- arrows -->
@@ -192,7 +192,7 @@
       <line x1="685" y1="240" x2="685" y2="258" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
       <line x1="685" y1="350" x2="685" y2="372" stroke="#8a8880" stroke-width="1.6" marker-end="url(#a2)"/>
     </svg>
-    <div class="cap">This is the answer to the Q&A "scraping legality" and "how does Tasco integrate": enrichment runs <b>offline</b>, the query path <b>never calls a scraper</b>, and serving matches Tasco's contract exactly. One binary + one KB file = integration is pointing their gateway at our endpoint.</div>
+    <div class="cap">This is the answer to the Q&A "scraping legality" and "how does Tasco integrate": enrichment runs <b>offline</b>, the query path <b>never calls a scraper</b>, and serving matches Tasco's contract exactly. One binary + one KB file = integration is pointing their gateway at our endpoint. Primary enrichment story is <b>UGC contribution + menu OCR</b> (PLAN.md §5.10) — S0–S5's scraping/resolver lane is optional/future (§6.5), shown here for the roadmap narrative, not the 12-hour build.</div>
   </div>
 
   <!-- ============ G3 : AGENT LOOP ============ -->
@@ -223,7 +223,7 @@
       <!-- Tools -->
       <rect x="390" y="120" width="140" height="66" rx="10" fill="#e7f0fa" stroke="#a9c6e6"/>
       <text x="460" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1f5c96">Tools</text>
-      <text x="460" y="167" text-anchor="middle" font-size="11.5" fill="#3f6a92">Apify·AgentQL·OCR·vision</text>
+      <text x="460" y="167" text-anchor="middle" font-size="11.5" fill="#3f6a92">Apify·AgentQL·ZenRows</text>
       <!-- Act -->
       <rect x="570" y="120" width="130" height="66" rx="10" fill="#e7f0fa" stroke="#a9c6e6"/>
       <text x="635" y="148" text-anchor="middle" font-size="14" font-weight="600" class="t-title" fill="#1f5c96">Act</text>
@@ -252,14 +252,14 @@
       <text x="74" y="364" font-size="11.5" fill="#0f6e56">consensus 2/2 → write, conf 0.80</text>
       <rect x="330" y="308" width="255" height="66" rx="8" fill="#f6f4ee" stroke="#d8d5cc"/>
       <text x="344" y="330" font-size="12" font-weight="600" fill="#1a1c1a">gap: menu + prices</text>
-      <text x="344" y="348" font-size="11.5" fill="#7a7870">→ Foody (AgentQL) + menu photo (OCR)</text>
+      <text x="344" y="348" font-size="11.5" fill="#7a7870">→ Foody (AgentQL) + website (Tavily)</text>
       <text x="344" y="364" font-size="11.5" fill="#0f6e56">price parsed by regex, LLM never guesses price</text>
       <rect x="600" y="308" width="280" height="66" rx="8" fill="#fbeae7" stroke="#e8b4ad"/>
       <text x="614" y="330" font-size="12" font-weight="600" fill="#b23a34">gap: dietary — only 1 source says "vegetarian"</text>
       <text x="614" y="348" font-size="11.5" fill="#8a3b36">consensus 1/2 → NOT written</text>
       <text x="614" y="364" font-size="11.5" fill="#8a3b36">gap flagged, waiting on a second source</text>
     </svg>
-    <div class="cap">The three example boxes are ammo for "why agentic, not a pipeline?": different POI → different plan; and the red box proves it knows how to <b>refuse</b>. If only one slide gets a diagram, make it this one.</div>
+    <div class="cap">The three example boxes are ammo for "why agentic, not a pipeline?": different POI → different plan; and the red box proves it knows how to <b>refuse</b>. Scope check: this runs on <b>real POIs outside the 30-quán benchmark only</b> (PLAN.md §6.5) and sits in the nice-to-have tier — cut first if the 12-hour build runs short (§10). Don't present it as guaranteed-live without checking the day-of build status.</div>
   </div>
 
   <!-- ============ G4 : TIER CASCADE + RESOLVER ============ -->
