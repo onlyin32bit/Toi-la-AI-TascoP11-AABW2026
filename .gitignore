@@ -5,4 +5,5 @@ node_modules/
 preprocess/__pycache__/
 preprocess/cache/
 engine/build/
+engine/engine
 /.claude
