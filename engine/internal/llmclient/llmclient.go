@@ -1,7 +1,9 @@
-// Package llmclient is the single Qwen/DashScope (or any OpenAI-compatible
-// provider) chat+vision+embedding client. Swapping provider is a .env edit
-// (LLM_BASE_URL/LLM_API_KEY/LLM_MODEL/LLM_VL_MODEL), never a code change.
-// Cache-first to disk so the demo never depends on network availability.
+// Package llmclient is the OpenAI chat+vision+embedding client (single
+// provider — OPENAI_API_KEY/OPENAI_BASE_URL/OPENAI_MODEL/OPENAI_EMBED_MODEL).
+// gpt-4o-mini-class models handle both text and vision on the same
+// /chat/completions endpoint, so one model config covers ChatText and
+// ChatVision. Cache-first to disk so the demo never depends on network
+// availability.
 package llmclient
 
 import (
@@ -62,18 +64,18 @@ func VisionMessage(role, text, imgB64, mime string) ChatMessage {
 // --- config ---
 
 type llmConfig struct {
-	baseURL string
-	apiKey  string
-	model   string
-	vlModel string
+	baseURL    string
+	apiKey     string
+	model      string // chat + vision
+	embedModel string
 }
 
 func loadLLMConfig() llmConfig {
 	return llmConfig{
-		baseURL: config.Or("LLM_BASE_URL", config.Or("DASHSCOPE_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")),
-		apiKey:  config.FirstNonEmpty(os.Getenv("LLM_API_KEY"), os.Getenv("DASHSCOPE_API_KEY")),
-		model:   config.Or("LLM_MODEL", config.Or("QWEN_MODEL", "qwen-plus")),
-		vlModel: config.Or("LLM_VL_MODEL", config.Or("QWEN_VL_MODEL", "qwen-vl-plus")),
+		baseURL:    config.Or("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+		apiKey:     os.Getenv("OPENAI_API_KEY"),
+		model:      config.Or("OPENAI_MODEL", "gpt-4o-mini"),
+		embedModel: config.Or("OPENAI_EMBED_MODEL", "text-embedding-3-large"),
 	}
 }
 
@@ -86,7 +88,7 @@ var ChatText = func(messages []ChatMessage) (string, error) {
 
 var ChatVision = func(messages []ChatMessage) (string, error) {
 	cfg := loadLLMConfig()
-	return chatComplete(cfg, cfg.vlModel, messages)
+	return chatComplete(cfg, cfg.model, messages)
 }
 
 var httpClient = &http.Client{Timeout: 45 * time.Second}
@@ -114,7 +116,7 @@ func chatComplete(cfg llmConfig, model string, messages []ChatMessage) (string, 
 	}
 
 	if cfg.apiKey == "" {
-		return "", fmt.Errorf("llm: no API key configured (set LLM_API_KEY or DASHSCOPE_API_KEY)")
+		return "", fmt.Errorf("llm: no API key configured (set OPENAI_API_KEY)")
 	}
 
 	reqBody, err := json.Marshal(chatRequest{Model: model, Messages: messages})
@@ -185,7 +187,7 @@ type embedResponse struct {
 
 // embedText is cache-first like chatComplete, keyed on (embed model, text).
 func embedText(cfg llmConfig, text string) ([]float32, error) {
-	model := config.Or("QWEN_EMBED_MODEL", "text-embedding-v3")
+	model := cfg.embedModel
 	cacheDir := filepath.Join(config.Or("KB_DIR", "build"), "cache", "embed")
 	cachePath := filepath.Join(cacheDir, Sha256Hex([]byte(model+"\n"+text))+".json")
 	if data, err := os.ReadFile(cachePath); err == nil {

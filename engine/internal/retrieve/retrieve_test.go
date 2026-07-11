@@ -142,6 +142,35 @@ func TestRecallHalalHCMNotFound(t *testing.T) {
 	}
 }
 
+// --- Autocomplete ------------------------------------------------------------
+
+func TestAutocompletePrefixMatch(t *testing.T) {
+	store := kbfixture.New()
+	got := Autocomplete(store, "pho", 5)
+	if len(got) == 0 {
+		t.Fatal("Autocomplete(pho) returned nothing, want Phở Bếp Nhà")
+	}
+	if got[0].RestaurantID != "RESA" {
+		t.Errorf("Autocomplete(pho)[0] = %s, want RESA (Phở Bếp Nhà)", got[0].RestaurantID)
+	}
+}
+
+func TestAutocompleteEmptyPrefix(t *testing.T) {
+	store := kbfixture.New()
+	if got := Autocomplete(store, "", 5); got != nil {
+		t.Errorf("Autocomplete(\"\") = %v, want nil", got)
+	}
+}
+
+func TestAutocompleteRespectsLimit(t *testing.T) {
+	store := kbfixture.New()
+	// "b" prefix-matches multiple fixture POIs (Bún Chả Phố Cổ, and others).
+	got := Autocomplete(store, "b", 1)
+	if len(got) > 1 {
+		t.Errorf("Autocomplete limit=1 returned %d results", len(got))
+	}
+}
+
 func TestRecallDietVegetarian(t *testing.T) {
 	store := kbfixture.New()
 	f := model.FilterSpec{OpenAfter: -1, Diet: []string{"vegetarian"}}

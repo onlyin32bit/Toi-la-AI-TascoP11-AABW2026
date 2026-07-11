@@ -21,7 +21,8 @@ import (
 )
 
 func main() {
-	kbDir := flag.String("kb-dir", "build", "directory containing kb.json")
+	kbDir := flag.String("kb-dir", "build", "directory containing kb.json (also the embed-cache dir)")
+	kbFile := flag.String("kb-file", "", "override the KB JSON path (default: <kb-dir>/kb.json) — e.g. a compiled enrichment KB like data/thuduc/thuduc_kb.json")
 	batchSize := flag.Int("batch", 16, "points per Qdrant upsert call")
 	qdrantURL := flag.String("qdrant-url", "", "Qdrant base URL (default: $QDRANT_URL, then http://localhost:6333)")
 	collection := flag.String("collection", "", "Qdrant collection name (default: $QDRANT_COLLECTION, then tascop11_pois)")
@@ -41,7 +42,10 @@ func main() {
 		os.Setenv("QDRANT_COLLECTION", *collection)
 	}
 
-	kbPath := filepath.Join(*kbDir, "kb.json")
+	kbPath := *kbFile
+	if kbPath == "" {
+		kbPath = filepath.Join(*kbDir, "kb.json")
+	}
 	raw, err := os.ReadFile(kbPath)
 	if err != nil {
 		log.Fatalf("read %s: %v (run preprocess/build_kb.py first)", kbPath, err)

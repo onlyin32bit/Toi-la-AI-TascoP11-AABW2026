@@ -5,6 +5,7 @@ package retrieve
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"unicode"
@@ -396,4 +397,42 @@ func keys(m map[string]struct{}) []string {
 		out = append(out, k)
 	}
 	return out
+}
+
+// Autocomplete returns POIs matching a partial query (prefix match on the
+// normalized name or any of its tokens) — a fast, low-latency suggestion
+// lookup distinct from ParseQuery's full free-text parsing. Exact
+// name-prefix matches sort first, then by rating. Empty prefix -> nil.
+func Autocomplete(k *kb.KB, prefix string, limit int) []*kb.POI {
+	p := kb.Norm(prefix)
+	if p == "" || limit <= 0 {
+		return nil
+	}
+	var matched []*kb.POI
+	for _, poi := range k.POIs {
+		if strings.HasPrefix(poi.NameNorm(), p) || tokenHasPrefix(poi.NameNorm(), p) {
+			matched = append(matched, poi)
+		}
+	}
+	sort.SliceStable(matched, func(i, j int) bool {
+		iExact := strings.HasPrefix(matched[i].NameNorm(), p)
+		jExact := strings.HasPrefix(matched[j].NameNorm(), p)
+		if iExact != jExact {
+			return iExact
+		}
+		return matched[i].Rating > matched[j].Rating
+	})
+	if len(matched) > limit {
+		matched = matched[:limit]
+	}
+	return matched
+}
+
+func tokenHasPrefix(normText, prefix string) bool {
+	for _, tok := range strings.Fields(normText) {
+		if strings.HasPrefix(tok, prefix) {
+			return true
+		}
+	}
+	return false
 }

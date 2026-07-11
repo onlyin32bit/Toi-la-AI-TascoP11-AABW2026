@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   IconArrowDown,
   IconCrown,
@@ -17,12 +17,26 @@ import { SearchBar } from "./components/SearchBar";
 import { FilterChips } from "./components/FilterChips";
 import { ResultCard } from "./components/ResultCard";
 import { AssistantBox } from "./components/AssistantBox";
+import { EnrichmentTerminal } from "./components/enrichment-terminal";
+import { UgcContributeForm } from "./components/ugc-contribute-form";
+import { DemoResetButton } from "./components/demo-reset-button";
 import { Button } from "./components/ui/button";
 import { Card } from "./components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
 import { useI18n } from "./i18n/LanguageContext";
 import { cn } from "./lib/utils";
-import type { NotFoundReason, SearchFilters, SearchResponse, UserLocation, Vehicle } from "./types";
+import type {
+  EnrichmentResult,
+  NotFoundReason,
+  PlaceResult,
+  SearchFilters,
+  SearchResponse,
+  UserLocation,
+  Vehicle,
+} from "./types";
+import { DEMO_POI_ID, MOCK_ENRICHMENT_RESULT } from "./data/mock-enrichment";
+import { loadEnriched, saveEnriched } from "./lib/enrichment-runner";
+import { enqueueUgc, listUgc, type UgcEntry } from "./lib/ugc-queue";
 import "./App.css";
 
 type ThemeMode = "dark" | "light";
@@ -116,6 +130,23 @@ function App() {
   // Tap grip to step down; drag up to reach full.
   const [sheetState, setSheetState] = useState<SheetState>("half");
 
+  // ── Enrichment + UGC demo state ────────────────────────────────────
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  // Client-side patches applied to results after enrichment (menu, hours, etc.)
+  // Keyed by POI id so we can layer them onto whatever the ranker returns.
+  const [enrichmentPatches, setEnrichmentPatches] = useState<Record<string, EnrichmentResult>>(
+    () => {
+      const saved = loadEnriched(DEMO_POI_ID);
+      const map: Record<string, EnrichmentResult> = {};
+      if (saved) map[DEMO_POI_ID] = saved;
+      return map;
+    },
+  );
+  const [ugcOpen, setUgcOpen] = useState(false);
+  const [ugcSuggested, setUgcSuggested] = useState("");
+  const [ugcPins, setUgcPins] = useState<UgcEntry[]>(() => listUgc());
+
   const dockRef = useRef<HTMLElement | null>(null);
   const dragStart = useRef<{ y: number; pointerId: number; moved: boolean } | null>(null);
   const swipeStart = useRef<{ y: number; pointerId: number } | null>(null);
@@ -199,6 +230,45 @@ function App() {
     setSheetState("half");
   };
 
+  // ── Enrichment handlers ────────────────────────────────────────────
+  const handleEnrichClick = useCallback((id: string) => {
+    setEnrichingId(id);
+    setTerminalOpen(true);
+  }, []);
+
+  // Stable identity so the EnrichmentTerminal's effect doesn't restart on
+  // unrelated App re-renders (resize, i18n toggle, etc.). Depends on
+  // enrichingId only — that's the piece the callback needs to close over.
+  const handleTerminalComplete = useCallback(
+    (res: EnrichmentResult) => {
+      if (!enrichingId) return;
+      saveEnriched(enrichingId, res);
+      setEnrichmentPatches((prev) => ({ ...prev, [enrichingId]: res }));
+    },
+    [enrichingId],
+  );
+
+  const handleTerminalClose = useCallback(() => {
+    setTerminalOpen(false);
+    setEnrichingId(null);
+  }, []);
+
+  // ── UGC handlers ────────────────────────────────────────────────────
+  const handleUgcOpen = useCallback((suggestedName: string) => {
+    setUgcSuggested(suggestedName);
+    setUgcOpen(true);
+  }, []);
+
+  const handleUgcSubmit = (data: Omit<UgcEntry, "id" | "createdAt" | "status">) => {
+    const entry = enqueueUgc(data);
+    setUgcPins((prev) => [...prev, entry]);
+    setUgcOpen(false);
+  };
+
+  const handleDemoReset = () => {
+    window.location.reload();
+  };
+
   // Grip handles both a tap-to-cycle and a drag gesture.
   //   tap          → cycle down (expanded → half → hidden → half)
   //   drag up      → step up   (hidden → half → expanded)
@@ -264,12 +334,45 @@ function App() {
     if (Math.abs(delta) < 8) setSheetState("half");
   };
 
-  const results = response?.results ?? [];
+  const rawResults = response?.results ?? [];
+  // Apply enrichment patches + demo-POI "before" downgrade to the results
+  // array before anything else consumes it. Order matters: patch first
+  // (adds enriched fields), THEN force the demo POI to 0.61 only if unenriched
+  // so the "before" state persists on cold load.
+  const results = useMemo<PlaceResult[]>(() => {
+    return rawResults.map((r) => {
+      const patch = enrichmentPatches[r.id];
+      if (patch) {
+        return {
+          ...r,
+          qualityScore: patch.qualityAfter,
+          provenance: patch.provenance,
+          isEnriched: true,
+          enrichedMenuItems: patch.menuItems,
+          enrichedHours: patch.hoursOpen,
+          enrichedPriceRange: patch.priceRange,
+          enrichedDietTags: patch.dietTags,
+        };
+      }
+      return r;
+    });
+  }, [rawResults, enrichmentPatches]);
+
   const topScore = results[0] ? (results[0].meta.why.final * 10).toFixed(1) : "--";
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const selectedResult = results.find((result) => result.id === selectedId) ?? results[0];
   // Secondary controls: always shown on lg+, gated by user toggle on narrow.
   const showExtras = !isNarrow || extrasExpanded;
+
+  const enrichingResult = enrichingId ? results.find((r) => r.id === enrichingId) : null;
+  const hasDemoState = Object.keys(enrichmentPatches).length > 0 || ugcPins.length > 0;
+
+  // Memoize the enrichment payload so EnrichmentTerminal's effect doesn't
+  // restart the runner whenever App re-renders (results reference changes).
+  const activeEnrichmentPayload = useMemo(() => {
+    if (!enrichingId) return MOCK_ENRICHMENT_RESULT;
+    return { ...MOCK_ENRICHMENT_RESULT, poiId: enrichingId };
+  }, [enrichingId]);
 
   return (
     <div className="relative h-[100dvh] overflow-hidden bg-background text-foreground app-ambient">
@@ -280,6 +383,7 @@ function App() {
         satellite={satellite}
         focusMode={mapFocus}
         onSelect={handleSelect}
+        ugcPins={ugcPins}
       />
 
       <div className="tech-grid-bg" aria-hidden />
@@ -478,10 +582,12 @@ function App() {
                   expanded={r.id === expandedId}
                   onSelect={() => handleSelect(r.id)}
                   onToggleExpand={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                  onEnrich={handleEnrichClick}
+                  enriching={enrichingId === r.id}
                 />
               ))
             )}
-            <AssistantBox />
+            <AssistantBox results={results} onUgcOpen={handleUgcOpen} />
           </div>
         </div>
       </aside>
@@ -529,6 +635,28 @@ function App() {
           <IconPhoto size={19} />
         </Button>
       </div>
+
+      {terminalOpen && enrichingId && enrichingResult && (
+        <EnrichmentTerminal
+          open={terminalOpen}
+          poiName={enrichingResult.name}
+          result={activeEnrichmentPayload}
+          onComplete={handleTerminalComplete}
+          onClose={handleTerminalClose}
+        />
+      )}
+
+      <UgcContributeForm
+        open={ugcOpen}
+        initialName={ugcSuggested}
+        userLat={userLoc?.lat ?? 21.028511}
+        userLng={userLoc?.lon ?? 105.804817}
+        onCancel={() => setUgcOpen(false)}
+        onSubmit={handleUgcSubmit}
+        t={t}
+      />
+
+      {hasDemoState && <DemoResetButton onReset={handleDemoReset} />}
     </div>
   );
 }

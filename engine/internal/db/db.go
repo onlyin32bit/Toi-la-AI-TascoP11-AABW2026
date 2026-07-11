@@ -20,6 +20,9 @@ import (
 //go:embed migrations/*.sql
 var migrationsFS embed.FS
 
+//go:embed seed.sql
+var seedSQL string
+
 // DB wraps a Postgres connection pool.
 type DB struct {
 	sql *sql.DB
@@ -64,6 +67,18 @@ func (d *DB) Migrate(ctx context.Context) error {
 		if _, err := d.sql.ExecContext(ctx, string(b)); err != nil {
 			return fmt.Errorf("db: migrate %s: %w", e.Name(), err)
 		}
+	}
+	return nil
+}
+
+// Seed inserts demo/test accounts + a sample saved context (seed.sql). Not
+// called by Migrate/server boot — explicit opt-in via `go run ./cmd/seed`,
+// since auto-creating test accounts on every server start would be surprising
+// for anyone pointing DATABASE_URL at a real deployment. Requires Migrate to
+// have run first (schema + pgcrypto). Idempotent (fixed ids, ON CONFLICT DO NOTHING).
+func (d *DB) Seed(ctx context.Context) error {
+	if _, err := d.sql.ExecContext(ctx, seedSQL); err != nil {
+		return fmt.Errorf("db: seed: %w", err)
 	}
 	return nil
 }

@@ -59,8 +59,11 @@ const vi: Dict = {
   "reason.eta": "khoảng {min} phút bằng {vehicle}",
 
   "assistant.title": "Trợ lý AI",
-  "assistant.soon": "Sắp ra mắt",
-  "assistant.placeholder": "Hỏi về quán, món ăn… (cần backend)",
+  "assistant.soon": "Trung thực • Không bịa",
+  "assistant.placeholder": "Hỏi về quán, món ăn…",
+  "assistant.send": "Gửi",
+  "assistant.notFound": 'Không tìm thấy "{name}" trong dữ liệu.',
+  "assistant.honesty.note": "Tôi chỉ trả lời từ dữ liệu đã có — không bịa đặt.",
 
   "empty.prefix": "Không tìm thấy kết quả",
   "empty.suffix": "Thử bỏ bớt bộ lọc, ví dụ đổi thành phố hoặc mức giá.",
@@ -71,6 +74,27 @@ const vi: Dict = {
   "empty.reason.generic": "không có quán nào khớp với các bộ lọc hiện tại",
 
   "map.score": "Điểm",
+
+  "enrich.button": "Làm giàu dữ liệu",
+  "enrich.tooltip": "Tự động điền thông tin còn thiếu",
+  "quality.label": "CHẤT LƯỢNG",
+  "demo.reset": "Reset demo",
+
+  "field.menu": "Thực đơn",
+  "field.hours": "Giờ mở cửa",
+  "field.priceRange": "Khoảng giá",
+  "field.dietTags": "Nhãn ăn kiêng",
+
+  "ugc.chip": "Thêm quán này vào bản đồ",
+  "ugc.modal.title": "Đóng góp quán ăn mới",
+  "ugc.field.name": "Tên quán",
+  "ugc.field.address": "Địa chỉ",
+  "ugc.field.address.placeholder": "Bỏ trống để dùng vị trí hiện tại",
+  "ugc.field.dish": "Món nổi bật",
+  "ugc.field.dietTags": "Nhãn ăn kiêng",
+  "ugc.submit": "Gửi đóng góp",
+  "ugc.cancel": "Hủy",
+  "ugc.pending.badge": "Chờ xác thực",
 };
 
 const en: Dict = {
@@ -126,8 +150,11 @@ const en: Dict = {
   "reason.eta": "~{min} min by {vehicle}",
 
   "assistant.title": "AI Assistant",
-  "assistant.soon": "Coming soon",
-  "assistant.placeholder": "Ask about places, dishes… (needs backend)",
+  "assistant.soon": "Honest • No hallucination",
+  "assistant.placeholder": "Ask about places, dishes…",
+  "assistant.send": "Send",
+  "assistant.notFound": '"{name}" not found in the dataset.',
+  "assistant.honesty.note": "I only answer from real data — I do not make things up.",
 
   "empty.prefix": "No results found",
   "empty.suffix": "Try removing some filters, e.g. change the city or price.",
@@ -138,6 +165,27 @@ const en: Dict = {
   "empty.reason.generic": "no restaurant matches the current filters",
 
   "map.score": "Score",
+
+  "enrich.button": "Enrich data",
+  "enrich.tooltip": "Auto-fill missing info",
+  "quality.label": "QUALITY",
+  "demo.reset": "Reset demo",
+
+  "field.menu": "Menu",
+  "field.hours": "Open hours",
+  "field.priceRange": "Price range",
+  "field.dietTags": "Diet tags",
+
+  "ugc.chip": "Add this place to map",
+  "ugc.modal.title": "Contribute a new place",
+  "ugc.field.name": "Name",
+  "ugc.field.address": "Address",
+  "ugc.field.address.placeholder": "Leave blank to use current location",
+  "ugc.field.dish": "Signature dish",
+  "ugc.field.dietTags": "Diet tags",
+  "ugc.submit": "Submit",
+  "ugc.cancel": "Cancel",
+  "ugc.pending.badge": "Pending",
 };
 
 export const translations: Record<Lang, Dict> = { vi, en };
