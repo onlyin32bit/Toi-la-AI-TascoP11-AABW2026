@@ -1,0 +1,311 @@
+\documentclass[acmsmall,screen]{acmart}
+
+\setcopyright{none}
+\settopmatter{printacmref=true}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\acmConference[Tasco Maps '26]{Tasco Maps Research Draft}{July 2026}{Mountain View, CA, USA}
+\acmYear{2026}
+\acmDOI{}
+\acmISBN{}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+\title{\textbf{Trust-Tiered Knowledge Resolution and Adaptive Multi-Criteria Scoring for Localized Cold-Start Recommendations on Tasco Maps}}
+
+\author{Ngo-Bao Khang}
+\email{ngobaokhang@cset.info.vn}
+\affiliation{%
+  \institution{Ben Tre High School for Gifted Students}
+  \city{Bến Tre}
+  \country{Vietnam}
+}
+
+\author{Minh Long Vo}
+\email{mncuchiinhuttt@gmail.com}
+\affiliation{%
+  \institution{RMIT University}
+  \city{Ho Chi Minh City}
+  \country{Vietnam}
+}
+
+\date{}
+
+\begin{abstract}
+Local search and recommendation engines on digital map platforms are heavily constrained by spatial proximity, temporal availability, and database accuracy. In rapidly shifting urban ecosystems, keeping point-of-interest (POI) attributes fresh is a major operational challenge. According to the iPOS 2024 report, Vietnam has 323,010 food and beverage (F\&B) outlets, but experiences a high churn rate with over 30,000 closures in a single half-year, making manual database curation (requiring ~40 person-years per pass) unsustainable. This paper introduces a trust-tiered knowledge resolution and adaptive recommendation framework built for the Vietnamese F\&B landscape on the Tasco Maps platform. The system integrates merchant point-of-sale data (MISA CukCuk) and vehicle dwell telemetry from the VETC mobility network (covering 2.8 million vehicles) into a five-tier registry. Conflicts are resolved using a consensus-based resolver ($N \geq 3$). For online serving, a sequential two-stage pipeline is implemented: (1) a Hard-Constraint Gate that enforces Vietnamese dietary preferences, spatial routing bounds, and opening hours to handle honesty traps, followed by (2) an Adaptive Multi-Criteria Soft-Scoring stage that switches between repeat and exploration travel modes and renormalizes weights for missing signals.
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10002951.10003317.10003347.10003350</concept_id>
+       <concept_desc>Information systems~Recommender systems</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Information systems~Recommender systems}
+
+\keywords{Cold-Start Recommendation, Tasco Maps, VETC Telemetry, iPOS Vietnam F\&B, Trust Resolver, Detour Decay, Weight Renormalization}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Digital map platforms are essential for local discovery, navigation, and location-based commerce. While global platforms like Google Maps excel at global scale and breadth, they frequently suffer from lack of depth, unverified metadata, and black-box ranking in localized markets. This limitation is particularly prominent in the Vietnamese food and beverage (F\&B) industry. According to the iPOS Vietnam 2024 F\&B Market Report~\cite{ipos2024report}, the country has approximately 323,010 active outlets. However, the industry suffers from a high churn rate: over 30,000 outlets closed in the first half of 2024 alone, indicating a semi-annual churn rate of approximately 10\%. 
+
+To keep a map platform's POI database accurate under such rapid decay, manual database curation is operationally unfeasible. At an estimated 15 minutes of human verification per POI, a single pass across 323,010 outlets requires 80,750 hours (equivalent to 40 person-years of manual labor). While large language models (LLMs) can scale extraction, naive LLM extraction frequently fabricates (hallucinates) missing attributes, causing brand damage.
+
+This paper presents the design and formulation of a trust-tiered knowledge resolution and adaptive recommendation engine implemented for the next-generation digital map, \textbf{Tasco Maps}. The platform leverages two major local data alliances: (1) \textbf{MISA CukCuk}~\cite{misacukcuk}, a leading merchant POS provider in Vietnam with over 50,000 restaurants, and (2) \textbf{VETC}~\cite{vetctoll}, a nationwide electronic toll collection network covering 2.8 million active vehicles. By combining merchant point-of-sale menus and real-time vehicle telemetry, the framework builds a self-updating, high-fidelity knowledge graph.
+
+Our recommendation engine operates as a sequential pipeline: \textbf{Hard-Constraint Gating followed by Soft-Scoring}. The Hard-Constraint Gate prevents semantic-matching engines from silently relaxing constraints, addressing ``honesty traps'' (e.g., verifying if a requested dietary option actually exists). The Soft-Scoring stage ranks surviving candidates using a multi-criteria linear formulation incorporating geographic detour decay, POI quality, real-time occupancy, and localness priors. Additionally, the weights adapt dynamically based on travel frequency, separating repeat commuters from exploratory travelers, following the food delivery paradigm analyzed by Wang et al.~\cite{wang2024righttool}.
+
+\section{Related Work}
+We build on cold-start POI recommendations, spatial detour modeling, and situation-aware systems.
+
+\subsection{Cold-Start Recommendation and LLM Priors}
+Collaborative filtering fails when items or users have zero historical interactions. Ju et al.~\cite{ju2024lmprior} introduced the Language-Model Prior (LM-Prior) framework, demonstrating that zero-shot LLM representations of item metadata can establish a strong baseline prior. For specialized discovery, KALM4Rec~\cite{kieu2024kalm4rec} leverages retrieval-augmented LLM architectures to extract and verify query keywords. In Vietnamese contexts, morphological segmenters like HuTieuBERT by Dinh et al.~\cite{dinh2026hutieubert} are critical for parsing localized dish names (e.g., ``bún chả'') and preventing entity-matching failures. Furthermore, processing noisy social media data (e.g., reviews, slang, and dialect expressions extracted from platforms like TikTok or Threads) requires robust domain-specific language models. For this purpose, we leverage ViSoBERT proposed by Nguyen et al.~\cite{nguyen2023visobert}, a pre-trained Transformer model optimized for Vietnamese social media text, enabling accurate aspect-based sentiment extraction and linguistic normalization in our offline enrichment pipeline.
+
+\subsection{Geographical POI Recommendation}
+POI recommendation is fundamentally shaped by geography. GeoMF by Lian et al.~\cite{lian2014geomf} models spatial regions within matrix factorization by applying spatial decay. In highway or corridor environments, routing recommenders must account for detour paths rather than straight-line distance. Dynamic spatial routing structures (e.g., GETNext by Yang et al.~\cite{yang2022getnext}) model trajectory transitions, but their parameter size causes overfitting on small localized datasets, highlighting the need for parametric decay functions that scale with detour times.
+
+\subsection{Situation-Aware Repeat vs. Explore Recommendations}
+User preferences fluctuate between familiar routines and novel exploration. Wang et al.~\cite{wang2024righttool} studied food consumption patterns and proposed dual-model architectures (RepRec and ExpRec) to separate repeat orders from exploratory choices, showing that unified recommendation pipelines underperform when situation-aware contexts are ignored.
+
+\section{System Architecture and Preference Channels}
+The system separates offline background knowledge resolution from online real-time serving, ensuring low latency and resilience during network drops. The architecture features a five-tier registry that ingests and resolves data through a multi-trigger loop.
+
+\subsection{Multi-Trigger Lifecycle Loop}
+Rather than treating the database as static, the system runs a multi-trigger lifecycle loop governed by a set of triggers $\mathcal{T} = \{T_1, T_2, T_3, T_4, T_5, T_6\}$:
+\begin{itemize}
+    \item \textbf{Bootstrap ($T_1$):} Initializes the database by ingesting baseline files and OpenStreetMap (OSM) nodes.
+    \item \textbf{Gap-Detect ($T_2$):} Triggered when a POI's quality score $Q < 0.75$ or key attributes (e.g., operating hours) are absent. This triggers a localized agent run to enrich the profile.
+    \item \textbf{TTL Expiry ($T_3$):} Triggered when the age of a resolved field exceeds its tier-specific Time-To-Live ($\tau$), prompting a target refresh of the expired source: $\tau_1=180\text{d}$ (Tier 1), $\tau_2=90\text{d}$ (Tier 2), $\tau_3=30\text{d}$ (Tier 3), $\tau_{4a}=14\text{d}$ (Tier 4a).
+    \item \textbf{Business Event ($T_4$):} Triggered when a merchant uploads a menu image, initiating zero-shot OCR and structured menu extraction.
+    \item \textbf{Driver Telemetry ($T_5$):} Triggered when GPS telemetry detects a vehicle passing and dwelling at a POI for $\geq 25$ minutes, prompting a 1-tap validation.
+    \item \textbf{User Query ($T_6$):} Triggers the online search and recommendation pathway.
+\end{itemize}
+
+\subsection{Preference Input Channels}
+To construct personalization models with minimal user effort, the system aggregates user preferences through four complementary channels:
+\begin{enumerate}
+    \item \textbf{Trip Context (CTX):} Fully passive channel extracting context from the active route navigation state, including the timestamp ($t_{\text{now}}$), arrival ETA ($t_{\text{arrival}}$), and vehicle class (e.g., cars require parking).
+    \item \textbf{Spatial-Temporal Autocomplete:} Captures query intents based on character prefixes combined with spatial-temporal priors. For example, the query prefix ``ca'' suggests coffee shops (``cà phê'') at 7:00 AM in urban zones, but shifts to fish soup (``cơm cá'') at 12:00 PM on a highway corridor. This addresses the 17.9\% intent variance observed by Li et al.~\cite{li2020baidu} (Baidu MST-PAC).
+    \item \textbf{Onboarding Chips:} A one-time 10-second setup capturing critical hard constraints (allergens, dietary restrictions, or family travel) where incorrect predictions pose safety or high-dissatisfaction risks.
+    \item \textbf{Implicit Learned Behavior:} Collects telemetry-based signals such as vehicle dwell times (indicating repeat customers), navigation requests, and post-trip 1-tap feedback.
+\end{enumerate}
+
+\section{Trust-Tiered Knowledge Resolution}
+Data is ingested from multiple sources, each mapped to a specific trust tier $t \in \{1, 2, 3, 4a, 4b\}$, as shown in Table~\ref{tab:tiers}. Each tier carries a static confidence weight $C_t \in [0, 1]$ and a time-to-live $\tau_t$ (in days).
+
+\begin{table}[h]
+\centering
+\caption{Trust Tier Hierarchy}
+\label{tab:tiers}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Tier} & \textbf{Source Type} & \textbf{Confidence ($C_t$)} & \textbf{TTL ($\tau_t$)} \\
+\midrule
+Tier 1 & Merchant Verified (MISA CukCuk POS / OCR) & $0.95$ & 180 days \\
+Tier 2 & Driver Telemetry (VETC vehicle dwells) & $0.85$ & 90 days \\
+Tier 3 & Licensed API (OSM/Tasco CSV) & $0.80$ & 30 days \\
+Tier 4a & Agentic Social Scraping (Foody/Riviu) & $0.60$ & 14 days \\
+Tier 4b & Social Buzz Signals (TikTok/Threads) & N/A & Decaying \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Let $\mathcal{V}_f = \{(v, t, \Delta t)_j\}$ be the set of candidate values extracted for a field $f$ from active sources, where $v$ is the value, $t$ is the source's trust tier, and $\Delta t$ is the data age. The Resolver determines the published value $v_f^*$ and its confidence $\text{conf}(f)$ through the following consensus rules:
+\begin{enumerate}
+    \item \textbf{TTL Filtering:} Remove all candidates where the elapsed time $\Delta t > \tau_t$.
+    \item \textbf{Highest Tier Selection:} Select candidates corresponding to the highest surviving tier $t_{\text{max}}$. If multiple distinct values exist within the same tier, the most recently updated value (lowest $\Delta t$) is selected.
+    \item \textbf{Consensus Constraint:} For Tiers 2 (driver confirmed) and 4a (agentic facts), a candidate value is only valid if supported by a consensus of $N \geq 3$ independent sources. A single agentic source cannot override fresh licensed data.
+    \item \textbf{Absence Gating:} If no candidates survive, the field is marked as \textit{absent}. No default values are fabricated. This prevents recommendation hallucinations under strict search queries (such as queries for non-existent entities like ``Crystal BBQ'').
+    \item \textbf{Full History Retention:} Retains the entire candidate list to provide source provenance for the RAG assistant ($\slash$assistant).
+\end{enumerate}
+The resolver preserves the winning tier's confidence as $\text{conf}(f) = C_{t_{\text{max}}}$, which is propagated to the ranking stage. Tier 4b sources bypass this resolver and feed directly into the soft scoring stage as transient popularity weights.
+
+\section{Mathematical Formulation and Online Serving}
+Let $U = (q, l, s, d, p_c, t, \mathcal{H})$ represent the user context, where $q$ is the query string, $l = (\phi_u, \lambda_u)$ is the location, $s \in \mathcal{S}$ is the user segment, $d \in \mathcal{D}$ denotes dietary requirements, $p_c$ is the maximum price threshold, $t$ is the timestamp, and $\mathcal{H}$ is the user's travel history on the current route. Let $R$ denote a candidate restaurant POI.
+
+\subsection{Stage 1: Hard-Constraint Gating}
+To prevent semantic matching from violating physical constraints, candidate POIs are filtered using a binary indicator $H(R, U) \in \{0, 1\}$:
+\begin{equation}
+H(R, U) = \prod_{k \in \mathcal{K}_{\text{active}}} h_k(R, U)
+\end{equation}
+where $\mathcal{K}_{\text{active}}$ represents the active constraint set, evaluating:
+\begin{itemize}
+\item \textbf{Dietary Match ($h_{\text{diet}}$):} Checks if dietary tags match the resolved properties of $R$ or its menu items:
+\begin{equation}
+h_{\text{diet}}(R, U) = \begin{cases}
+1 & \text{if } d = \emptyset \text{ or } \exists m \in \mathcal{M} \text{ s.t. } \text{status}(m, d) \geq 0.60 \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+\item \textbf{Geographic Max Boundary ($h_{\text{geo}}$):} Validates if the physical distance is within the query radius limit.
+\item \textbf{Operating Hours ($h_{\text{time}}$):} Evaluates opening hours at the estimated arrival time $t_{\text{arrival}} = t_{\text{now}} + \text{ETA}$, rather than the query time $t_{\text{now}}$.
+\item \textbf{Price Ceiling ($h_{\text{price}}$):} Rejects $R$ if the average price $P_a > p_c$ or if all matched dishes exceed $p_c$.
+\item \textbf{Parking Requirement ($h_{\text{parking}}$):} Escalated to a hard constraint if vehicle class is set to `car'.
+\end{itemize}
+
+If the gated set $\mathcal{R}_{\text{gate}} = \{R \mid H(R, U) = 1\} = \emptyset$, the system returns an explicit empty state rather than relaxing constraints silently, addressing honesty traps (such as requests for Halal food in districts with zero certified options).
+
+\subsection{Stage 2: Multi-Criteria Soft-Scoring}
+For each candidate $R \in \mathcal{R}_{\text{gate}}$, we compute the unified score:
+\begin{equation}
+\tilde{S}(R, U) = \sum_{i \in \mathcal{I}} w_i S_i(R, U)
+\end{equation}
+where $\sum_{i \in \mathcal{I}} w_i = 1$, and each $S_i(R, U) \in [0, 1]$. The components are:
+\begin{enumerate}
+    \item \textbf{Semantic Relevance ($S_{\text{semantic}}$, $w_1 = 0.30$):} Cosine similarity of embeddings plus Jaccard token similarity over normalized unigrams.
+    \item \textbf{Preference Match ($S_{\text{match}}$, $w_2 = 0.20$):} Matches query preferences against POI tags, scaled by the resolved field confidence:
+    \begin{equation}
+    S_{\text{match}}(R, U) = \text{MatchRatio}(q, \mathcal{A}) \cdot \text{conf}(\mathcal{A})
+    \end{equation}
+    where $\text{conf}(\mathcal{A})$ is the confidence of the attributes generated by the Resolver.
+    \item \textbf{Detour Decay ($S_{\text{route}}$, $w_3 = 0.15$):} Modeled using exponential decay over detour time:
+    \begin{equation}
+    S_{\text{route}} = \exp\left(-\frac{\Delta t_{\text{detour}}}{\lambda}\right)
+    \end{equation}
+    where $\Delta t_{\text{detour}}$ is the detour time in minutes and $\lambda = 5$ minutes.
+    \item \textbf{Behavioral History ($S_{\text{behavior}}$, $w_4 = 0.15$):} Extracted from vehicle telemetry $\mathcal{H}$ representing historical visit frequency on the current corridor.
+    \item \textbf{Information Quality ($S_{\text{qual}}$, $w_5 = 0.10$):} Static completeness metric $Q/100$.
+    \item \textbf{Crowd Occupancy ($S_{\text{crowd}}$, $w_6 = 0.05$):} Real-time congestion index:
+    \begin{equation}
+    S_{\text{crowd}} = 1 - \frac{\text{occupancy}(t_{\text{arrival}})}{100}
+    \end{equation}
+    \item \textbf{Social Buzz ($S_{\text{buzz}}$, $w_7 = 0.05$):} Decaying trending score from Tier 4b sources. Textual features from social posts are parsed using ViSoBERT~\cite{nguyen2023visobert} to extract aspect-based sentiments before computing the transient buzz index.
+\end{enumerate}
+
+\subsection{Adaptive Renormalization for Missing Signals}
+Online requests often lack GPS context (denied permissions) or behavioral logs. To prevent score distortion, we exclude missing features from the active set $\mathcal{I}_{\text{active}} \subseteq \mathcal{I}$ and renormalize the weights:
+\begin{equation}
+S(R, U) = \sum_{i \in \mathcal{I}_{\text{active}}} w_i^* S_i(R, U) \quad \text{where} \quad w_i^* = \frac{w_i}{\sum_{j \in \mathcal{I}_{\text{active}}} w_j}
+\end{equation}
+
+\subsection{Context-Aware Mode Switching}
+Following the repeat-explore behavioral dichotomy in local food delivery studied by Wang et al.~\cite{wang2024righttool}, we implement dynamic mode-switching based on route familiarity. A route is classified as \textit{familiar} if user history contains $\geq 3$ trips within the past 90 days. The weights are dynamically switched as follows:
+\begin{itemize}
+    \item \textbf{Repeat Mode (Familiar Routes):} Prioritizes user habit and crowd status, decreasing the semantic weight and ignoring temporary social buzz:
+    \begin{equation*}
+    w = [0.25, 0.20, 0.15, 0.25, 0.10, 0.05, 0.00]
+    \end{equation*}
+    representing $[w_{\text{sem}}, w_{\text{mat}}, w_{\text{rout}}, w_{\text{beh}}, w_{\text{qual}}, w_{\text{cro}}, w_{\text{buz}}]$.
+    \item \textbf{Explore Mode (New Routes):} Prioritizes semantic discovery and trending social buzz:
+    \begin{equation*}
+    w = [0.35, 0.20, 0.15, 0.05, 0.10, 0.05, 0.10]
+    \end{equation*}
+\end{itemize}
+
+\subsection{Vietnam-Specific Adjustments: Localness and Anti-Luxury Bias}
+Under the Tasco Map platform guidelines, there is a preference for small, local, and authentic eateries (``bình dân'') over high-end international luxury chains. To incorporate this, the final score incorporates a localness adjustment:
+\begin{equation}
+S_{\text{final}}(R, U) = S(R, U) + \alpha \cdot \text{Localness}(R) - \beta \cdot \text{Luxury}(R)
+\end{equation}
+where $\text{Localness}(R) = 1$ is triggered if the price tier is budget and POI quality is high, and $\text{Luxury}(R) = 1$ is triggered if the price level is premium. The hyperparameters $\alpha$ and $\beta$ control the strength of this localization prior.
+
+\subsection{LLM Rerank and Explainer}
+Following the classical-plus-neural recommendation architectures described by DoorDash~\cite{doordashkdd}, the top 20 candidates generated by Stage 2 are passed to an LLM Reranking model. The classical scoring model manages scaling and candidate pruning, while the LLM incorporates contextual semantics and generates natural language explanations (e.g., ``4 minutes detour from route, has car parking [owner verified], positive reviews on TikTok'') in Vietnamese.
+
+\section{Discussion and Future Work}
+The trust-tiered consensus resolver provides a robust mechanism to manage the trade-off between coverage and accuracy. While scraping social platforms increases coverage, it introduces noise. The consensus constraint ($N \ge 3$ for Tier 4a) acts as an automated filter, preventing unverified claims from contaminating the knowledge base. Furthermore, propagating the resolver's confidence score ($\text{conf}(f)$) into $S_{\text{match}}$ ensures that highly verified facts naturally rank higher than agentic guesses.
+
+Currently, the weights for Repeat and Explore modes are statically defined. A logical next step is to train a meta-learning ensemble layer to interpolate weights based on continuous context features. Additionally, while the linear model is highly suitable for cold-start environments due to its interpretability, scaling to millions of POIs will necessitate a deep architecture. In such scenarios, the Hard-Constraint Gate will continue to serve as a pre-filtering layer, maintaining system honesty.
+
+\section{Conclusion}
+We presented a two-stage localized recommendation framework that integrates trust-tiered knowledge resolution and multi-criteria soft-scoring. By layering a consensus resolver over merchant, telemetry, and agentic sources, we establish a verifiable foundation for query evaluation. The sequential integration of hard-constraint gating, detour-based geographic decay, and context-aware mode switching balances spatial routing requirements and user preferences. The adaptive weight renormalization rule ensures robust execution under sparse signals, presenting a production-ready approach for next-generation map recommendation systems in Vietnam.
+
+\begin{thebibliography}{10}
+
+\bibitem{ipos2024report}
+{iPOS.vn}.
+\newblock {\em iPOS Vietnam Food and Beverage Market Report}.
+\newblock Hanoi, Vietnam, 2024.
+
+\bibitem{misacukcuk}
+{MISA Joint Stock Company}.
+\newblock {\em MISA CukCuk: Restaurant Management Software Specification}.
+\newblock Hanoi, Vietnam, 2024.
+
+\bibitem{vetctoll}
+{VETC Electronic Toll Collection}.
+\newblock {\em VETC Nationwide Mobility Data Report}.
+\newblock Hanoi, Vietnam, 2024.
+
+\bibitem{kieu2024kalm4rec}
+D.~Kieu et~al.
+\newblock {KALM4Rec}: Keyword-driven retrieval-augmented llms for cold-start
+  user recommendations.
+\newblock {\em arXiv preprint arXiv:2405.19612}, 2024.
+
+\bibitem{ju2024lmprior}
+J.~Ju et~al.
+\newblock Language-model prior overcomes cold-start items.
+\newblock {\em arXiv preprint arXiv:2411.09065}, 2024.
+
+\bibitem{dinh2026hutieubert}
+A.~T.~D. Dinh, K.~H.~N. Vo, et~al.
+\newblock {HuTieuBERT}: Morpheme-aware transformer for vietnamese language
+  processing.
+\newblock In {\em Proceedings of the Annual Meeting of the Association for
+  Computational Linguistics (ACL)}, 2026.
+
+\bibitem{lian2014geomf}
+Defu Lian, Cong Zhao, Xing~Xie Zhou, Ji~Zhou, Kai Zheng, and Yong Rui.
+\newblock {GeoMF}: Joint geographical modeling and matrix factorization for
+  point-of-interest recommendation.
+\newblock In {\em Proceedings of the 20th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining (KDD)}, pages 831--840, 2014.
+
+\bibitem{yang2022getnext}
+S.~Yang et~al.
+\newblock {GETNext}: Trajectory flow map enhanced transformer for next {POI}
+  recommendation.
+\newblock In {\em Proceedings of the 45th International ACM SIGIR Conference on
+  Research and Development in Information Retrieval (SIGIR)}, 2022.
+
+\bibitem{he2020lightgcn}
+Xiangnan He, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Wang Meng.
+\newblock {LightGCN}: Simplifying and powering graph convolution network for
+  recommendation.
+\newblock In {\em Proceedings of the 43rd International ACM SIGIR Conference on
+  Research and Development in Information Retrieval (SIGIR)}, pages 639--648,
+  2020.
+
+\bibitem{kang2018sasrec}
+Wang-Cheng Kang and Julian McAuley.
+\newblock Self-attentive sequential recommendation.
+\newblock In {\em Proceedings of the IEEE International Conference on Data
+  Mining (ICDM)}, 2018.
+
+\bibitem{wang2024righttool}
+Shuchao Wang et~al.
+\newblock Right tool, right job: Recommendation for repeat and exploration
+  consumption in food delivery.
+\newblock In {\em Proceedings of the 18th ACM Conference on Recommender Systems
+  (RecSys)}, 2024.
+
+\bibitem{li2020baidu}
+Y.~Li et~al.
+\newblock Personalized query auto-completion at {Baidu Maps}.
+\newblock In {\em Proceedings of the 26th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining (KDD)}, 2020.
+
+\bibitem{doordashkdd}
+{DoorDash Engineering}.
+\newblock Large language models for search and recommendation at {DoorDash}.
+\newblock {\em DoorDash Engineering Blog}, 2025.
+
+\bibitem{nguyen2023visobert}
+N.~Nguyen, T.~Phan, D.-V. Nguyen, and K.~Nguyen.
+\newblock {ViSoBERT}: A pre-trained language model for Vietnamese social media
+  text processing.
+\newblock In {\em Proceedings of the Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 5191--5207, 2023.
+
+\end{thebibliography}
+
+\end{document}
