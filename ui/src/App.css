@@ -1,1120 +1,1019 @@
-/* General Reset & Typography */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: #0a0d08;
+  --color-foreground: #f1f5e8;
+  --color-card: #171c14;
+  --color-card-foreground: #f1f5e8;
+  --color-popover: rgb(23 28 20 / 0.94);
+  --color-popover-foreground: #f1f5e8;
+  --color-primary: #ccff00;
+  --color-primary-foreground: #0d1400;
+  --color-secondary: #feb700;
+  --color-secondary-foreground: #271900;
+  --color-muted: #262d1e;
+  --color-muted-foreground: #d3dec0;
+  --color-accent: #3b452b;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #ff8f87;
+  --color-border: rgb(241 245 232 / 0.13);
+  --color-input: rgb(241 245 232 / 0.16);
+  --color-ring: #ccff00;
+  --color-lime-glow: #ccff00;
+  --color-score: #ffb800;
+  --color-glass: rgb(15 20 12 / 0.42);
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: #030712; /* Deep dark background */
-  color: #f3f4f6;
-  overflow: hidden;
-  height: 100vh;
+:root {
+  --map-overlay: radial-gradient(circle at 42% 34%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 26%),
+    radial-gradient(circle at 82% 78%, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 32%),
+    linear-gradient(180deg, rgb(10 13 8 / 0.34) 0%, rgb(10 13 8 / 0.04) 42%, rgb(10 13 8 / 0.32) 100%);
+  --mode-toggle-bg: rgb(23 28 20 / 0.72);
+  --panel-border: rgb(255 255 255 / 0.14);
+  --panel-highlight: rgb(255 255 255 / 0.14);
+  --panel-highlight-strong: rgb(255 255 255 / 0.28);
+  --panel-shadow: 0 24px 60px rgb(0 0 0 / 0.42), 0 2px 0 rgb(255 255 255 / 0.04) inset, 0 -1px 0 rgb(0 0 0 / 0.30) inset;
+  --soft-fill: rgb(255 255 255 / 0.07);
+  --soft-strong: rgb(255 255 255 / 0.16);
+  --accent-ink: var(--color-primary);
+  --selection-bg: rgb(23 28 20 / 0.94);
+  --selection-hover: color-mix(in srgb, var(--color-primary) 16%, rgb(23 28 20));
+  --selection-text: #f5f9ec;
+  --grid-line: rgb(255 255 255 / 0.045);
+  --grid-line-strong: rgb(255 255 255 / 0.08);
+  --sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.16) 48%, transparent 66%);
 }
 
-/* Main Layout: Centers the Phone Simulator */
-.app-layout {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  padding: 1.5rem;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at top right, rgba(29, 78, 216, 0.15), transparent),
-              radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent),
-              #030712;
+:root[data-theme="light"] {
+  --color-background: #eff1e6;
+  --color-foreground: #10130a;
+  --color-card: #ffffff;
+  --color-card-foreground: #10130a;
+  --color-popover: rgb(255 255 255 / 0.92);
+  --color-popover-foreground: #10130a;
+  --color-muted: #eaeddf;
+  --color-muted-foreground: #4f573f;
+  --color-accent: #e4e8d8;
+  --color-accent-foreground: #10130a;
+  --color-border: rgb(23 26 16 / 0.14);
+  --color-input: rgb(23 26 16 / 0.18);
+  --color-glass: rgb(255 255 255 / 0.55);
+  --map-overlay: radial-gradient(circle at 42% 34%, color-mix(in srgb, var(--color-primary) 15%, transparent), transparent 24%),
+    linear-gradient(180deg, rgb(244 245 237 / 0.58) 0%, rgb(244 245 237 / 0.04) 42%, rgb(244 245 237 / 0.62) 100%);
+  --mode-toggle-bg: rgb(255 255 255 / 0.72);
+  --panel-border: rgb(23 26 16 / 0.16);
+  --panel-highlight: rgb(255 255 255 / 0.9);
+  --panel-highlight-strong: rgb(255 255 255 / 1);
+  --panel-shadow: 0 20px 46px rgb(23 26 16 / 0.14), inset 0 1px 0 rgb(255 255 255 / 0.6);
+  --soft-fill: rgb(23 26 16 / 0.06);
+  --soft-strong: rgb(23 26 16 / 0.16);
+  --accent-ink: color-mix(in srgb, var(--color-primary) 44%, #0b1400);
+  --selection-bg: rgb(255 255 255 / 0.96);
+  --selection-hover: color-mix(in srgb, var(--color-primary) 20%, #ffffff);
+  --selection-text: #171a10;
+  --grid-line: rgb(23 26 16 / 0.055);
+  --grid-line-strong: rgb(23 26 16 / 0.09);
+  --sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.75) 48%, transparent 66%);
 }
 
-/* ==========================================================================
-   MOBILE APP SIMULATOR (Center panel)
-   ========================================================================== */
-.phone-simulator {
-  width: 390px;
-  height: 100%;
-  max-height: 850px;
-  background: #eef0f2;
-  border: 12px solid #1e293b; /* Thick bezel */
-  border-radius: 3rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-              0 0 0 1px rgba(255, 255, 255, 0.05);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: background 0.6s ease;
+:root[data-theme="dark"] {
+  --color-background: #0a0d08;
+  --color-foreground: #f1f5e8;
+  --color-card: #171c14;
+  --color-card-foreground: #f1f5e8;
+  --color-popover: rgb(23 28 20 / 0.94);
+  --color-popover-foreground: #f1f5e8;
+  --color-muted: #262d1e;
+  --color-muted-foreground: #d3dec0;
+  --color-accent: #3b452b;
+  --color-accent-foreground: #ffffff;
+  --color-border: rgb(241 245 232 / 0.13);
+  --color-input: rgb(241 245 232 / 0.16);
+  --color-glass: rgb(15 20 12 / 0.42);
+  --panel-border: rgb(255 255 255 / 0.14);
+  --panel-highlight: rgb(255 255 255 / 0.14);
+  --panel-highlight-strong: rgb(255 255 255 / 0.28);
+  --soft-fill: rgb(255 255 255 / 0.07);
+  --soft-strong: rgb(255 255 255 / 0.16);
+  --accent-ink: var(--color-primary);
+  --selection-bg: rgb(23 28 20 / 0.94);
+  --selection-hover: color-mix(in srgb, var(--color-primary) 16%, rgb(23 28 20));
+  --selection-text: #f5f9ec;
+  --grid-line: rgb(255 255 255 / 0.045);
+  --grid-line-strong: rgb(255 255 255 / 0.08);
+  --sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.16) 48%, transparent 66%);
 }
 
-.phone-simulator.is-3d {
-  background: linear-gradient(180deg, #bcd4e6 0%, #d8e6ee 45%, #eef0f2 62%);
+:root[data-accent="green"] {
+  --color-primary: #ccff00;
+  --color-ring: #ccff00;
+  --color-lime-glow: #ccff00;
+  --color-score: #ffb800;
+}
+:root[data-accent="blue"] {
+  --color-primary: #5bd3ff;
+  --color-ring: #5bd3ff;
+  --color-lime-glow: #5bd3ff;
+  --color-score: #ffb800;
+}
+:root[data-accent="orange"] {
+  --color-primary: #ff9f1c;
+  --color-ring: #ff9f1c;
+  --color-lime-glow: #ff9f1c;
+  --color-score: #ccff00;
+}
+:root[data-accent="pink"] {
+  --color-primary: #ff5db1;
+  --color-ring: #ff5db1;
+  --color-lime-glow: #ff5db1;
+  --color-score: #ffb800;
+}
+:root[data-accent="lgbt"] {
+  --color-primary: #ff4f8b;
+  --color-ring: #ff4f8b;
+  --color-lime-glow: #00d084;
+  --color-score: #ffed00;
 }
 
-/* Apple Notch simulator */
-.phone-notch {
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
+  /* Neon focus ring for keyboard nav */
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ================================================================== *
+ * TECH BACKDROP — subtle animated grid + ambient nebula
+ * ================================================================== */
+.app-ambient::before {
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 110px;
-  height: 22px;
-  background: #1e293b;
-  border-bottom-left-radius: 0.85rem;
-  border-bottom-right-radius: 0.85rem;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.phone-notch-camera {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #020617;
-  margin-right: 15px;
-}
-
-.phone-notch-speaker {
-  width: 35px;
-  height: 3px;
-  border-radius: 2px;
-  background: #334155;
-}
-
-/* Map Container under layers */
-.map-view {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
-              height 0.6s cubic-bezier(0.25, 1, 0.5, 1),
-              top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-  transform-origin: center bottom;
-}
-
-/* Simulated 3D tilt perspective matching Google/Apple maps */
-.map-view.leaflet-3d-active {
-  transform: perspective(650px) rotateX(52deg) scale(2.1);
-  height: 240%;
-  top: -130%;
-}
-
-/* Keep map labels standing upright (billboard style) in 3D mode */
-.map-view.leaflet-3d-active .custom-map-label {
-  transform: translate3d(-50%, -15px, 0) rotateX(-52deg) !important;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.map-view .leaflet-container {
-  width: 100%;
-  height: 100%;
-  background-color: #eef0f2;
-}
-
-/* Leaflet Custom Map Label POIs (Màu sáng giống hình 2) */
-.map-label-poi {
-  background: #ffffff;
-  color: #1e293b;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12),
-              0 0 0 1px rgba(0,0,0,0.03);
-  border: 1px solid rgba(0,0,0,0.05);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap;
-}
-
-.poi-label-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #f97316; /* Cam giống WinMart+ */
-  display: inline-block;
-}
-
-/* GPS pulse glow effect */
-.user-gps-pulse-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: rgba(59, 130, 246, 0.35);
-  animation: gpsRipple 2s infinite;
-  z-index: 1;
+  inset: 0;
+  z-index: 350;
   pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.20), transparent 18%, transparent 76%, rgb(0 0 0 / 0.22)),
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 28%),
+    radial-gradient(circle at 88% 92%, color-mix(in srgb, var(--color-secondary) 10%, transparent), transparent 34%);
+  content: "";
+  animation: ambient-drift 22s ease-in-out infinite alternate;
 }
 
-@keyframes gpsRipple {
-  0% {
-    width: 16px;
-    height: 16px;
-    opacity: 1;
-  }
-  100% {
-    width: 48px;
-    height: 48px;
-    opacity: 0;
-  }
+@keyframes ambient-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-2%, 1%, 0) scale(1.04); }
 }
 
-/* Map controls layer (Xếp dọc góc dưới bên phải như hình 2) */
-.map-controls {
+.tech-grid-bg {
   position: absolute;
-  right: 0.85rem;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Position control buttons dynamically relative to bottom sheet heights */
-.map-controls.state-home {
-  bottom: 110px;
-}
-
-.map-controls.state-home_expanded {
-  bottom: 340px;
-}
-
-.map-controls.state-search_results {
-  bottom: auto;
-  top: 4.5rem;
-}
-
-.map-controls.state-place_details {
-  bottom: 540px;
-}
-
-.map-controls.state-route_setup {
-  bottom: auto;
-  top: 4.5rem;
-}
-
-.control-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: none;
-  color: #334155;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12),
-              0 0 0 1px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.control-btn:hover {
-  background: #ffffff;
-  transform: scale(1.05);
-  color: #1d70f2;
-}
-
-.control-btn.active {
-  background: #1d70f2;
-  color: white;
-}
-
-
-/* ==========================================================================
-   INTEGRATED SEARCH BAR INSIDE BOTTOM SHEET (Hình 2)
-   ========================================================================== */
-.inner-search-bar {
-  background: #f1f5f9; /* Xám nhạt giống hình 2 */
-  border-radius: 9999px;
-  padding: 0.55rem 0.85rem;
-  margin: 0.25rem 1.25rem 0.5rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border: 1px solid rgba(0,0,0,0.02);
-}
-
-.inner-search-bar:hover {
-  background: #e2e8f0;
-}
-
-.inner-search-bar input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 0.9rem;
-  color: #1e293b;
-  outline: none;
-  font-family: inherit;
-  font-weight: 600;
-}
-
-.inner-search-bar input::placeholder {
-  color: #64748b;
-  font-weight: 500;
-}
-
-.search-icon-btn {
-  color: #64748b;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.avatar-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #f97316;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-
-/* ==========================================================================
-   LAYERED BOTTOM SHEETS
-   ========================================================================== */
-.bottom-sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #ffffff;
-  color: #1e293b;
-  border-top-left-radius: 1.5rem;
-  border-top-right-radius: 1.5rem;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.12);
-  z-index: 300;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Bottom Sheet heights based on state class */
-.bottom-sheet.state-min {
-  height: 98px; /* Đủ chứa handle + thanh tìm kiếm */
-  transform: translateY(0);
-}
-
-.bottom-sheet.state-half {
-  height: 320px; /* Chứa handle + thanh tìm kiếm + danh mục */
-  transform: translateY(0);
-}
-
-.bottom-sheet.state-details {
-  height: 520px;
-  transform: translateY(0);
-}
-
-.bottom-sheet.state-full {
-  height: calc(100% - 4.5rem);
-  transform: translateY(0);
-}
-
-.sheet-handle {
-  width: 38px;
-  height: 5px;
-  background: #cbd5e1;
-  border-radius: 3px;
-  margin: 0.6rem auto;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.sheet-handle:hover {
-  background: #94a3b8;
-}
-
-.sheet-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.5rem 1.25rem 1.5rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-/* --- A. HOME VIEW --- */
-.goy-section {
-  background: #f8fafc;
-  border-radius: 1rem;
-  padding: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.goy-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.icon-circle-bg {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(29, 112, 242, 0.1);
-  color: #1d70f2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.goy-title {
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.goy-desc {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 0.1rem;
-}
-
-/* Category grid (Nhà, Cây xăng, Bãi đỗ) */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.25rem;
-  text-align: center;
-}
-
-.cat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  cursor: pointer;
-}
-
-.cat-icon-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-}
-
-.cat-item span {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #475569;
-}
-
-/* Category theme colors from screenshots */
-.cat-blue { background: #3b82f6; }
-.cat-orange { background: #ea580c; }
-.cat-rose { background: #e11d48; }
-.cat-navy { background: #334155; }
-.cat-brown { background: #a16207; }
-
-/* History lists */
-.recent-header {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: -0.5rem;
-}
-
-.history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.65rem 0;
-  border-bottom: 1px solid #f1f5f9;
-  cursor: pointer;
-}
-
-.history-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.history-name {
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.history-address {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 0.1rem;
-}
-
-/* --- B. SEARCH RESULTS LIST --- */
-.results-header-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.search-back-btn {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.results-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.result-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.result-card:hover {
-  background: #f8fafc;
-}
-
-.result-pin {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: rgba(225, 29, 72, 0.1);
-  color: #e11d48;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.result-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.card-title {
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.card-address {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 0.1rem;
-}
-
-.result-route-pill {
-  background: rgba(29, 112, 242, 0.1);
-  color: #1d70f2;
-  border: none;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.4rem 0.65rem;
-  border-radius: 9999px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-
-/* --- C. PLACE DETAILS --- */
-.details-head {
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.details-head-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.details-head-actions {
-  display: flex;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-
-.icon-btn-ghost {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  border: none;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.details-name {
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
-.details-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
-.details-rating {
-  color: #fbbf24;
-  font-weight: bold;
-}
-
-.details-sub-row {
-  font-size: 0.78rem;
-  color: #64748b;
-}
-
-.details-coords {
-  font-variant-numeric: tabular-nums;
-}
-
-.action-row {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
-
-.btn-primary-action {
-  flex: 1;
-  background: #1d70f2;
-  border: none;
-  color: white;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  transition: all 0.2s;
-}
-
-.btn-primary-action:hover {
-  background: #1a62d4;
-}
-
-.btn-sec-action {
-  width: 44px;
-  height: 44px;
-  border-radius: 0.75rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-
-/* --- D. ROUTE PLANNING SETUP --- */
-.route-top-panel {
-  padding: 1.25rem;
-  border-bottom: 1px solid #f1f5f9;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.route-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.route-header-row h3 {
-  font-size: 0.95rem;
-  font-weight: 800;
-}
-
-.route-close-btn {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.vehicle-tabs {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.15rem 0.25rem;
-}
-
-.vehicle-tab-btn {
-  width: 38px;
-  height: 38px;
-  background: none;
-  border: none;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-
-.vehicle-tab-btn.active {
-  background: #1d70f2;
-  color: #ffffff;
-}
-
-.route-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  position: relative;
-}
-
-.route-connector {
-  position: absolute;
-  left: 11px;
-  top: 14px;
-  bottom: 14px;
-  width: 2px;
-  background: #cbd5e1;
-  z-index: 0;
-}
-
-.input-node {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.4rem;
-  padding: 0.5rem;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #1e293b;
-  font-weight: 600;
-  position: relative;
-  z-index: 1;
-}
-
-.route-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.route-dot-origin {
-  background: #3b82f6;
-}
-
-.route-dot-dest {
-  width: 7px;
-  height: 7px;
-  background: #ffffff;
-  border: 2px solid #ef4444;
-}
-
-.route-detail-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(29, 112, 242, 0.05);
-  border: 1px solid rgba(29, 112, 242, 0.1);
-  padding: 0.85rem;
-  border-radius: 0.75rem;
-}
-
-.route-time-val {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #1d70f2;
-}
-
-.route-dist-val {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 0.1rem;
-}
-
-.route-list-alt {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.alt-route-card {
-  border: 1px solid #f1f5f9;
-  padding: 0.65rem 0.85rem;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.alt-route-card:hover {
-  background: #f8fafc;
-}
-
-.alt-route-card.active {
-  border-color: #1d70f2;
-  background: rgba(29, 112, 242, 0.02);
-}
-
-.alt-route-time {
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-.alt-route-name {
-  font-size: 0.7rem;
-  color: #64748b;
-}
-
-
-/* --- E. ACTIVE NAVIGATION MODE --- */
-.nav-direction-panel {
-  position: absolute;
-  top: 4.5rem;
-  left: 1rem;
-  background: #00875a; /* Traffic green color */
-  color: white;
-  border-radius: 1rem;
-  padding: 0.75rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 200px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-  z-index: 200;
-  animation: fadeIn 0.25s ease-out;
-}
-
-.nav-direction-val {
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
-.nav-direction-lbl {
-  font-size: 0.7rem;
+  inset: 0;
+  pointer-events: none;
+  z-index: 340;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(var(--grid-line-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-strong) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 90%);
   opacity: 0.9;
 }
 
-.nav-speed-panel {
-  position: absolute;
-  top: 4.5rem;
-  right: 1rem;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 4px solid #1d70f2;
-  color: #1e293b;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-  z-index: 200;
+/* ================================================================== *
+ * LIQUID GLASS — apple-esque refractive panel
+ * ================================================================== */
+.glass-panel,
+.liquid-glass {
+  position: relative;
+  background: var(--color-glass);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(22px) saturate(180%) contrast(112%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%) contrast(112%);
+  isolation: isolate;
+  overflow: hidden;
 }
 
-.nav-speed-val {
-  font-size: 0.95rem;
-  font-weight: 800;
-}
-
-.nav-speed-lbl {
-  font-size: 0.45rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #64748b;
-}
-
-.nav-bottom-bar {
-  background: #0f172a; /* Dark bar in nav mode */
-  color: white;
-  padding: 1rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  border-top-left-radius: 1.25rem;
-  border-top-right-radius: 1.25rem;
-  box-shadow: 0 -10px 20px rgba(0,0,0,0.3);
-}
-
-.nav-stats-time {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #38bdf8;
-}
-
-.nav-stats-dist {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin-top: 0.1rem;
-}
-
-.btn-cancel-nav {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #ef4444;
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancel-nav:hover {
-  background: #dc2626;
-  transform: scale(1.05);
-}
-
-
-/* --- F. MAP MODE PICKER SHEET --- */
-.map-mode-overlay {
+.glass-panel::before,
+.liquid-glass::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  z-index: 400;
-  display: flex;
-  align-items: flex-end;
-  animation: fadeIn 0.2s ease-out;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 60% at 20% 0%, rgb(255 255 255 / 0.12), transparent 60%),
+    radial-gradient(ellipse 100% 60% at 80% 100%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 60%);
+  mix-blend-mode: screen;
 }
 
-.map-mode-sheet {
-  width: 100%;
-  background: #ffffff;
-  border-top-left-radius: 1.5rem;
-  border-top-right-radius: 1.5rem;
-  padding: 0.5rem 1.25rem 1.5rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+.glass-panel::after,
+.liquid-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 0.35) 0%,
+    rgb(255 255 255 / 0.06) 30%,
+    rgb(255 255 255 / 0) 60%,
+    color-mix(in srgb, var(--color-primary) 22%, transparent) 100%
+  );
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
 }
 
-.map-mode-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.command-deck,
+.result-dock {
+  box-shadow: var(--panel-shadow);
 }
 
-.map-mode-header h3 {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #1e293b;
+/* Sheen sweep — a subtle highlight that periodically travels across peak surfaces */
+.sheen-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.sheen-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: var(--sheen);
+  transform: translateX(-120%);
+  pointer-events: none;
+  animation: sheen-travel 6s cubic-bezier(0.4, 0, 0.2, 1) 1.4s infinite;
+  mix-blend-mode: screen;
+}
+@keyframes sheen-travel {
+  0%   { transform: translateX(-120%); }
+  60%  { transform: translateX(140%); }
+  100% { transform: translateX(140%); }
 }
 
-.map-mode-section-title {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+/* Cards get sheen on hover only */
+.result-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.2s ease,
+    box-shadow 0.28s ease;
 }
-
-.map-mode-thumb-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 0.6rem;
-}
-
-.map-mode-thumb {
-  background: none;
-  border: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  cursor: pointer;
-}
-
-.map-mode-thumb span {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #475569;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.thumb-preview {
-  width: 100%;
-  aspect-ratio: 1.3 / 1;
-  border-radius: 0.6rem;
-  border: 2px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  transition: all 0.2s;
-}
-
-.map-mode-thumb.active .thumb-preview {
-  border-color: #1d70f2;
-  color: #1d70f2;
-}
-
-.thumb-default {
-  background: linear-gradient(135deg, #eef0f2 0%, #dbe1e8 100%);
-}
-
-.thumb-satellite {
-  background: linear-gradient(135deg, #3b5c3f 0%, #6b7a3a 45%, #8a9b4e 100%);
-  color: #eef0f2;
-}
-
-.map-mode-thumb.active .thumb-satellite {
-  color: #ffffff;
-}
-
-.thumb-traffic {
-  background: linear-gradient(100deg, #eef0f2 45%, #f97316 45%, #f97316 55%, #eef0f2 55%);
-}
-
-.thumb-transit {
-  background: #eef0f2;
-}
-
-.thumb-2d {
-  background: #eef0f2;
-}
-
-.thumb-3d {
-  background: #eef0f2;
-}
-
-.map-mode-attribution {
-  font-size: 0.6rem;
-  color: #94a3b8;
-  text-align: center;
-}
-
-
-/* ==========================================================================
-   DECORATION & HELPER CLASSES
-   ========================================================================== */
-/* Apple Status Bar Simulator */
-.phone-status-bar {
-  height: 38px;
-  padding: 0 1.5rem;
-  background: transparent;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #1e293b;
+.result-card::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--panel-highlight-strong), transparent);
+  z-index: 1;
+}
+.result-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--mx, 30%) var(--my, 20%), color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 45%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--color-secondary) 10%, transparent), transparent 50%);
+  transition: opacity 0.3s ease;
+  content: "";
+}
+.result-card:hover::after,
+.result-card.is-active::after {
+  opacity: 1;
+}
+.result-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Result card shine sweep on hover (peak) */
+.result-card .card-shine {
+  position: absolute;
+  inset: 0;
+  background: var(--sheen);
+  transform: translateX(-140%);
+  pointer-events: none;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  mix-blend-mode: screen;
+  z-index: 2;
+}
+.result-card:hover .card-shine {
+  transform: translateX(140%);
+}
+
+/* ================================================================== *
+ * ENTRANCE — stagger fade-slide, ceremonial reveal
+ * ================================================================== */
+@keyframes rise-in {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(6px); }
+  60%  { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes rise-in-soft {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.enter-rise {
+  animation: rise-in 0.62s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.enter-soft {
+  animation: rise-in-soft 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > * {
+  animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger > *:nth-child(4) { animation-delay: 0.22s; }
+.stagger > *:nth-child(5) { animation-delay: 0.28s; }
+.stagger > *:nth-child(6) { animation-delay: 0.34s; }
+.stagger > *:nth-child(7) { animation-delay: 0.40s; }
+.stagger > *:nth-child(8) { animation-delay: 0.46s; }
+.stagger > *:nth-child(n+9) { animation-delay: 0.52s; }
+
+/* ================================================================== *
+ * MISC POLISH
+ * ================================================================== */
+.theme-dot {
+  width: 1.3rem;
+  height: 1.3rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+}
+.theme-dot:hover {
+  transform: scale(1.12);
+}
+.theme-dot.is-active {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    0 0 16px color-mix(in srgb, var(--color-primary) 60%, transparent);
+  transform: scale(1.08);
+}
+
+.search-shell {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.search-shell:focus-within {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  box-shadow: var(--panel-shadow),
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+.search-shell input {
+  color: var(--color-foreground);
+}
+.search-shell input::placeholder {
+  color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+  opacity: 1;
+}
+
+.map-mode-group {
+  box-shadow: inset 0 1px 0 var(--panel-highlight);
+}
+
+/* Floating map-style switcher, docked bottom-right of the viewport.
+ * z-index (690) sits BELOW the recommendations dock (700) so the dock
+ * covers the FAB whenever the sheet is at half/expanded state. */
+.map-mode-fab {
+  position: fixed;
+  z-index: 690;
+  right: calc(0.75rem + env(safe-area-inset-right, 0px));
+  bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 1.15rem;
+  background: color-mix(in srgb, var(--color-card) 85%, transparent);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--panel-highlight),
+    0 12px 30px rgb(0 0 0 / 0.32),
+    0 0 24px color-mix(in srgb, var(--color-primary) 12%, transparent);
+  animation: rise-in-soft 0.42s cubic-bezier(0.22, 1, 0.36, 1) both 0.2s;
+}
+@media (min-width: 1024px) {
+  .map-mode-fab {
+    /* Pin to the far right — the dock lives here too but sits on a higher
+     * layer, so it covers the FAB whenever it's expanded/half. */
+    right: calc(1.5rem + env(safe-area-inset-right, 0px));
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.filter-rail {
+  mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 18px), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 18px), transparent);
+}
+
+.selection-trigger,
+.selection-item {
+  background: var(--selection-bg);
+  border: 1px solid color-mix(in srgb, var(--selection-text) 18%, transparent);
+  color: var(--selection-text);
+  box-shadow: inset 0 1px 0 var(--panel-highlight), 0 8px 20px rgb(0 0 0 / 0.16);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.selection-trigger:hover,
+.selection-item:hover {
+  background: var(--selection-hover);
+  border-color: color-mix(in srgb, var(--color-primary) 60%, transparent);
+  color: var(--selection-text);
+}
+.selection-item:active {
+  transform: scale(0.96);
+}
+.selection-trigger [data-placeholder] {
+  color: color-mix(in srgb, var(--selection-text) 72%, transparent);
+}
+.selection-content {
+  background: var(--selection-bg);
+  border: 1px solid color-mix(in srgb, var(--selection-text) 16%, transparent);
+  color: var(--selection-text);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+}
+.selection-option {
+  color: var(--selection-text);
+}
+.selection-option[data-highlighted],
+.selection-option[data-state="checked"] {
+  background: var(--selection-hover);
+  color: var(--selection-text);
+}
+.selection-item[data-state="on"] {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 45%, transparent),
+    0 10px 24px color-mix(in srgb, var(--color-primary) 26%, transparent),
+    0 0 30px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+.score-tile {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.4),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18),
+    0 12px 28px color-mix(in srgb, var(--color-secondary) 26%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-secondary) 22%, transparent);
+}
+.score-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.45) 48%, transparent 66%);
+  transform: translateX(-140%);
+  animation: sheen-travel 5s cubic-bezier(0.4, 0, 0.2, 1) 0.8s infinite;
   pointer-events: none;
 }
 
-.phone-status-bar.dark-mode {
-  color: white;
+/* Live indicator dot pulse */
+.pulse-dot {
+  position: relative;
+  display: inline-flex;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  box-shadow: 0 0 14px var(--color-primary);
+}
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0%   { opacity: 0.9; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(1.9); }
 }
 
-.phone-status-right {
+/* Pin tile subtle hover lift */
+.pin-tile {
+  box-shadow: inset 0 1px 0 var(--panel-highlight);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.result-card:hover .pin-tile {
+  box-shadow: inset 0 1px 0 var(--panel-highlight),
+    0 6px 18px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.map-overlay {
+  background: var(--map-overlay);
+}
+
+.mode-toggle-bg {
+  background: var(--mode-toggle-bg);
+}
+
+/* ================================================================== *
+ * THEME OVERRIDES — force css var colors even when tailwind emits inline color-mix
+ * ================================================================== */
+:root[data-theme] [class~="text-foreground"],
+:root[data-theme] [class~="text-card-foreground"] {
+  color: var(--color-foreground) !important;
+}
+:root[data-theme] [class~="text-muted-foreground"] {
+  color: var(--color-muted-foreground) !important;
+}
+:root[data-theme] [class~="text-primary"] {
+  color: var(--accent-ink) !important;
+}
+:root[data-theme] [class~="text-primary-foreground"] {
+  color: var(--color-primary-foreground) !important;
+}
+:root[data-theme] [class~="text-secondary-foreground"] {
+  color: var(--color-secondary-foreground) !important;
+}
+:root[data-theme] [class~="bg-background"] {
+  background-color: var(--color-background) !important;
+}
+:root[data-theme] [class~="bg-card"],
+:root[data-theme] [class~="bg-card/95"] {
+  background-color: color-mix(in srgb, var(--color-card) 95%, transparent) !important;
+}
+:root[data-theme] [class~="bg-muted"] {
+  background-color: var(--color-muted) !important;
+}
+:root[data-theme] [class~="bg-accent"] {
+  background-color: var(--color-accent) !important;
+}
+:root[data-theme] [class~="bg-primary"] {
+  background-color: var(--color-primary) !important;
+}
+:root[data-theme] [class~="bg-secondary"] {
+  background-color: var(--color-secondary) !important;
+}
+:root[data-theme] [class~="border-primary"] {
+  border-color: var(--color-primary) !important;
+}
+
+.bottom-sheet-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 55%, transparent) transparent;
+}
+.bottom-sheet-scroll::-webkit-scrollbar { width: 6px; }
+.bottom-sheet-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  border-radius: 999px;
+}
+
+/* Leaflet skin (dark first) */
+.leaflet-container { background: #0d120c; }
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #20251a;
+  color: #f1f5e8;
+  border: 1px solid rgb(241 245 232 / 0.14);
+}
+.leaflet-popup-content { margin: 10px 12px; }
+
+.user-location-marker,
+.poi-marker { background: transparent; border: none; }
+
+.user-dot {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  background: var(--color-primary);
+  border: 3px solid #161e00;
+  border-radius: 50%;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 80%, transparent);
+}
+.user-dot-pulse {
+  position: absolute;
+  inset: -6px;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+  border-radius: 50%;
+  animation: user-pulse 1.8s ease-out infinite;
+}
+@keyframes user-pulse {
+  0%   { opacity: 0.9; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+
+.poi-pin {
+  position: relative;
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #161e00;
+  border-radius: 50% 50% 50% 0;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.5);
+  transform: rotate(-45deg);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.poi-pin > span {
+  color: #fff; font-size: 0.72rem; font-weight: 700; line-height: 1; transform: rotate(45deg);
+}
+.poi-pin.tier-high { background: #ccff00; }
+.poi-pin.tier-mid  { background: #ffb800; }
+.poi-pin.tier-low  { background: #5d684b; }
+.poi-pin:hover { transform: rotate(-45deg) scale(1.14); }
+.poi-pin.tier-high > span,
+.poi-pin.tier-mid > span { color: #161e00; }
+.poi-pin-active,
+.poi-pin-active:hover {
+  box-shadow: 0 0 0 5px rgb(204 255 0 / 0.28), 0 10px 24px rgb(0 0 0 / 0.42);
+  transform: rotate(-45deg) scale(1.28);
+}
+.poi-pin-active::before {
+  position: absolute;
+  inset: -7px;
+  border: 2px solid rgb(204 255 0 / 0.7);
+  border-radius: 50%;
+  animation: poi-pulse 1.5s ease-out infinite;
+  content: "";
+}
+@keyframes poi-pulse {
+  0%   { opacity: 0.9; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+/* ================================================================== *
+ * DRAWER SHEET (own styles — replaces .glass-panel on the aside so we
+ * don't depend on mask-composite which fails on some mobile browsers).
+ *   expanded → fully docked bottom (mobile) / bottom-right (desktop)
+ *   hidden   → translated fully off-screen; swipe-zone at bottom re-opens
+ *   half     → ~52 dvh (default) — enough for a few cards, map still visible
+ *   expanded → full viewport height
+ * Interaction: tap grip steps down; drag up steps up; drag down > 90px steps
+ * down; swipe up on bottom-edge zone > 30px reveals to half.
+ * ================================================================== */
+.result-dock {
+  position: fixed;
+  z-index: 700;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 560px;
+  padding-top: 0;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+
+  display: flex;
+  flex-direction: column;
+  /* Default = half state. `data-sheet="expanded"` swaps to full below. */
+  max-height: 52dvh;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Solid opaque background — visible even if backdrop-filter is disabled. */
+  background: color-mix(in srgb, var(--color-card) 94%, transparent);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+
+  border: 1px solid var(--panel-border);
+  border-radius: 1.65rem 1.65rem 0 0;
+
+  box-shadow:
+    inset 0 1px 0 var(--panel-highlight),
+    0 -20px 50px rgb(0 0 0 / 0.32),
+    0 0 40px color-mix(in srgb, var(--color-primary) 12%, transparent);
+
+  transition:
+    transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+  will-change: transform, max-height;
+  touch-action: pan-y;
+}
+.result-dock[data-sheet="hidden"] {
+  transform: translateY(110%);
+  pointer-events: none;
+}
+.result-dock[data-sheet="expanded"] {
+  max-height: 100dvh;
+}
+.result-dock .sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+@media (min-width: 1024px) {
+  .result-dock {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    border-radius: 1.65rem;
+    /* Desktop half is roomier since a right-side sidebar can afford it. */
+    max-height: calc((100dvh - 3rem) * 0.62);
+  }
+  .result-dock[data-sheet="expanded"] {
+    max-height: calc(100dvh - 3rem);
+  }
+}
+
+/* Swipe-up-from-bottom zone — active only when the dock is hidden.
+ * A slim area along the viewport bottom edge with a subtle iOS-style
+ * home-indicator hint bar. */
+.swipe-zone {
+  position: fixed;
+  z-index: 690;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(46px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  animation: rise-in-soft 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.swipe-zone:active { cursor: grabbing; }
+
+.swipe-hint {
+  display: block;
+  width: 108px;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 68%, transparent);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--color-primary) 12%, transparent),
+    0 0 22px color-mix(in srgb, var(--color-primary) 60%, transparent);
+  animation: swipe-hint-breathe 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes swipe-hint-breathe {
+  0%, 100% {
+    transform: scaleX(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scaleX(1.20);
+    opacity: 0.5;
+  }
+}
+/* Desktop: dock lives bottom-right, so the swipe hint should align there too. */
+@media (min-width: 1024px) {
+  .swipe-zone {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: min(560px, calc(100% - 3rem));
+    border-radius: 1.65rem;
+  }
 }
 
-/* Home indicator line at bottom */
-.phone-home-indicator {
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 4px;
-  background: #94a3b8;
-  border-radius: 2px;
-  z-index: 1000;
+/* ================================================================== *
+ * COLLAPSE PANEL — reusable expand/collapse container for the top overlay
+ * Used to hide the theme row, city-picker row, filter chips row on
+ * narrow viewports until the user taps the expand chevron.
+ * ================================================================== */
+.collapse-panel {
+  overflow: hidden;
+  max-height: 260px;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.28s ease;
+  will-change: max-height, opacity;
+}
+.collapse-panel[data-visible="false"] {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   pointer-events: none;
 }
 
-.phone-home-indicator.light-theme {
-  background: #334155;
+/* Filters shortcut pill — surfaces active filter count while the
+ * extras panel is collapsed so the user knows a filter is applied. */
+.filters-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-card) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, var(--panel-border));
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  cursor: pointer;
+  animation: rise-in-soft 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.2s ease;
+  box-shadow:
+    inset 0 1px 0 var(--panel-highlight),
+    0 6px 18px rgb(0 0 0 / 0.18),
+    0 0 24px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+.filters-pill:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-primary) 65%, transparent);
+  box-shadow:
+    inset 0 1px 0 var(--panel-highlight),
+    0 8px 22px rgb(0 0 0 / 0.24),
+    0 0 32px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+.filters-pill:active { transform: scale(0.97); }
+.filters-pill .count-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 55%, transparent);
 }
 
-/* Keyframes */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* On lg+ the collapse mechanism is inert — always show extras. */
+@media (min-width: 1024px) {
+  .collapse-panel {
+    max-height: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+  .filters-pill { display: none !important; }
 }
 
-/* ==========================================================================
-   RESPONSIVE FOR REAL MOBILE DEVICES
-   ========================================================================== */
-@media (max-width: 480px) {
-  .app-layout {
-    padding: 0;
-    background: #000000;
-  }
+.sheet-handle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px 10px;
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+.sheet-handle:active { cursor: grabbing; }
+.sheet-handle-grip {
+  display: block;
+  width: 52px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-foreground) 42%, transparent);
+  transition: background 0.2s ease, width 0.2s ease, box-shadow 0.2s ease;
+}
+.sheet-handle:hover .sheet-handle-grip {
+  width: 68px;
+  background: color-mix(in srgb, var(--color-primary) 88%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-primary) 70%, transparent);
+}
+/* (Grip breathe animation removed — dock is off-screen when hidden.) */
 
-  .phone-simulator {
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
+/* Peek label + hidden-state background overrides removed — the dock now
+ * slides fully off-screen when hidden, and a bottom-edge swipe-zone with
+ * an iOS-style home indicator takes over the re-open affordance. */
 
-  /* Hide simulated status bar, notch, and home indicator on real mobile screen */
-  .phone-notch,
-  .phone-status-bar,
-  .phone-home-indicator {
-    display: none;
-  }
+/* ================================================================== *
+ * LIGHT MODE READABILITY REMAPS
+ * ================================================================== */
+:root[data-theme="light"] .border-white\/10,
+:root[data-theme="light"] .border-white\/12,
+:root[data-theme="light"] .border-white\/14,
+:root[data-theme="light"] .border-white\/15,
+:root[data-theme="light"] .border-white\/20 {
+  border-color: var(--panel-border) !important;
+}
+:root[data-theme="light"] .bg-white\/\[0\.055\],
+:root[data-theme="light"] .bg-white\/\[0\.06\],
+:root[data-theme="light"] .bg-white\/\[0\.07\],
+:root[data-theme="light"] .bg-white\/\[0\.08\],
+:root[data-theme="light"] .bg-white\/\[0\.1\],
+:root[data-theme="light"] .bg-black\/15 {
+  background-color: var(--soft-fill) !important;
+}
+:root[data-theme="light"] .bg-white\/10,
+:root[data-theme="light"] .bg-white\/20 {
+  background-color: var(--soft-strong) !important;
+}
+:root[data-theme="light"] [class~="bg-card"],
+:root[data-theme="light"] [class~="bg-card/95"] {
+  background-color: rgb(255 255 255 / 0.96) !important;
+}
+:root[data-theme="light"] .hover\:bg-white\/\[0\.1\]:hover {
+  background-color: var(--soft-strong) !important;
+}
+:root[data-theme="light"] .glass-panel,
+:root[data-theme="light"] .command-deck,
+:root[data-theme="light"] .result-dock,
+:root[data-theme="light"] .search-shell,
+:root[data-theme="light"] .city-picker-row,
+:root[data-theme="light"] .result-card,
+:root[data-theme="light"] .assistant-card {
+  box-shadow: inset 0 1px 0 var(--panel-highlight), 0 10px 26px rgb(23 26 16 / 0.10);
+}
+:root[data-theme="light"] .app-ambient::before {
+  background:
+    linear-gradient(90deg, rgb(23 26 16 / 0.06), transparent 20%, transparent 76%, rgb(23 26 16 / 0.07)),
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 30%);
+}
 
-  /* Adjust map controls position under notchless screen */
-  .map-controls.state-home {
-    bottom: 110px;
+/* ================================================================== *
+ * MOBILE POLISH & MOTION-REDUCE
+ * ================================================================== */
+@media (max-width: 400px) {
+  .theme-dot { width: 1.15rem; height: 1.15rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .app-ambient::before,
+  .sheen-sweep::after,
+  .score-tile::after,
+  .pulse-dot::after,
+  .user-dot-pulse,
+  .poi-pin-active::before {
+    animation: none !important;
   }
 }

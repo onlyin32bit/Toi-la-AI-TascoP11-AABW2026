@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tasco Food Intelligence">
+  <rect width="512" height="512" rx="112" fill="#131313"/>
+  <path d="M112 346 256 92l144 254H112Z" fill="#c3f400"/>
+  <path d="M176 320h160l-80-142-80 142Z" fill="#feb700"/>
+  <circle cx="256" cy="274" r="48" fill="#201f1f"/>
+  <path d="M256 236c21 0 38 17 38 38 0 34-38 69-38 69s-38-35-38-69c0-21 17-38 38-38Z" fill="#c3f400"/>
+  <circle cx="256" cy="274" r="13" fill="#161e00"/>
+</svg>

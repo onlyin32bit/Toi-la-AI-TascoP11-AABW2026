@@ -1,875 +1,535 @@
-import { useState, useEffect, useRef } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import {
-  Search,
-  Mic,
-  MapPin,
-  Navigation,
-  Navigation2,
-  Compass,
-  Layers,
-  ArrowLeft,
-  Car,
-  Bus,
-  Footprints,
-  Bike,
-  Scooter,
-  Check,
-  X,
-  MoreHorizontal,
-  Share2,
-  Bookmark,
-  Zap,
-  Fuel,
-  Utensils,
-  SquareParking,
-  Coffee,
-  Map,
-  Globe,
-  TrafficCone,
-  Square,
-  Box
-} from "lucide-react";
+  IconArrowDown,
+  IconCrown,
+  IconGear,
+  IconGlobe,
+  IconLocationHeart,
+  IconLocationMap,
+  IconPhoto,
+  IconSwitchOff,
+  IconSwitchOn,
+} from "nucleo-isometric";
+import { recommend } from "./api";
+import { CITIES } from "./data/mockPlaces";
+import { MapView } from "./components/MapView";
+import { SearchBar } from "./components/SearchBar";
+import { FilterChips } from "./components/FilterChips";
+import { ResultCard } from "./components/ResultCard";
+import { AssistantBox } from "./components/AssistantBox";
+import { Button } from "./components/ui/button";
+import { Card } from "./components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
+import { useI18n } from "./i18n/LanguageContext";
+import { cn } from "./lib/utils";
+import type { NotFoundReason, SearchFilters, SearchResponse, UserLocation, Vehicle } from "./types";
 import "./App.css";
 
-// Interface definitions for TypeScript safety
-interface Place {
-  id: string;
-  name: string;
-  address: string;
-  score: number;
-  tags: string[];
-  lat?: number;
-  lng?: number;
-}
+type ThemeMode = "dark" | "light";
+type AccentTheme = "green" | "blue" | "orange" | "pink" | "lgbt";
+// Three-position bottom sheet:
+//   hidden   → docked off-screen; a swipe-hint bar peeks at the viewport edge
+//   half     → ~52 dvh visible (default) — enough for a few cards, map still readable
+//   expanded → full viewport height — deep browse
+type SheetState = "hidden" | "half" | "expanded";
 
-interface MenuItem {
-  dish_name: string;
-  menu_category: string;
-  price_vnd?: number;
-  is_signature?: boolean;
-  dietary_tags?: string[];
-}
-
-interface Review {
-  comment: string;
-  rating: number;
-  sentiment: string;
-}
-
-interface PlaceDetail {
-  id: string;
-  name: { value: string };
-  address: { value: string };
-  rating: { value?: number };
-  review_count: { value: number };
-  quality: {
-    dataset_score: number;
-    computed_score: number;
-    gaps: string[];
-  };
-  menu: { value: MenuItem[] };
-  reviews: { value: Review[] };
-  ai_summary?: string;
-  known_strengths?: { value: string[] };
-}
-
-// Fixed GPS coordinate for user's Current Location (Hanoi center near Lotte Mall)
-const USER_LOCATION: [number, number] = [21.0315, 105.8115];
-
-// Static Mock Data for 100% Frontend Independent Test
-const MOCK_PLACES: Place[] = [
-  {
-    id: "RES002",
-    name: "Sushi Sakura",
-    address: "25 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội",
-    score: 0.90,
-    tags: ["segment:Japanese", "amenity:AirConditioning", "diet:HalalFriendly"]
-  },
-  {
-    id: "RES018",
-    name: "Bún Chả Phố Cổ",
-    address: "18 Đường Láng, Đống Đa, Hà Nội",
-    score: 0.78,
-    tags: ["segment:Vietnamese", "amenity:Parking", "amenity:OutdoorSeating"]
-  },
-  {
-    id: "RES005",
-    name: "Phở Gia Truyền",
-    address: "49 Bát Đàn, Cửa Đông, Hoàn Kiếm, Hà Nội",
-    score: 0.85,
-    tags: ["segment:Vietnamese", "amenity:CashOnly"]
-  }
+const VEHICLE_OPTIONS: { id: Vehicle; emoji: string }[] = [
+  { id: "walk", emoji: "🚶" },
+  { id: "bike", emoji: "🚲" },
+  { id: "motorbike", emoji: "🛵" },
+  { id: "car", emoji: "🚗" },
 ];
 
-const MOCK_PLACE_DETAILS: Record<string, PlaceDetail> = {
-  "RES002": {
-    id: "RES002",
-    name: { value: "Sushi Sakura" },
-    address: { value: "25 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội" },
-    rating: { value: 4.5 },
-    review_count: { value: 120 },
-    quality: {
-      dataset_score: 0.85,
-      computed_score: 0.90,
-      gaps: []
-    },
-    menu: {
-      value: [
-        { dish_name: "Combo Sakura Sushi Special", menu_category: "Sushi Combo", price_vnd: 350000, is_signature: true, dietary_tags: ["Seafood"] },
-        { dish_name: "Sashimi Salmon (5 chiếc)", menu_category: "Sashimi", price_vnd: 180000, is_signature: false, dietary_tags: ["Raw Seafood"] },
-        { dish_name: "Tempura Udon", menu_category: "Noodles", price_vnd: 120000, is_signature: false }
-      ]
-    },
-    reviews: {
-      value: [
-        { comment: "Đồ ăn rất tươi, phục vụ nhiệt tình nhanh chóng.", rating: 5, sentiment: "Tích cực" },
-        { comment: "Không gian sang trọng, giá hơi cao nhưng xứng đáng.", rating: 4, sentiment: "Tích cực" }
-      ]
-    },
-    ai_summary: "Sushi Sakura được đánh giá cao về độ tươi ngon của hải sản và không gian đậm nét văn hóa Nhật Bản. Rất thích hợp cho các buổi tiếp khách hoặc gia đình.",
-    known_strengths: { value: ["Đồ tươi sống", "Không gian sang trọng", "Phục vụ tốt"] }
+const ACCENT_THEMES: { id: AccentTheme; label: string; swatch: string }[] = [
+  { id: "green", label: "Green", swatch: "#ccff00" },
+  { id: "blue", label: "Blue", swatch: "#5bd3ff" },
+  { id: "orange", label: "Orange", swatch: "#ff9f1c" },
+  { id: "pink", label: "Pink", swatch: "#ff5db1" },
+  {
+    id: "lgbt",
+    label: "LGBT",
+    swatch:
+      "linear-gradient(135deg, #e40303 0 16%, #ff8c00 16% 32%, #ffed00 32% 48%, #008026 48% 64%, #24408e 64% 80%, #732982 80% 100%)",
   },
-  "RES018": {
-    id: "RES018",
-    name: { value: "Bún Chả Phố Cổ" },
-    address: { value: "18 Đường Láng, Đống Đa, Hà Nội" },
-    rating: { value: 4.2 },
-    review_count: { value: 85 },
-    quality: {
-      dataset_score: 0.70,
-      computed_score: 0.78,
-      gaps: ["ocr_menu"]
-    },
-    menu: {
-      value: [
-        { dish_name: "Bún chả đặc biệt đầy đủ", menu_category: "Bún Chả", price_vnd: 60000, is_signature: true },
-        { dish_name: "Nem cua bể giòn rụm", menu_category: "Món ăn kèm", price_vnd: 20000, is_signature: false }
-      ]
-    },
-    reviews: {
-      value: [
-        { comment: "Nước dùng đậm đà thơm ngon, thịt nướng cháy cạnh vừa phải.", rating: 5, sentiment: "Tích cực" },
-        { comment: "Quán hơi chật và nóng vào buổi trưa cao điểm.", rating: 3, sentiment: "Trung lập" }
-      ]
-    },
-    ai_summary: "Nước dùng của quán có hương vị truyền thống đặc biệt, nem cua bể nhân đầy đặn. Điểm trừ lớn là quán hơi nhỏ và đỗ xe ô tô vào giờ cao điểm hơi khó khăn.",
-    known_strengths: { value: ["Nước dùng ngon", "Nem giòn", "Giá hợp lý"] }
-  },
-  "RES005": {
-    id: "RES005",
-    name: { value: "Phở Gia Truyền" },
-    address: { value: "49 Bát Đàn, Hoàn Kiếm, Hà Nội" },
-    rating: { value: 4.4 },
-    review_count: { value: 340 },
-    quality: {
-      dataset_score: 0.75,
-      computed_score: 0.85,
-      gaps: ["menu"]
-    },
-    menu: {
-      value: [
-        { dish_name: "Phở bò tái nạm", menu_category: "Phở", price_vnd: 55000, is_signature: true },
-        { dish_name: "Quẩy giòn", menu_category: "Ăn kèm", price_vnd: 10000, is_signature: false }
-      ]
-    },
-    reviews: {
-      value: [
-        { comment: "Hương vị phở chuẩn Hà Nội xưa, nước dùng thanh ngọt tự nhiên.", rating: 5, sentiment: "Tích cực" },
-        { comment: "Phải xếp hàng hơi lâu mới mua được phở.", rating: 4, sentiment: "Trung lập" }
-      ]
-    },
-    ai_summary: "Phở Bát Đàn nổi tiếng lâu đời với sợi phở mềm dai, thịt bò thái mỏng tươi ngon và nước dùng ninh xương đậm vị ngọt thanh. Phải xếp hàng tự phục vụ.",
-    known_strengths: { value: ["Nước phở ngon", "Thương hiệu lâu đời"] }
-  }
-};
+];
 
-// Map POI ID to fixed offsets around Hanoi for realistic map display
-const getMockCoordinates = (id: string): [number, number] => {
-  const hash = id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const latOffset = ((hash % 100) - 50) * 0.0003;
-  const lngOffset = (((hash >> 2) % 100) - 50) * 0.0003;
-  return [USER_LOCATION[0] + latOffset, USER_LOCATION[1] + lngOffset];
-};
+// Drag thresholds on the grip.
+const HIDE_THRESHOLD_PX = 90; // drag DOWN this far → hide
+const SHOW_THRESHOLD_PX = 30; // drag UP this far   → show (easy)
+
+function readThemeMode(): ThemeMode {
+  const value = window.localStorage.getItem("tasco-theme-mode");
+  return value === "light" || value === "dark" ? value : "dark";
+}
+
+function readAccentTheme(): AccentTheme {
+  const value = window.localStorage.getItem("tasco-accent-theme");
+  return ACCENT_THEMES.some((theme) => theme.id === value) ? (value as AccentTheme) : "green";
+}
+
+function readExtrasExpanded(): boolean {
+  // Default expanded — reveal all controls on first paint. User can collapse.
+  const val = window.localStorage.getItem("tasco-extras-expanded");
+  return val === null ? true : val === "1";
+}
+
+const VEHICLE_IDS: Vehicle[] = ["walk", "bike", "motorbike", "car"];
+
+function readVehicle(): Vehicle {
+  const value = window.localStorage.getItem("tasco-vehicle");
+  return VEHICLE_IDS.includes(value as Vehicle) ? (value as Vehicle) : "motorbike";
+}
+
+function reasonText(r: NotFoundReason, t: (k: string, p?: Record<string, string | number>) => string): string {
+  switch (r.kind) {
+    case "dish":
+      return t("empty.reason.dish", { dish: r.dish ?? "" });
+    case "dietCity":
+      return t("empty.reason.dietCity", { diet: t(`diet.${r.diet}`), city: r.city ?? "" });
+    case "segment":
+      return t("empty.reason.segment", { segment: t(`segment.${r.segment}`) });
+    case "vehicleRange":
+      return t("empty.reason.vehicleRange", { vehicle: r.vehicle ? t(`vehicle.${r.vehicle}`) : "" });
+    default:
+      return t("empty.reason.generic");
+  }
+}
 
 function App() {
-  // UI states: 'home' (minimized map view) | 'home_expanded' (half-sheet search/categories) | 'search_results' | 'place_details' | 'route_setup' | 'navigation' | 'min'
-  const [uiState, setUiState] = useState<"home" | "home_expanded" | "search_results" | "place_details" | "route_setup" | "navigation" | "min">("home");
-  
-  // Data states
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Place[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
+  const { t, lang, setLang } = useI18n();
+  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<SearchFilters>(() => ({ vehicle: readVehicle() }));
+  const [userLoc, setUserLoc] = useState<UserLocation | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [response, setResponse] = useState<SearchResponse | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [satellite, setSatellite] = useState(false);
+  const [mapFocus, setMapFocus] = useState<"results" | "user">("results");
+  const [themeMode, setThemeMode] = useState<ThemeMode>(readThemeMode);
+  const [accentTheme, setAccentTheme] = useState<AccentTheme>(readAccentTheme);
+  // Collapse state for secondary controls on narrow viewports.
+  // On lg+ this is ignored — all extras are always visible.
+  const [isNarrow, setIsNarrow] = useState<boolean>(() => window.innerWidth < 1024);
+  const [extrasExpanded, setExtrasExpanded] = useState<boolean>(readExtrasExpanded);
+  // Default to half so results are visible without covering the whole map.
+  // Tap grip to step down; drag up to reach full.
+  const [sheetState, setSheetState] = useState<SheetState>("half");
 
-  // Map settings
-  const [isSatellite, setIsSatellite] = useState(false);
-  const [is3D, setIs3D] = useState(false);
-  const [showMapModeSheet, setShowMapModeSheet] = useState(false);
-  const [showTraffic, setShowTraffic] = useState(false);
-  const [showTransit, setShowTransit] = useState(false);
+  const dockRef = useRef<HTMLElement | null>(null);
+  const dragStart = useRef<{ y: number; pointerId: number; moved: boolean } | null>(null);
+  const swipeStart = useRef<{ y: number; pointerId: number } | null>(null);
 
-  // Navigation simulation states
-  const [navRouteIndex, setNavRouteIndex] = useState<0 | 1 | 2>(0);
-  const [simulatedSpeed, setSimulatedSpeed] = useState(0);
-  const [navStepIndex, setNavStepIndex] = useState(0);
-
-  // Map Leaflet Refs
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const userMarkerRef = useRef<L.Marker | null>(null);
-  const poiMarkerRef = useRef<L.Marker | null>(null);
-  const routePolylineRef = useRef<L.Polyline | null>(null);
-
-  // Toggle bottom sheet expand/minimize states
-  const toggleSheet = () => {
-    if (uiState === "home") {
-      setUiState("home_expanded");
-    } else if (uiState === "home_expanded") {
-      setUiState("home");
-    } else if (uiState === "min") {
-      if (selectedPlace) {
-        setUiState("place_details");
-      } else {
-        setUiState("home");
-      }
-    } else {
-      setUiState("min");
-    }
+  const runSearch = async (nextQuery: string, nextFilters: SearchFilters, loc: UserLocation | null) => {
+    const res = await recommend(nextQuery, nextFilters, loc ?? undefined);
+    setResponse(res);
   };
 
-  // Initialize Map
   useEffect(() => {
-    if (!mapContainerRef.current) return;
-
-    // Create Map pointing to Hanoi
-    mapRef.current = L.map(mapContainerRef.current, {
-      zoomControl: false,
-      attributionControl: false
-    }).setView(USER_LOCATION, 15);
-
-    // Default Streets Tile (Light Positron)
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 20
-    }).addTo(mapRef.current);
-
-    // Current location marker (Blue pin with pulse rings)
-    const userIcon = L.divIcon({
-      html: `
-        <div class="user-gps-pulse-ring"></div>
-        <div style="background-color: #3b82f6; width: 16px; height: 16px; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(59, 130, 246, 0.6); position: relative; z-index: 2;"></div>
-      `,
-      className: "user-gps-pin-container",
-      iconSize: [40, 40],
-      iconAnchor: [20, 20]
-    });
-    userMarkerRef.current = L.marker(USER_LOCATION, { icon: userIcon }).addTo(mapRef.current);
-
-    // Add surrounding mock markers similar to screenshot (WinMart+, Coffee shops)
-    const mockPois = [
-      { name: "Cà Phê Fimo Sp", coords: [21.0335, 105.8085] },
-      { name: "Sakura Montessori", coords: [21.0345, 105.8135] },
-      { name: "WinMart+", coords: [21.0318, 105.8118] },
-      { name: "Kohi Coffee", coords: [21.0285, 105.8125] }
-    ];
-
-    mockPois.forEach(poi => {
-      const poiIcon = L.divIcon({
-        html: `
-          <div class="map-label-poi">
-            <span class="poi-label-dot"></span>
-            <span class="poi-label-text">${poi.name}</span>
-          </div>
-        `,
-        className: "custom-map-label",
-        iconSize: [100, 30],
-        iconAnchor: [50, 15]
-      });
-      L.marker(poi.coords as [number, number], { icon: poiIcon }).addTo(mapRef.current!);
-    });
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
+    runSearch("", {}, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update map layer base on satellite mode
   useEffect(() => {
-    if (!mapRef.current) return;
+    document.documentElement.dataset.theme = themeMode;
+    document.documentElement.dataset.accent = accentTheme;
+    window.localStorage.setItem("tasco-theme-mode", themeMode);
+    window.localStorage.setItem("tasco-accent-theme", accentTheme);
+  }, [themeMode, accentTheme]);
 
-    // Clear old layers
-    mapRef.current.eachLayer((layer) => {
-      if (layer instanceof L.TileLayer) {
-        mapRef.current?.removeLayer(layer);
-      }
-    });
+  useEffect(() => {
+    window.localStorage.setItem("tasco-extras-expanded", extrasExpanded ? "1" : "0");
+  }, [extrasExpanded]);
 
-    const StreetsLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 20
-    });
+  useEffect(() => {
+    if (filters.vehicle) window.localStorage.setItem("tasco-vehicle", filters.vehicle);
+  }, [filters.vehicle]);
 
-    const SatelliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-      maxZoom: 19
-    });
+  useEffect(() => {
+    const onResize = () => setIsNarrow(window.innerWidth < 1024);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
-    if (isSatellite) {
-      SatelliteLayer.addTo(mapRef.current);
-    } else {
-      StreetsLayer.addTo(mapRef.current);
-    }
-  }, [isSatellite]);
+  // Auto-reveal on new search: bump hidden → half but don't clobber user's
+  // existing choice if they've already expanded.
+  const revealForResults = () => setSheetState((prev) => (prev === "hidden" ? "half" : prev));
 
-  // Handle toggling of 3D simulated tilt angle
-  const handleToggle3D = () => {
-    const nextState = !is3D;
-    setIs3D(nextState);
-    if (mapRef.current) {
-      // Auto zoom in to 17 in 3D mode for detailed buildings, zoom out to 15 for 2D
-      if (nextState) {
-        mapRef.current.setZoom(17, { animate: true });
-      } else {
-        mapRef.current.setZoom(15, { animate: true });
-      }
-      setTimeout(() => {
-        mapRef.current?.invalidateSize({ animate: true });
-        mapRef.current?.panBy([0, nextState ? -80 : 80], { animate: true });
-      }, 300);
-    }
+  const handleSubmit = () => {
+    setMapFocus("results");
+    revealForResults();
+    runSearch(query, filters, userLoc);
   };
 
-  // Speedometer simulation in Navigation Mode
-  useEffect(() => {
-    let interval: number;
-    if (uiState === "navigation") {
-      setSimulatedSpeed(35);
-      interval = window.setInterval(() => {
-        setSimulatedSpeed(prev => {
-          const delta = (Math.random() - 0.5) * 6;
-          const next = Math.max(15, Math.min(65, prev + delta));
-          return Math.round(next);
-        });
-        setNavStepIndex(prev => (prev + 1) % 4);
-      }, 3000);
-    } else {
-      setSimulatedSpeed(0);
-      setNavStepIndex(0);
-    }
-    return () => clearInterval(interval);
-  }, [uiState]);
+  const handleFiltersChange = (next: SearchFilters) => {
+    setFilters(next);
+    setMapFocus("results");
+    revealForResults();
+    runSearch(query, next, userLoc);
+  };
 
-  // Submit query for search results (Mock Filter)
-  const handleSearchSubmit = (queryText: string) => {
-    const term = queryText.trim().toLowerCase();
-    if (!term) return;
-    setSearchQuery(queryText.trim());
-    setUiState("search_results");
-
-    // Filter MOCK_PLACES based on query keywords
-    const filtered = MOCK_PLACES.filter(place => 
-      place.name.toLowerCase().includes(term) || 
-      place.address.toLowerCase().includes(term) ||
-      place.tags.some(tag => tag.toLowerCase().includes(term))
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const loc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        setUserLoc(loc);
+        setLocating(false);
+        setMapFocus("user");
+        runSearch(query, filters, loc);
+      },
+      () => setLocating(false),
+      { timeout: 8000 },
     );
-    
-    setSearchResults(filtered);
   };
 
-  // Display specific place details and trigger map movements
-  const selectPlaceDetails = (placeId: string) => {
-    const cleanId = placeId.replace("poi:", "").toUpperCase();
-    const data = MOCK_PLACE_DETAILS[cleanId];
-    if (!data) return;
-      
-    setSelectedPlace(data);
-    setUiState("place_details");
+  const handleCityPick = (city: string) => {
+    setQuery(city);
+    setMapFocus("results");
+    revealForResults();
+    runSearch(city, filters, userLoc);
+  };
 
-    // Draw Marker on Map
-    const coords = getMockCoordinates(data.id);
-    if (mapRef.current) {
-      if (poiMarkerRef.current) {
-        mapRef.current.removeLayer(poiMarkerRef.current);
-      }
-      if (routePolylineRef.current) {
-        mapRef.current.removeLayer(routePolylineRef.current);
-      }
+  const handleSelect = (id: string) => {
+    setSelectedId(id);
+    setExpandedId(id);
+    // Selecting a POI focuses the map — force the sheet to half so the pin is
+    // visible. From half or hidden we also normalize to half.
+    setSheetState("half");
+  };
 
-      const redIcon = L.divIcon({
-        html: `<div style="background-color: #ef4444; width: 16px; height: 16px; border: 2.5px solid white; border-radius: 50%; box-shadow: 0 0 12px #ef4444;"></div>`,
-        className: "poi-target-pin",
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
-      });
+  // Grip handles both a tap-to-cycle and a drag gesture.
+  //   tap          → cycle down (expanded → half → hidden → half)
+  //   drag up      → step up   (hidden → half → expanded)
+  //   drag down    → step down (expanded → half → hidden)
+  const stepUp = (s: SheetState): SheetState =>
+    s === "hidden" ? "half" : s === "half" ? "expanded" : "expanded";
+  const stepDown = (s: SheetState): SheetState =>
+    s === "expanded" ? "half" : s === "half" ? "hidden" : "hidden";
+  const tapCycle = (s: SheetState): SheetState =>
+    // Tap on grip = go one step down. From hidden the grip is off-screen so
+    // this branch is unreachable; guard by cycling back to half instead.
+    s === "expanded" ? "half" : s === "half" ? "hidden" : "half";
 
-      poiMarkerRef.current = L.marker(coords, { icon: redIcon }).addTo(mapRef.current);
-      
-      const bounds = L.latLngBounds([USER_LOCATION, coords]);
-      mapRef.current.fitBounds(bounds, { padding: [40, 40] });
+  const onHandlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+    dragStart.current = { y: e.clientY, pointerId: e.pointerId, moved: false };
+  };
+
+  const onHandlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragStart.current || dragStart.current.pointerId !== e.pointerId) return;
+    const raw = e.clientY - dragStart.current.y;
+    // Bumped from 4 → 12 so mouse jitter on desktop doesn't turn a tap into a
+    // failed drag.
+    if (Math.abs(raw) > 12) dragStart.current.moved = true;
+  };
+
+  const releaseDrag = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragStart.current || dragStart.current.pointerId !== e.pointerId) return;
+    const delta = e.clientY - dragStart.current.y;
+    const moved = dragStart.current.moved;
+    dragStart.current = null;
+    const smallMove = Math.abs(delta) < SHOW_THRESHOLD_PX;
+    if (!moved || smallMove) {
+      setSheetState(tapCycle(sheetState));
+      return;
+    }
+    if (delta < -SHOW_THRESHOLD_PX) setSheetState(stepUp(sheetState));
+    else if (delta > HIDE_THRESHOLD_PX) setSheetState(stepDown(sheetState));
+  };
+
+  // Bottom-edge swipe-up: reveals the dock when hidden. Fires as soon as the
+  // upward delta crosses SHOW_THRESHOLD_PX so it feels instant.
+  const onSwipePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+    swipeStart.current = { y: e.clientY, pointerId: e.pointerId };
+  };
+
+  const onSwipePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!swipeStart.current || swipeStart.current.pointerId !== e.pointerId) return;
+    const delta = e.clientY - swipeStart.current.y;
+    if (delta < -SHOW_THRESHOLD_PX) {
+      swipeStart.current = null;
+      // Reveal to half — user can drag further up to full via grip.
+      setSheetState("half");
     }
   };
 
-  // Setup simulated Route paths
-  const handleRouteSetup = () => {
-    if (!selectedPlace) return;
-    setUiState("route_setup");
-
-    // Draw routing Polyline
-    if (mapRef.current) {
-      if (routePolylineRef.current) {
-        mapRef.current.removeLayer(routePolylineRef.current);
-      }
-
-      const destCoords = getMockCoordinates(selectedPlace.id);
-      
-      const pathPoints: [number, number][] = [
-        USER_LOCATION,
-        [USER_LOCATION[0] + (destCoords[0] - USER_LOCATION[0]) * 0.4 + 0.001, USER_LOCATION[1] + (destCoords[1] - USER_LOCATION[1]) * 0.3 - 0.0005],
-        [USER_LOCATION[0] + (destCoords[0] - USER_LOCATION[0]) * 0.7 - 0.0005, USER_LOCATION[1] + (destCoords[1] - USER_LOCATION[1]) * 0.75 + 0.0008],
-        destCoords
-      ];
-
-      routePolylineRef.current = L.polyline(pathPoints, {
-        color: "#1d70f2",
-        weight: 5,
-        opacity: 0.8,
-        dashArray: "10, 10"
-      }).addTo(mapRef.current);
-
-      mapRef.current.fitBounds(routePolylineRef.current.getBounds(), { padding: [30, 30] });
-    }
+  const onSwipeRelease = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!swipeStart.current || swipeStart.current.pointerId !== e.pointerId) return;
+    const delta = e.clientY - swipeStart.current.y;
+    swipeStart.current = null;
+    // Tap on hint = reveal to half.
+    if (Math.abs(delta) < 8) setSheetState("half");
   };
 
-  // Launch simulated Navigation Mode
-  const startNavigation = () => {
-    setUiState("navigation");
-    if (mapRef.current) {
-      mapRef.current.setView(USER_LOCATION, 17, { animate: true });
-    }
-  };
-
-  // Quit simulated Navigation
-  const exitNavigation = () => {
-    setUiState("home");
-    if (mapRef.current) {
-      if (poiMarkerRef.current) mapRef.current.removeLayer(poiMarkerRef.current);
-      if (routePolylineRef.current) mapRef.current.removeLayer(routePolylineRef.current);
-      mapRef.current.setView(USER_LOCATION, 15, { animate: true });
-    }
-    setSelectedPlace(null);
-    setSearchQuery("");
-  };
-
-  const navigationSteps = [
-    { instruction: "Đi thẳng theo hướng Lạc Long Quân", distance: "1.2 km" },
-    { instruction: "Chuẩn bị rẽ trái vào Âu Cơ", distance: "450 m" },
-    { instruction: "Rẽ trái tại ngã tư tiếp theo", distance: "150 m" },
-    { instruction: "Bạn đã đến gần điểm đích bên phải", distance: "50 m" }
-  ];
+  const results = response?.results ?? [];
+  const topScore = results[0] ? (results[0].meta.why.final * 10).toFixed(1) : "--";
+  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const selectedResult = results.find((result) => result.id === selectedId) ?? results[0];
+  // Secondary controls: always shown on lg+, gated by user toggle on narrow.
+  const showExtras = !isNarrow || extrasExpanded;
 
   return (
-    <main className="app-layout">
-      {/* T MAPS PHONE SIMULATOR */}
-      <section className={`phone-simulator ${is3D ? "is-3d" : ""}`}>
-        <div className="phone-notch">
-          <div className="phone-notch-camera" />
-          <div className="phone-notch-speaker" />
-        </div>
+    <div className="relative h-[100dvh] overflow-hidden bg-background text-foreground app-ambient">
+      <MapView
+        results={results}
+        userLoc={userLoc}
+        selectedId={selectedId}
+        satellite={satellite}
+        focusMode={mapFocus}
+        onSelect={handleSelect}
+      />
 
-        {/* Simulated iOS Status Bar */}
-        <div className={`phone-status-bar ${uiState === "navigation" ? "dark-mode" : ""}`}>
-          <span>23:33</span>
-          <div className="phone-status-right">
-            <span style={{ fontSize: "0.6rem" }}>5G</span>
-            <div style={{ width: 16, height: 8, border: "1px solid currentColor", padding: 1, borderRadius: 2, display: "flex" }}>
-              <div style={{ flex: 1, backgroundColor: "currentColor", borderRadius: 1 }} />
-            </div>
-          </div>
-        </div>
+      <div className="tech-grid-bg" aria-hidden />
+      <div className="map-overlay pointer-events-none absolute inset-0 z-[400]" />
 
-        {/* Leaflet Map rendering view with simulated 3D tilt class */}
-        <div className={`map-view ${is3D ? "leaflet-3d-active" : ""}`}>
-          <div ref={mapContainerRef} />
-        </div>
-
-        {/* Floating map controls (Xếp dọc góc dưới bên phải như hình 2) */}
-        {uiState !== "navigation" && (
-          <div className={`map-controls state-${uiState}`}>
-            <button className={`control-btn ${is3D ? "active" : ""}`} onClick={handleToggle3D}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 800 }}>3D</span>
-            </button>
-            <button className={`control-btn ${isSatellite ? "active" : ""}`} onClick={() => setShowMapModeSheet(true)}>
-              <Layers size={18} />
-            </button>
-            <button className="control-btn" onClick={() => {
-              if (mapRef.current) mapRef.current.setView(USER_LOCATION, 15, { animate: true });
-            }}>
-              <Compass size={18} />
-            </button>
-          </div>
-        )}
-
-        {/* Simulated Navigation Heads Up Panels */}
-        {uiState === "navigation" && (
-          <>
-            <div className="nav-direction-panel">
-              <Navigation2 size={24} style={{ transform: "rotate(-45deg)" }} />
-              <div>
-                <div className="nav-direction-val">{navigationSteps[navStepIndex].distance}</div>
-                <div className="nav-direction-lbl">{navigationSteps[navStepIndex].instruction}</div>
+      <section className="pointer-events-none absolute inset-x-0 top-0 z-[700] px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4">
+        <div className="pointer-events-auto mx-auto flex w-full max-w-[520px] flex-col gap-2.5 lg:ml-6 lg:mr-auto stagger">
+          <div className="glass-panel command-deck sheen-sweep overflow-hidden rounded-[1.35rem] p-2.5">
+            <div className="flex items-center justify-between gap-2.5">
+              <div className="min-w-0 px-1">
+                <div className="flex items-center gap-2 text-[0.65rem] font-extrabold uppercase tracking-[0.16em] text-primary">
+                  <IconCrown size={15} />
+                  <span className="font-mono">P11.INTEL</span>
+                  <span className="ml-1 inline-flex h-[6px] w-[6px] rounded-full bg-primary shadow-[0_0_10px_var(--color-primary)]" />
+                </div>
+                <div className="mt-1 flex min-w-0 items-end gap-2">
+                  <h1 className="font-display truncate text-[1.4rem] font-bold leading-none text-foreground">Tasco Food</h1>
+                  <span className="hidden rounded-full border border-white/12 bg-white/[0.06] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:inline-flex font-mono">
+                    v2.6 / MAP-FIRST
+                  </span>
+                </div>
+                <p className="mt-1 line-clamp-1 text-xs font-medium text-muted-foreground">{t("app.subtitle")}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <div className="flex items-center gap-1 rounded-2xl border border-white/12 bg-black/25 p-1 backdrop-blur-md">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={lang === "vi" ? "default" : "ghost"}
+                    className="h-8 rounded-xl px-2.5 text-xs font-mono"
+                    onClick={() => setLang("vi")}
+                  >
+                    VI
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={lang === "en" ? "default" : "ghost"}
+                    className="h-8 rounded-xl px-2.5 text-xs font-mono"
+                    onClick={() => setLang("en")}
+                  >
+                    EN
+                  </Button>
+                </div>
+                {isNarrow && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="glass"
+                    className="size-9 rounded-2xl lg:hidden"
+                    aria-label={extrasExpanded ? "Collapse controls" : "Expand controls"}
+                    aria-expanded={extrasExpanded}
+                    onClick={() => setExtrasExpanded((v) => !v)}
+                  >
+                    <IconArrowDown
+                      size={16}
+                      className={cn("transition-transform duration-300", extrasExpanded && "rotate-180")}
+                    />
+                  </Button>
+                )}
               </div>
             </div>
-            <div className="nav-speed-panel">
-              <span className="nav-speed-val">{simulatedSpeed}</span>
-              <span className="nav-speed-lbl">km/h</span>
-            </div>
-          </>
-        )}
 
-        {/* ==========================================================
-           DYNAMIC LAYERED BOTTOM SHEET CONTROLLER
-           ========================================================== */}
-        <div className={`bottom-sheet state-${
-          uiState === "home" ? "min" : 
-          uiState === "home_expanded" ? "half" :
-          uiState === "search_results" ? "full" : 
-          uiState === "place_details" ? "details" : 
-          uiState === "route_setup" ? "full" : "min"
-        }`}>
-          <div className="sheet-handle" onClick={toggleSheet} />
-          
-          {/* A. SEARCH BAR INTEGRATED IN BOTTOM SHEET (Hình 2) */}
-          {(uiState === "home" || uiState === "home_expanded" || uiState === "search_results") && (
-            <div className="inner-search-bar" onClick={() => uiState === "home" && setUiState("home_expanded")}>
-              <span className="search-icon-btn" onClick={(e) => {
-                e.stopPropagation();
-                handleSearchSubmit(searchQuery);
-              }}>
-                <Search size={18} style={{ color: "#64748b" }} />
-              </span>
-              <input 
-                type="text" 
-                placeholder="Tìm kiếm" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit(searchQuery)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (uiState === "home") setUiState("home_expanded");
-                }}
-              />
-              <Mic size={18} style={{ color: "#64748b", marginRight: "0.25rem" }} />
-              <div className="avatar-btn" style={{ backgroundColor: "#f97316" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </div>
-            </div>
-          )}
-
-          <div className="sheet-content">
-            {/* HOME VIEW (CATEGORIES & RECENT HISTORY) */}
-            {(uiState === "home" || uiState === "home_expanded") && (
-              <>
-                <div className="goy-section">
-                  <div className="goy-left">
-                    <div className="icon-circle-bg">
-                      <Car size={18} />
-                    </div>
-                    <div>
-                      <div className="goy-title">Ô tô đã đỗ</div>
-                      <div className="goy-desc">Gần Keangnam Landmark 72</div>
-                    </div>
-                  </div>
-                  <MoreHorizontal size={16} style={{ color: "#94a3b8", cursor: "pointer" }} />
-                </div>
-
-                <div className="category-grid">
-                  <div className="cat-item" onClick={() => handleSearchSubmit("Trạm sạc")}>
-                    <div className="cat-icon-circle cat-blue"><Zap size={18} /></div>
-                    <span>Trạm sạc</span>
-                  </div>
-                  <div className="cat-item" onClick={() => handleSearchSubmit("Cây xăng")}>
-                    <div className="cat-icon-circle cat-orange"><Fuel size={18} /></div>
-                    <span>Cây xăng</span>
-                  </div>
-                  <div className="cat-item" onClick={() => handleSearchSubmit("Bún chả")}>
-                    <div className="cat-icon-circle cat-rose"><Utensils size={18} /></div>
-                    <span>Ăn uống</span>
-                  </div>
-                  <div className="cat-item" onClick={() => handleSearchSubmit("Bãi đỗ")}>
-                    <div className="cat-icon-circle cat-navy"><SquareParking size={18} /></div>
-                    <span>Bãi đỗ xe</span>
-                  </div>
-                  <div className="cat-item" onClick={() => handleSearchSubmit("Sakura")}>
-                    <div className="cat-icon-circle cat-brown"><Coffee size={18} /></div>
-                    <span>Cafe</span>
-                  </div>
-                </div>
-
-                <div className="recent-header">Gần đây</div>
-                <div className="history-item" onClick={() => selectPlaceDetails("RES018")}>
-                  <div className="history-left">
-                    <MapPin size={16} style={{ color: "#94a3b8" }} />
-                    <div>
-                      <div className="history-name">Bún Chả Phố Cổ</div>
-                      <div className="history-address">18 Đường Láng, Hà Nội</div>
-                    </div>
-                  </div>
-                  <MoreHorizontal size={16} style={{ color: "#94a3b8", cursor: "pointer" }} />
-                </div>
-              </>
-            )}
-
-            {/* B. SEARCH RESULTS VIEW */}
-            {uiState === "search_results" && (
-              <>
-                <div className="results-header-box">
-                  <button className="search-back-btn" onClick={() => setUiState("home")}>
-                    <ArrowLeft size={16} /> Quay lại
-                  </button>
-                  <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Tìm thấy {searchResults.length} kết quả</span>
-                </div>
-
-                <div className="results-list">
-                  {searchResults.map((place, idx) => (
-                    <div key={place.id} className="result-card" onClick={() => selectPlaceDetails(place.id)}>
-                      <div className="result-pin">
-                        <MapPin size={16} />
-                      </div>
-                      <div className="result-info">
-                        <div className="card-title">{place.name}</div>
-                        <div className="card-address">{place.address}</div>
-                      </div>
-                      {idx === 0 && (
-                        <button
-                          className="result-route-pill"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            selectPlaceDetails(place.id);
-                          }}
-                        >
-                          Chỉ đường
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  {searchResults.length === 0 && (
-                    <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
-                      Không có kết quả nào. Thử tìm "Sakura", "Bún chả" hoặc "Phở".
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* C. PLACE DETAILS VIEW */}
-            {uiState === "place_details" && selectedPlace && (
-              <>
-                <div className="details-head">
-                  <div className="details-head-top">
-                    <h2 className="details-name">{selectedPlace.name.value}</h2>
-                    <div className="details-head-actions">
-                      <button className="icon-btn-ghost" onClick={handleRouteSetup}>
-                        <Navigation size={16} />
-                      </button>
-                      <button className="icon-btn-ghost" onClick={() => setUiState("home")}>
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="details-meta-row">
-                    {selectedPlace.rating.value ? (
-                      <>
-                        <span className="details-rating">★ {selectedPlace.rating.value}</span>
-                        <span style={{ color: "#94a3b8" }}>({selectedPlace.review_count.value} đánh giá)</span>
-                      </>
-                    ) : (
-                      <span style={{ color: "#94a3b8" }}>Chưa có đánh giá</span>
+            <div className="collapse-panel" data-visible={showExtras}>
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+              <Button
+                type="button"
+                size="sm"
+                variant={themeMode === "dark" ? "default" : "glass"}
+                className="h-9 min-w-[6.5rem] flex-1 justify-start rounded-xl px-2.5 text-xs"
+                onClick={() => setThemeMode(themeMode === "dark" ? "light" : "dark")}
+                title={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {themeMode === "dark" ? <IconSwitchOn size={18} /> : <IconSwitchOff size={18} />}
+                {themeMode === "dark" ? "Dark" : "Light"}
+              </Button>
+              <div className="flex shrink-0 items-center gap-1.5 rounded-xl border border-white/12 bg-white/[0.06] px-1.5 py-1.5">
+                <IconGear size={16} className="shrink-0 text-muted-foreground" />
+                {ACCENT_THEMES.map((theme) => (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    aria-label={`${theme.label} theme`}
+                    title={`${theme.label} theme`}
+                    className={cn(
+                      "theme-dot shrink-0 rounded-full border border-white/20",
+                      accentTheme === theme.id && "is-active",
                     )}
-                  </div>
-                  <div className="details-sub-row">{selectedPlace.address.value}</div>
-                  <div className="details-sub-row">Giờ mở cửa chưa rõ</div>
-                  <div className="details-sub-row details-coords">
-                    {getMockCoordinates(selectedPlace.id).map((v) => v.toFixed(6)).join(", ")}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="action-row">
-                  <button className="btn-primary-action" onClick={handleRouteSetup}>
-                    <Navigation size={16} />
-                    Chỉ đường
-                  </button>
-                  <button className="btn-sec-action">
-                    <Share2 size={18} />
-                  </button>
-                  <button className="btn-sec-action">
-                    <Bookmark size={18} />
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* D. ROUTE PLANNING VIEW */}
-            {uiState === "route_setup" && selectedPlace && (
-              <>
-                <div className="route-top-panel">
-                  <div className="route-header-row">
-                    <h3>Chỉ đường</h3>
-                    <button className="route-close-btn" onClick={() => setUiState("place_details")}>
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  <div className="vehicle-tabs">
-                    <button className="vehicle-tab-btn active">
-                      <Car size={18} />
-                    </button>
-                    <button className="vehicle-tab-btn">
-                      <Bus size={18} />
-                    </button>
-                    <button className="vehicle-tab-btn">
-                      <Footprints size={18} />
-                    </button>
-                    <button className="vehicle-tab-btn">
-                      <Bike size={18} />
-                    </button>
-                    <button className="vehicle-tab-btn">
-                      <Scooter size={18} />
-                    </button>
-                  </div>
-
-                  <div className="route-inputs">
-                    <div className="route-connector" />
-                    <div className="input-node">
-                      <span className="route-dot route-dot-origin" />
-                      <span>Vị trí hiện tại của bạn</span>
-                    </div>
-                    <div className="input-node">
-                      <span className="route-dot route-dot-dest" />
-                      <span>{selectedPlace.name.value}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="route-detail-summary">
-                  <div>
-                    <div className="route-time-val">16 phút</div>
-                    <div className="route-dist-val">16 km · Đến lúc 23:50</div>
-                  </div>
-                  <button className="btn-primary-action" style={{ padding: "0.6rem 1.2rem" }} onClick={startNavigation}>
-                    Bắt đầu
-                  </button>
-                </div>
-
-                <div className="recent-header">Tuyến đường khác</div>
-                <div className="route-list-alt">
-                  <div className={`alt-route-card ${navRouteIndex === 0 ? "active" : ""}`} onClick={() => setNavRouteIndex(0)}>
-                    <div>
-                      <div className="alt-route-time">16 phút</div>
-                      <div className="alt-route-name">Nhanh nhất · Qua Võ Chí Công</div>
-                    </div>
-                    {navRouteIndex === 0 && <Check size={16} style={{ color: "#1d70f2" }} />}
-                  </div>
-                  <div className={`alt-route-card ${navRouteIndex === 1 ? "active" : ""}`} onClick={() => setNavRouteIndex(1)}>
-                    <div>
-                      <div className="alt-route-time">21 phút</div>
-                      <div className="alt-route-name">Tuyến khác · Qua Đường Bưởi</div>
-                    </div>
-                    {navRouteIndex === 1 && <Check size={16} style={{ color: "#1d70f2" }} />}
-                  </div>
-                </div>
-              </>
-            )}
+                    style={{ background: theme.swatch }}
+                    onClick={() => setAccentTheme(theme.id)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.06] px-2 py-1.5">
+              <span className="shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted-foreground font-mono">
+                {t("vehicle.label")}
+              </span>
+              <Select
+                value={filters.vehicle ?? "motorbike"}
+                onValueChange={(v) => handleFiltersChange({ ...filters, vehicle: v as Vehicle })}
+              >
+                <SelectTrigger className="h-9 min-w-0 flex-1 rounded-lg" aria-label={t("vehicle.label")}>
+                  <SelectValue>
+                    <span className="mr-2" aria-hidden>
+                      {VEHICLE_OPTIONS.find((v) => v.id === (filters.vehicle ?? "motorbike"))?.emoji}
+                    </span>
+                    {t(`vehicle.${filters.vehicle ?? "motorbike"}`)}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {VEHICLE_OPTIONS.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      <span className="mr-2" aria-hidden>
+                        {v.emoji}
+                      </span>
+                      {t(`vehicle.${v.id}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            </div>
+          </div>
+          <SearchBar
+            query={query}
+            onQueryChange={setQuery}
+            onSubmit={handleSubmit}
+            onUseMyLocation={handleUseMyLocation}
+            cities={CITIES}
+            onCityPick={handleCityPick}
+            locating={locating}
+            showCityPicker={showExtras}
+          />
+          <div className="collapse-panel" data-visible={showExtras}>
+            <FilterChips filters={filters} onChange={handleFiltersChange} />
           </div>
         </div>
-
-        {/* E. SIMULATED TURN-BY-TURN NAVIGATION FOOTER */}
-        {uiState === "navigation" && (
-          <div className="nav-bottom-bar">
-            <div>
-              <div className="nav-stats-time">16 phút</div>
-              <div className="nav-stats-dist">16 km · 23:50 đến nơi</div>
-            </div>
-            <button className="btn-cancel-nav" onClick={exitNavigation}>
-              <X size={18} />
-            </button>
-          </div>
-        )}
-
-        {/* F. MAP MODE PICKER SHEET */}
-        {showMapModeSheet && (
-          <div className="map-mode-overlay" onClick={() => setShowMapModeSheet(false)}>
-            <div className="map-mode-sheet" onClick={(e) => e.stopPropagation()}>
-              <div className="sheet-handle" />
-              <div className="map-mode-header">
-                <h3>Chế độ bản đồ</h3>
-                <button className="icon-btn-ghost" onClick={() => setShowMapModeSheet(false)}>
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div className="map-mode-section-title">Loại bản đồ</div>
-              <div className="map-mode-thumb-row">
-                <button
-                  className={`map-mode-thumb ${!isSatellite ? "active" : ""}`}
-                  onClick={() => setIsSatellite(false)}
-                >
-                  <div className="thumb-preview thumb-default"><Map size={20} /></div>
-                  <span>Mặc định</span>
-                </button>
-                <button
-                  className={`map-mode-thumb ${isSatellite ? "active" : ""}`}
-                  onClick={() => setIsSatellite(true)}
-                >
-                  <div className="thumb-preview thumb-satellite"><Globe size={20} /></div>
-                  <span>Vệ tinh</span>
-                </button>
-              </div>
-
-              <div className="map-mode-section-title">Chi tiết bản đồ</div>
-              <div className="map-mode-thumb-row">
-                <button
-                  className={`map-mode-thumb ${showTraffic ? "active" : ""}`}
-                  onClick={() => setShowTraffic(!showTraffic)}
-                >
-                  <div className="thumb-preview thumb-traffic"><TrafficCone size={20} /></div>
-                  <span>Giao thông</span>
-                </button>
-                <button
-                  className={`map-mode-thumb ${showTransit ? "active" : ""}`}
-                  onClick={() => setShowTransit(!showTransit)}
-                >
-                  <div className="thumb-preview thumb-transit"><Bus size={20} /></div>
-                  <span>Phương tiện công cộng</span>
-                </button>
-                <button
-                  className={`map-mode-thumb ${!is3D ? "active" : ""}`}
-                  onClick={() => { if (is3D) handleToggle3D(); }}
-                >
-                  <div className="thumb-preview thumb-2d"><Square size={20} /></div>
-                  <span>2D</span>
-                </button>
-                <button
-                  className={`map-mode-thumb ${is3D ? "active" : ""}`}
-                  onClick={() => { if (!is3D) handleToggle3D(); }}
-                >
-                  <div className="thumb-preview thumb-3d"><Box size={20} /></div>
-                  <span>3D</span>
-                </button>
-              </div>
-
-              <div className="map-mode-attribution">© Esri, Maxar, Earthstar Geographics và GIS User Community</div>
-            </div>
-          </div>
-        )}
-
-        <div className="phone-home-indicator" />
       </section>
-    </main>
+
+      <aside ref={dockRef} data-sheet={sheetState} className="result-dock">
+        <button
+          type="button"
+          className="sheet-handle"
+          aria-label={sheetState === "expanded" ? "Collapse recommendations" : "Toggle recommendations"}
+          aria-expanded={sheetState !== "hidden"}
+          onPointerDown={onHandlePointerDown}
+          onPointerMove={onHandlePointerMove}
+          onPointerUp={releaseDrag}
+          onPointerCancel={releaseDrag}
+        >
+          <span className="sheet-handle-grip" />
+        </button>
+
+        <div className="sheet-body flex min-h-0 flex-1 flex-col px-4">
+          <div className="mb-3 grid grid-cols-[1fr_auto] items-center gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 text-[0.66rem] font-extrabold uppercase tracking-[0.14em] text-primary">
+                <span className="pulse-dot" />
+                <span className="font-mono">Live recommendations</span>
+              </div>
+              <h2 className="font-display mt-1 truncate text-xl font-bold leading-tight text-foreground">
+                {t("results.count", { count: results.length })}
+              </h2>
+              <p className="mt-0.5 line-clamp-1 text-xs font-medium text-muted-foreground">
+                {selectedResult ? selectedResult.name : "Ranked by proximity, taste, and context"}
+              </p>
+            </div>
+            <div className="score-tile flex shrink-0 items-center gap-2 rounded-2xl border border-secondary/60 bg-secondary px-3 py-2 text-secondary-foreground">
+              <IconLocationHeart size={20} />
+              <div>
+                <div className="font-display text-sm font-bold leading-none">P11 {topScore}</div>
+                <div className="mt-0.5 text-[0.62rem] font-bold uppercase tracking-[0.12em] opacity-80 font-mono">
+                  {activeFilterCount ? `${activeFilterCount} filters` : "Top match"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bottom-sheet-scroll stagger min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+            {response?.meta.notFound ? (
+              <Card className="border-dashed border-white/15 bg-card/95 p-5 text-center text-sm text-muted-foreground">
+                <IconGlobe size={34} className="mx-auto mb-3 text-primary" />
+                <p className="m-0">
+                  {t("empty.prefix")}
+                  {response.meta.notFoundReason ? ` (${reasonText(response.meta.notFoundReason, t)})` : ""}. {t("empty.suffix")}
+                </p>
+              </Card>
+            ) : (
+              results.map((r) => (
+                <ResultCard
+                  key={r.id}
+                  result={r}
+                  filters={filters}
+                  active={r.id === selectedId}
+                  expanded={r.id === expandedId}
+                  onSelect={() => handleSelect(r.id)}
+                  onToggleExpand={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                />
+              ))
+            )}
+            <AssistantBox />
+          </div>
+        </div>
+      </aside>
+
+      {sheetState === "hidden" && (
+        <div
+          className="swipe-zone"
+          role="button"
+          tabIndex={0}
+          aria-label={t("results.count", { count: results.length })}
+          onPointerDown={onSwipePointerDown}
+          onPointerMove={onSwipePointerMove}
+          onPointerUp={onSwipeRelease}
+          onPointerCancel={onSwipeRelease}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setSheetState("half");
+            }
+          }}
+        >
+          <span className="swipe-hint" />
+        </div>
+      )}
+
+      <div className="map-mode-fab" role="group" aria-label="Map style">
+        <Button
+          type="button"
+          size="icon"
+          variant={satellite ? "ghost" : "default"}
+          className="size-10 rounded-xl"
+          onClick={() => setSatellite(false)}
+          title="Map mode"
+        >
+          <IconLocationMap size={19} />
+        </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant={satellite ? "default" : "ghost"}
+          className="size-10 rounded-xl"
+          onClick={() => setSatellite(true)}
+          title="Satellite mode"
+        >
+          <IconPhoto size={19} />
+        </Button>
+      </div>
+    </div>
   );
 }
 
