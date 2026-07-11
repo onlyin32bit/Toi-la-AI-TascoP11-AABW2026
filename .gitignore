@@ -83,3 +83,11 @@ skills-lock.json
 tmp/
 temp/
 *.local
+
+# Preprocess & Engine local files
+preprocess/__pycache__/
+preprocess/cache/
+preprocess/scrape_env/
+preprocess/.venv/
+engine/build/
+engine/engine

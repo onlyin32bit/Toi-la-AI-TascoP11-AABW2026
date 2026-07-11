@@ -8,7 +8,7 @@ PREP_DIR   := preprocess
 
 .DEFAULT_GOAL := help
 
-.PHONY: help kb build run test vet tidy fmt clean check
+.PHONY: help kb thuduc build run test vet tidy fmt clean check
 
 help: ## Liệt kê các target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -16,6 +16,12 @@ help: ## Liệt kê các target
 
 kb: ## Sinh engine/build/kb.json từ 5 CSV (chạy 1 lần / khi đổi data)
 	cd $(PREP_DIR) && $(PYTHON) build_kb.py
+
+thuduc: ## Scrape Foody Thủ Đức qua TinyFish -> engine/build/thuduc_enrichment.json (cần TINYFISH_API_KEY)
+	cd $(PREP_DIR) && scrape_env/bin/python scrape_thuduc.py $(ARGS)
+
+thuduc-apify: ## Scrape Google Places (Apify) Thủ Đức, merge vào cùng thuduc_enrichment.json (cần APIFY_TOKEN)
+	cd $(PREP_DIR) && scrape_env/bin/python scrape_thuduc_apify.py $(ARGS)
 
 build: ## Build Go engine -> engine/engine (binary tĩnh)
 	cd $(ENGINE_DIR) && $(GO) build -o engine .
