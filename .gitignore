@@ -69,3 +69,5 @@ skills-lock.json
 *.tar.gz
 tmp/
 temp/
+
+/.claude
