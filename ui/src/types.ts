@@ -180,6 +180,11 @@ export interface NotFoundReason {
   // Set when kind === "vehicleRange" — user picked a vehicle whose hard-cap
   // filtered every candidate away.
   vehicle?: Vehicle;
+  // Real backend's own localized reason (e.g. "Không có quán Halal ở TP. Hồ
+  // Chí Minh") and relaxation suggestions — present only for kind === "generic"
+  // results that came from the live engine rather than the mock ranker.
+  raw?: string;
+  suggestions?: string[];
 }
 
 export interface SearchFilters {

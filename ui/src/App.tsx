@@ -10,7 +10,7 @@ import {
   IconSwitchOff,
   IconSwitchOn,
 } from "nucleo-isometric";
-import { recommend } from "./api";
+import { contributePoi, recommend } from "./api";
 import { CITIES } from "./data/mockPlaces";
 import { MapView } from "./components/MapView";
 import { SearchBar } from "./components/SearchBar";
@@ -20,6 +20,9 @@ import { AssistantBox } from "./components/AssistantBox";
 import { EnrichmentTerminal } from "./components/enrichment-terminal";
 import { EnrichmentSplitView } from "./components/enrichment-split-view";
 import { UgcContributeForm } from "./components/ugc-contribute-form";
+import { MenuUpload } from "./components/menu-upload";
+import { DishPhoto } from "./components/dish-photo";
+import { CompareView } from "./components/compare-view";
 import { DemoResetButton } from "./components/demo-reset-button";
 import { Button } from "./components/ui/button";
 import { Card } from "./components/ui/card";
@@ -38,7 +41,7 @@ import type {
 import { DEMO_POI_ID, MOCK_ENRICHMENT_RESULT } from "./data/mock-enrichment";
 import { loadEnriched, saveEnriched } from "./lib/enrichment-runner";
 import type { EnrichApiRequest } from "./lib/enrich-api-client";
-import { enqueueUgc, listUgc, type UgcEntry } from "./lib/ugc-queue";
+import { enqueueUgc, listUgc, removeUgc, type UgcEntry } from "./lib/ugc-queue";
 import "./App.css";
 
 type ThemeMode = "dark" | "light";
@@ -107,7 +110,7 @@ function reasonText(r: NotFoundReason, t: (k: string, p?: Record<string, string 
     case "vehicleRange":
       return t("empty.reason.vehicleRange", { vehicle: r.vehicle ? t(`vehicle.${r.vehicle}`) : "" });
     default:
-      return t("empty.reason.generic");
+      return r.raw ?? t("empty.reason.generic");
   }
 }
 
@@ -149,6 +152,10 @@ function App() {
   const [ugcSuggested, setUgcSuggested] = useState("");
   const [ugcPins, setUgcPins] = useState<UgcEntry[]>(() => listUgc());
   const [compareOpenId, setCompareOpenId] = useState<string | null>(null);
+  const [menuUploadPoiId, setMenuUploadPoiId] = useState<string | null>(null);
+  const [dishPhotoOpen, setDishPhotoOpen] = useState(false);
+  const [cmpSelection, setCmpSelection] = useState<Set<string>>(new Set());
+  const [cmpViewOpen, setCmpViewOpen] = useState(false);
 
   const dockRef = useRef<HTMLElement | null>(null);
   const dragStart = useRef<{ y: number; pointerId: number; moved: boolean } | null>(null);
@@ -161,6 +168,19 @@ function App() {
 
   useEffect(() => {
     runSearch("", {}, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Best-effort retry of any UGC entries queued while the backend was
+  // unreachable. Silent — a queued entry just stays queued until it works.
+  useEffect(() => {
+    listUgc().forEach((entry) => {
+      contributePoi(entry)
+        .then(() => removeUgc(entry.id))
+        .catch(() => {
+          /* still offline/unreachable — keep queued */
+        });
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -262,10 +282,24 @@ function App() {
     setUgcOpen(true);
   }, []);
 
-  const handleUgcSubmit = (data: Omit<UgcEntry, "id" | "createdAt" | "status">) => {
-    const entry = enqueueUgc(data);
-    setUgcPins((prev) => [...prev, entry]);
+  const handleUgcSubmit = async (data: Omit<UgcEntry, "id" | "createdAt" | "status">) => {
     setUgcOpen(false);
+    try {
+      const saved = await contributePoi(data);
+      const entry: UgcEntry = {
+        ...data,
+        id: saved.id,
+        createdAt: new Date().toISOString(),
+        status: "pending",
+      };
+      setUgcPins((prev) => [...prev, entry]);
+      // Refresh search results so the new contribution can show up immediately.
+      runSearch(query, filters, userLoc);
+    } catch (err) {
+      console.warn("[ugc] contribute failed, queueing offline:", err);
+      const entry = enqueueUgc(data);
+      setUgcPins((prev) => [...prev, entry]);
+    }
   };
 
   const handleDemoReset = () => {
@@ -278,6 +312,17 @@ function App() {
   }, []);
   const handleCompareClose = useCallback(() => {
     setCompareOpenId(null);
+  }, []);
+
+  // ── Multi-restaurant compare (GET /v1/compare) — distinct from the
+  // before/after enrichment split view above. ─────────────────────────
+  const handleCmpToggle = useCallback((id: string) => {
+    setCmpSelection((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else if (next.size < 5) next.add(id);
+      return next;
+    });
   }, []);
 
   // Grip handles both a tap-to-cycle and a drag gesture.
@@ -622,10 +667,13 @@ function App() {
                   onEnrich={handleEnrichClick}
                   enriching={enrichingId === r.id}
                   onCompare={handleCompareOpen}
+                  onUploadMenu={setMenuUploadPoiId}
+                  onToggleCompareSelect={handleCmpToggle}
+                  compareSelected={cmpSelection.has(r.id)}
                 />
               ))
             )}
-            <AssistantBox results={results} onUgcOpen={handleUgcOpen} />
+            <AssistantBox onUgcOpen={handleUgcOpen} onOpenPoi={handleSelect} />
           </div>
         </div>
       </aside>
@@ -672,7 +720,34 @@ function App() {
         >
           <IconPhoto size={19} />
         </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="size-10 rounded-xl"
+          onClick={() => setDishPhotoOpen(true)}
+          title={t("dish.photo.title")}
+        >
+          🍜
+        </Button>
       </div>
+
+      {cmpSelection.size > 0 && (
+        <div className="cmp-bar" role="toolbar">
+          <span>{t("cmp.bar.label", { n: cmpSelection.size })}</span>
+          <button type="button" className="ugc-btn ugc-btn-ghost" onClick={() => setCmpSelection(new Set())}>
+            {t("cmp.bar.clear")}
+          </button>
+          <button
+            type="button"
+            className="ugc-btn ugc-btn-primary"
+            disabled={cmpSelection.size < 2}
+            onClick={() => setCmpViewOpen(true)}
+          >
+            {t("cmp.bar.button")}
+          </button>
+        </div>
+      )}
 
       {terminalOpen && enrichingId && enrichingResult && (
         <EnrichmentTerminal
@@ -696,6 +771,38 @@ function App() {
       />
 
       {hasDemoState && <DemoResetButton onReset={handleDemoReset} />}
+
+      {menuUploadPoiId && (() => {
+        const poi = results.find((r) => r.id === menuUploadPoiId);
+        return (
+          <MenuUpload
+            open
+            poiId={menuUploadPoiId}
+            poiName={poi?.name ?? menuUploadPoiId}
+            onClose={() => setMenuUploadPoiId(null)}
+            t={t}
+          />
+        );
+      })()}
+
+      <DishPhoto
+        open={dishPhotoOpen}
+        userLoc={userLoc}
+        onClose={() => setDishPhotoOpen(false)}
+        onOpenPoi={(id) => {
+          setDishPhotoOpen(false);
+          handleSelect(id);
+        }}
+        t={t}
+      />
+
+      <CompareView
+        open={cmpViewOpen}
+        ids={[...cmpSelection]}
+        userLoc={userLoc}
+        onClose={() => setCmpViewOpen(false)}
+        t={t}
+      />
 
       {compareOpenId && (() => {
         const poi = results.find((r) => r.id === compareOpenId);

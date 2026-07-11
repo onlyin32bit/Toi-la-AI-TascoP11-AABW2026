@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { IconWand } from "nucleo-isometric";
 import { useI18n } from "../i18n/LanguageContext";
-import type { PlaceResult } from "../types";
+import { askAssistant } from "../api";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -15,13 +15,15 @@ interface AssistantMessage {
   id: number;
   role: "user" | "assistant";
   text: string;
-  kind?: "answer" | "not-found";
+  kind?: "answer" | "not-found" | "unavailable" | "error";
   suggestedName?: string;
+  sources?: { field: string; source: string }[];
+  poiId?: string;
 }
 
 interface AssistantBoxProps {
-  results: PlaceResult[];
   onUgcOpen: (suggestedName: string) => void;
+  onOpenPoi?: (poiId: string) => void;
 }
 
 // Best-effort extraction of the entity being asked about. Strips common
@@ -34,49 +36,57 @@ function extractEntityName(query: string): string {
   return trimmed.slice(0, 60);
 }
 
-function findMatch(query: string, results: PlaceResult[]): PlaceResult | null {
-  const q = query.toLowerCase();
-  return (
-    results.find((r) => q.includes(r.name.toLowerCase())) ??
-    results.find((r) => r.name.toLowerCase().includes(q)) ??
-    null
-  );
-}
-
-export function AssistantBox({ results, onUgcOpen }: AssistantBoxProps) {
+export function AssistantBox({ onUgcOpen, onOpenPoi }: AssistantBoxProps) {
   const { t } = useI18n();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [idSeq, setIdSeq] = useState(1);
+  const [pending, setPending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const query = input.trim();
-    if (!query) return;
+    if (!query || pending) return;
     setInput("");
 
     const userId = idSeq;
     const userMsg: AssistantMessage = { id: userId, role: "user", text: query };
     setIdSeq((n) => n + 2);
+    setMessages((prev) => [...prev, userMsg]);
+    setPending(true);
 
-    const match = findMatch(query, results);
+    const outcome = await askAssistant(query);
     const replyId = userId + 1;
-    const reply: AssistantMessage = match
-      ? {
+    let reply: AssistantMessage;
+    switch (outcome.kind) {
+      case "answer":
+        reply = {
           id: replyId,
           role: "assistant",
           kind: "answer",
-          text: `${match.name} — ${match.address}`,
-        }
-      : {
+          text: outcome.answer.answer,
+          sources: outcome.answer.sources,
+          poiId: outcome.answer.poi_id,
+        };
+        break;
+      case "not_found":
+        reply = {
           id: replyId,
           role: "assistant",
           kind: "not-found",
-          text: t("assistant.notFound", { name: extractEntityName(query) }),
+          text: outcome.message || t("assistant.notFound", { name: extractEntityName(query) }),
           suggestedName: extractEntityName(query),
         };
+        break;
+      case "unavailable":
+        reply = { id: replyId, role: "assistant", kind: "unavailable", text: t("assistant.unavailable") };
+        break;
+      default:
+        reply = { id: replyId, role: "assistant", kind: "error", text: t("assistant.error") };
+    }
 
-    setMessages((prev) => [...prev, userMsg, reply]);
+    setMessages((prev) => [...prev, reply]);
+    setPending(false);
   };
 
   const lastAssistantIdx = [...messages]
@@ -99,7 +109,7 @@ export function AssistantBox({ results, onUgcOpen }: AssistantBoxProps) {
         </Badge>
       </div>
 
-      {messages.length > 0 && (
+      {(messages.length > 0 || pending) && (
         <div className="assistant-log mb-3 space-y-2">
           {messages.map((m) => (
             <div
@@ -108,9 +118,34 @@ export function AssistantBox({ results, onUgcOpen }: AssistantBoxProps) {
               data-role={m.role}
               data-kind={m.kind}
             >
-              <span className="assistant-msg-bubble">{m.text}</span>
+              <span className="assistant-msg-bubble">
+                {m.text}
+                {m.poiId && onOpenPoi && (
+                  <button
+                    type="button"
+                    className="assistant-poi-link ml-1 underline"
+                    onClick={() => onOpenPoi(m.poiId!)}
+                  >
+                    →
+                  </button>
+                )}
+              </span>
+              {m.sources && m.sources.length > 0 && (
+                <div className="assistant-sources mt-1 flex flex-wrap gap-1">
+                  {m.sources.map((s, i) => (
+                    <Badge key={i} variant="outline" className="text-[0.6rem] font-mono opacity-70">
+                      {s.field}:{s.source}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
+          {pending && (
+            <div className="assistant-msg" data-role="assistant" data-kind="pending">
+              <span className="assistant-msg-bubble opacity-70">{t("assistant.thinking")}</span>
+            </div>
+          )}
           {lastAssistant?.kind === "not-found" && lastAssistant.suggestedName && (
             <div className="assistant-ugc-slot">
               <UgcSuggestChip
@@ -136,7 +171,7 @@ export function AssistantBox({ results, onUgcOpen }: AssistantBoxProps) {
           size="sm"
           variant="default"
           className="h-10 rounded-2xl px-3 text-xs font-bold"
-          disabled={!input.trim()}
+          disabled={!input.trim() || pending}
         >
           {t("assistant.send")}
         </Button>

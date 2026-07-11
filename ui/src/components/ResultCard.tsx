@@ -26,6 +26,9 @@ interface ResultCardProps {
   onEnrich?: (id: string) => void;
   enriching?: boolean;
   onCompare?: (id: string) => void;
+  onUploadMenu?: (id: string) => void;
+  onToggleCompareSelect?: (id: string) => void;
+  compareSelected?: boolean;
 }
 
 const WHY_ROWS: { key: keyof PlaceResult["meta"]["why"]; labelKey: string }[] = [
@@ -54,6 +57,9 @@ export function ResultCard({
   onEnrich,
   enriching,
   onCompare,
+  onUploadMenu,
+  onToggleCompareSelect,
+  compareSelected,
 }: ResultCardProps) {
   const { t } = useI18n();
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -130,6 +136,19 @@ export function ResultCard({
             <Badge variant="score" className="shrink-0 font-display">
               P11 {p11Score}
             </Badge>
+            {onToggleCompareSelect && (
+              <label
+                className="flex shrink-0 items-center gap-1 text-[0.62rem] text-muted-foreground"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={!!compareSelected}
+                  onChange={() => onToggleCompareSelect(result.id)}
+                />
+                {t("cmp.select")}
+              </label>
+            )}
           </div>
           <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{result.address}</p>
         </div>
@@ -221,6 +240,20 @@ export function ResultCard({
             🔍
           </span>
           <span>{t("compare.button")}</span>
+        </button>
+      )}
+
+      {onUploadMenu && (
+        <button
+          type="button"
+          className="enrich-btn mt-3 w-full"
+          onClick={(e) => {
+            e.stopPropagation();
+            onUploadMenu(result.id);
+          }}
+        >
+          <span aria-hidden>📋</span>
+          <span>{t("menu.upload.button")}</span>
         </button>
       )}
 

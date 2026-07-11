@@ -50,3 +50,12 @@ export function clearUgc(): void {
     /* ignore */
   }
 }
+
+/** Removes one queued entry, e.g. after it's successfully retried against the backend. */
+export function removeUgc(id: string): void {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(listUgc().filter((e) => e.id !== id)));
+  } catch {
+    /* ignore */
+  }
+}

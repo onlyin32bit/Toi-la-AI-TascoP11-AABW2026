@@ -65,10 +65,16 @@ const DEFAULT_LOCALE = "vi-VN";
 const DEFAULT_TZ_FALLBACK = "Asia/Ho_Chi_Minh";
 const DEFAULT_TIMEOUT_MS = 15000;
 
+// Our own Go engine now serves this exact map-service surface
+// (internal/httpserver/mapsapi.go), so VITE_ENGINE_BASE_URL is preferred.
+// VITE_TASCO_MAPS_BASE_URL stays as an override for pointing at a different
+// facade (e.g. staging/production hackathon endpoints) if ever needed.
 function resolveBaseUrl(configured?: string): string {
   if (configured && configured.length) return configured.replace(/\/+$/, "");
-  const envBase = import.meta.env.VITE_TASCO_MAPS_BASE_URL;
-  if (envBase && envBase.length) return envBase.replace(/\/+$/, "");
+  const tascoBase = import.meta.env.VITE_TASCO_MAPS_BASE_URL;
+  if (tascoBase && tascoBase.length) return tascoBase.replace(/\/+$/, "");
+  const engineBase = import.meta.env.VITE_ENGINE_BASE_URL;
+  if (engineBase && engineBase.length) return engineBase.replace(/\/+$/, "");
   return DEFAULT_BASE_URL;
 }
 
