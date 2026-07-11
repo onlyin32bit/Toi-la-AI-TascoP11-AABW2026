@@ -8,7 +8,7 @@ PREP_DIR   := preprocess
 
 .DEFAULT_GOAL := help
 
-.PHONY: help kb thuduc build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich
+.PHONY: help kb thuduc build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich docker-up docker-down seed-contrib seed-db demo thuduc-compile thuduc-embed
 
 help: ## Liệt kê các target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -17,11 +17,23 @@ help: ## Liệt kê các target
 kb: ## Sinh engine/build/kb.json từ 5 CSV (chạy 1 lần / khi đổi data)
 	cd $(PREP_DIR) && $(PYTHON) build_kb.py
 
+seed-contrib: ## Sinh engine/build/contributions.json demo (2 quán UGC mẫu, 1 cái trùng benchmark để demo dedup)
+	cd $(PREP_DIR) && $(PYTHON) seed_demo_contributions.py
+
+seed-db: ## Tạo tài khoản demo trong Postgres (cần DATABASE_URL — xem docker-up)
+	cd $(ENGINE_DIR) && $(GO) run ./cmd/seed
+
 thuduc: ## Scrape Foody Thủ Đức qua TinyFish -> engine/build/thuduc_enrichment.json (cần TINYFISH_API_KEY)
 	cd $(PREP_DIR) && scrape_env/bin/python scrape_thuduc.py $(ARGS)
 
 thuduc-apify: ## Scrape Google Places (Apify) Thủ Đức, merge vào cùng thuduc_enrichment.json (cần APIFY_TOKEN)
 	cd $(PREP_DIR) && scrape_env/bin/python scrape_thuduc_apify.py $(ARGS)
+
+thuduc-compile: ## Structured facts -> thuduc_resolved.json (provenance) + thuduc_kb.json (buzz_score, flat)
+	cd $(PREP_DIR) && $(PYTHON) compile_thuduc_kb.py && $(PYTHON) resolve_thuduc.py
+
+thuduc-embed: ## Descriptive text ONLY (searchableText) -> Qdrant, collection riêng tascop11_thuduc
+	cd $(ENGINE_DIR) && $(GO) run ./cmd/embed -kb-file ../data/thuduc/thuduc_kb.json -collection tascop11_thuduc
 
 build: ## Build Go engine -> engine/engine (binary tĩnh)
 	cd $(ENGINE_DIR) && $(GO) build -o engine ./cmd/server
@@ -55,6 +67,12 @@ qdrant-up: ## Auto setup: chạy Qdrant qua Docker + embed kb.json nếu đã c�
 qdrant-down: ## Dừng + xoá container Qdrant
 	./scripts/setup_qdrant.sh --down
 
+docker-up: ## Chạy Postgres + Qdrant qua docker-compose (optional infra, xem docker-compose.yml)
+	docker compose up -d
+
+docker-down: ## Dừng Postgres + Qdrant (thêm ARGS=-v để xoá luôn data)
+	docker compose down $(ARGS)
+
 embed: ## Sinh embedding cho kb.json và upsert vào Qdrant (cần kb.json + Qdrant đang chạy)
 	cd $(ENGINE_DIR) && $(GO) run ./cmd/embed
 
@@ -65,4 +83,6 @@ clean: ## Xoá binary + kb.json build
 
 # Tiện dụng: dựng lại data rồi chạy
 dev: kb run ## kb + run
-.PHONY: dev test-v
+
+demo: kb seed-contrib run ## Demo nhanh: kb + UGC mẫu + chạy engine (Postgres/Qdrant optional — xem docker-up, seed-db)
+.PHONY: dev demo test-v

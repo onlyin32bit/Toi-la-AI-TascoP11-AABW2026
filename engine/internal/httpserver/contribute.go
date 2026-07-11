@@ -56,7 +56,7 @@ func (s *Server) handleContribute(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusBadRequest, "invalid_request", inv.Msg, nil)
 			return
 		}
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không lưu được đóng góp", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không lưu được đóng góp", err.Error())
 		return
 	}
 
@@ -98,7 +98,7 @@ func (s *Server) handleContributeMenu(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusNotFound, "not_found", inv.Msg, nil)
 			return
 		}
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không gắn được menu", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không gắn được menu", err.Error())
 		return
 	}
 	if !wired {

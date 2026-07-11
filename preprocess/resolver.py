@@ -40,11 +40,18 @@ TIER = {
     "tasco_csv": 3,
     "user_ocr": 2,  # business-verified equivalent for this hackathon (menu OCR)
     "user_contributed": 1,
+    # Thu Duc enrichment sources (resolve_thuduc.py) — separate corpus, never
+    # candidate-compared against the benchmark/UGC entries above, so reusing
+    # tier 3/2 here doesn't create false equivalence with tasco_csv/user_ocr.
+    "apify:google_places": 3,  # SYSTEM_FLOW.md tier 3, licensed-api
+    "tinyfish:foody": 2,  # SYSTEM_FLOW.md tier 4a, agentic-facts (lower trust than apify)
 }
 CONFIDENCE = {
     "tasco_csv": 0.80,
     "user_ocr": 0.85,
     "user_contributed": 0.55,
+    "apify:google_places": 0.80,
+    "tinyfish:foody": 0.60,
 }
 CONSENSUS_MIN = 3
 

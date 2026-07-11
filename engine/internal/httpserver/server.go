@@ -59,6 +59,25 @@ func New(deps Deps) http.Handler {
 	mux.HandleFunc("/v1/me", s.handleMe)
 	mux.HandleFunc("/v1/contexts", s.handleContexts)
 
+	// Map-service surface compatible with
+	// resources/data/tasco_maps_hackathon_api_documentation.md (see mapsapi.go).
+	mux.HandleFunc("/v1/search", s.handleSearch)
+	mux.HandleFunc("/search", s.handleSearch)
+	mux.HandleFunc("/v1/geocode-search", s.handleSearch)
+	mux.HandleFunc("/v1/autocomplete", s.handleAutocomplete)
+	mux.HandleFunc("/autocomplete", s.handleAutocomplete)
+	mux.HandleFunc("/v1/poi/{id}", s.handlePOIByPath)
+	mux.HandleFunc("/poi/{id}", s.handlePOIByPath)
+	mux.HandleFunc("/v1/reverse-geocoding", s.handleReverseGeocoding)
+	mux.HandleFunc("/reverse-geocoding", s.handleReverseGeocoding)
+	mux.HandleFunc("/v1/reverse", s.handleReverseGeocoding)
+	mux.HandleFunc("/v1/nearby-search", s.handleNearbySearch)
+	mux.HandleFunc("/nearby-search", s.handleNearbySearch)
+	mux.HandleFunc("/v1/geocoding", s.handleGeocoding)
+	mux.HandleFunc("/geocoding", s.handleGeocoding)
+	mux.HandleFunc("/v1/route", methodPost(s.handleRoute))
+	mux.HandleFunc("/route", methodPost(s.handleRoute))
+
 	if deps.UIDist != "" {
 		mux.Handle("/", http.FileServer(http.Dir(deps.UIDist)))
 	} else {
@@ -145,7 +164,7 @@ func recoverMiddleware(next http.Handler) http.Handler {
 		defer func() {
 			if rec := recover(); rec != nil {
 				log.Printf("panic: %v", rec)
-				writeError(w, r, http.StatusInternalServerError, "internal", "Lỗi máy chủ", nil)
+				writeError(w, r, http.StatusInternalServerError, "internal_error", "Lỗi máy chủ", nil)
 			}
 		}()
 		next.ServeHTTP(w, r)

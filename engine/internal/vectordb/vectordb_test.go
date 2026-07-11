@@ -75,3 +75,18 @@ func TestQdrantSearchDownGracefulError(t *testing.T) {
 		t.Errorf("Search against unreachable Qdrant returned nil error, want error")
 	}
 }
+
+func TestNormalizeURL(t *testing.T) {
+	cases := map[string]string{
+		"":                                      "",
+		"qdrant-production.up.railway.app:6333": "https://qdrant-production.up.railway.app:6333",
+		"http://localhost:6333":                 "http://localhost:6333",
+		"https://example.com/":                  "https://example.com",
+		"https://example.com":                   "https://example.com",
+	}
+	for in, want := range cases {
+		if got := normalizeURL(in); got != want {
+			t.Errorf("normalizeURL(%q) = %q, want %q", in, got, want)
+		}
+	}
+}

@@ -47,13 +47,3 @@ func Or(key, def string) string {
 	}
 	return def
 }
-
-// FirstNonEmpty returns the first non-empty string among vals.
-func FirstNonEmpty(vals ...string) string {
-	for _, v := range vals {
-		if v != "" {
-			return v
-		}
-	}
-	return ""
-}

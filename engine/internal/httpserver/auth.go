@@ -20,11 +20,18 @@ func (s *Server) dbUnavailable(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
+// bearerToken accepts either of the doc's two pluggable auth strategies:
+// "Authorization: Bearer <token>" or "X-API-Key: <token>" — both resolve to
+// the same session-token lookup (db.UserByToken doesn't care which header
+// carried it).
 func bearerToken(r *http.Request) string {
 	h := r.Header.Get("Authorization")
 	const prefix = "Bearer "
 	if strings.HasPrefix(h, prefix) {
 		return strings.TrimSpace(h[len(prefix):])
+	}
+	if key := r.Header.Get("X-API-Key"); key != "" {
+		return key
 	}
 	return ""
 }
@@ -72,7 +79,7 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusBadRequest, "invalid_request", "Email đã được đăng ký", nil)
 			return
 		}
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không tạo được tài khoản", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không tạo được tài khoản", err.Error())
 		return
 	}
 	writeJSON(w, r, http.StatusCreated, user)
@@ -98,7 +105,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusUnauthorized, "unauthorized", "Email hoặc mật khẩu không đúng", nil)
 			return
 		}
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không đăng nhập được", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không đăng nhập được", err.Error())
 		return
 	}
 	writeJSON(w, r, http.StatusOK, map[string]any{"token": token, "user": user})
@@ -114,7 +121,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := s.db.Logout(r.Context(), tok); err != nil {
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không đăng xuất được", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không đăng xuất được", err.Error())
 		return
 	}
 	writeJSON(w, r, http.StatusOK, map[string]any{"ok": true})
@@ -136,7 +143,7 @@ func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
 func (s *Server) requireUser(w http.ResponseWriter, r *http.Request) (*db.User, error) {
 	user, err := s.currentUser(r)
 	if err != nil {
-		writeError(w, r, http.StatusInternalServerError, "internal", "Không xác thực được", err.Error())
+		writeError(w, r, http.StatusInternalServerError, "internal_error", "Không xác thực được", err.Error())
 		return nil, err
 	}
 	if user == nil {

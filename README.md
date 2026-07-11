@@ -69,16 +69,34 @@ python3 build_kb.py            # writes ../engine/build/kb.json
 # 2) Build and run the engine
 cd ../engine
 go build ./...
-go run .                       # or: go build -o engine . && ./engine
+go run ./cmd/server             # or: go build -o engine ./cmd/server && ./engine
 ```
 
-Configuration is env-only:
+Configuration is env-only (see `.env.example`):
 
 | Env var   | Default   | Meaning                                            |
 |-----------|-----------|----------------------------------------------------|
 | `PORT`    | `8000`    | HTTP listen port                                   |
 | `KB_DIR`  | `build`   | Directory holding `kb.json` / `contributions.json` |
 | `UI_DIST` | *(unset)* | If set, serve this static dir at `/` (same-origin) |
+
+### Demo data & test accounts
+
+```bash
+make demo           # kb + demo UGC contributions + run — no Postgres/Qdrant needed
+```
+
+- `make seed-contrib` writes 2 sample UGC restaurants to `engine/build/contributions.json`:
+  one is a near-duplicate of an existing benchmark POI (~15m away, same name) to
+  demo `preprocess/resolver.py`'s entity-resolution dedup; the other is a
+  genuinely new restaurant that just shows up in `/v1/recommend` as
+  `source:"user_contributed", verified:false`.
+- `make docker-up` (see `docker-compose.yml`) starts local Postgres + Qdrant, then
+  `make seed-db` inserts 3 demo accounts (all password `demo1234`):
+  `demo.family@tascomaps.vn` (has a saved trip context feeding §5.3's `S_behavior`
+  factor), `demo.contributor@tascomaps.vn` (owns the seeded UGC above),
+  `demo.admin@tascomaps.vn`. Login via `POST /v1/auth/login`. Both seed commands
+  are idempotent — safe to rerun.
 
 ## API reference
 
@@ -166,10 +184,56 @@ it degrades honestly:
 {"poi_id":"…","dishes":[],"needs_confirm":true,"note":"OCR chưa nối"}
 ```
 
-### Stubs (DEV3)
+### `GET /v1/assistant` and `POST /v1/dishes/recognize`
 
-`GET /v1/assistant` and `POST /v1/dishes/recognize` return `501`
-`{"error":{"code":"not_implemented","message":"DEV3 chưa nối"}}`.
+Both are fully implemented (RAG Q&A with citations; vision-LLM dish recognition +
+menu OCR) — see `internal/assistant`/`internal/vision`. They return `503
+llm_unavailable`/`vision_unavailable` only when no LLM provider key is configured,
+never a hardcoded stub.
+
+## Tasco Maps hackathon API compatibility
+
+This engine additionally exposes the map-service surface defined by
+[`resources/data/tasco_maps_hackathon_api_documentation.md`](resources/data/tasco_maps_hackathon_api_documentation.md) —
+`/v1/search`, `/v1/autocomplete`, `/v1/poi/{id}`, `/v1/reverse-geocoding`,
+`/v1/nearby-search`, `/v1/geocoding`, `/v1/route` (plus every alias the doc lists,
+e.g. `/search`, `/poi/{id}`, `/v1/reverse`) — implemented in
+`internal/httpserver/mapsapi.go`. Full contract: [`openapi.yaml`](openapi.yaml).
+
+This engine's domain is restaurants only (no street/address database, no
+road-network routing graph), so three endpoints are explicitly best-effort rather
+than general-purpose, and say so honestly instead of fabricating precision:
+
+- **`/v1/geocoding` / `/v1/reverse-geocoding`** match against this engine's own
+  POI corpus (token-overlap on address text; nearest-POI-within-radius for
+  reverse), not a general street geocoder. A query with no nearby/matching POI
+  returns an empty `results: []`, never an invented coordinate or address.
+- **`/v1/route`** has no routing engine behind it. It returns an honest haversine
+  straight-line distance/duration estimate (`routes[].approximate: true`) with a
+  single maneuver that says exactly that — never fabricated turn-by-turn
+  directions or street names. Always 1 route, regardless of the requested
+  `alternates` count (no fake route diversity).
+- **`/v1/search` / `/v1/nearby-search` / `/v1/autocomplete` / `/v1/poi/{id}`**
+  are fully real, backed by the same `internal/retrieve`→`internal/rerank`
+  pipeline as this engine's own `/v1/recommend` — `category` is matched
+  best-effort against cuisine/segments (restaurant-domain categories, not a
+  general POI taxonomy like `office`/`hotel`).
+
+**Compatibility requirements** (per the doc's "Submission Expectations"):
+
+| Requirement | Status |
+|---|---|
+| Stable IDs | `poi:<id>` / `ugc:<hex>`, never reassigned |
+| WGS84 lat/lon | `model.Coordinates{Lat, Lon}` throughout |
+| VN diacritics preserved | `json.Encoder.SetEscapeHTML(false)`, UTF-8 everywhere |
+| Configurable base URL | `PORT`/`UI_DIST` env — see `.env.example` |
+| Configurable auth | `Authorization: Bearer <token>` or `X-API-Key: <token>`, both optional |
+| No app-specific UI deps | Pure JSON HTTP API, zero Flutter/UI coupling in the service layer |
+| Deterministic mock data | `engine/build/kb.json` (from `preprocess/build_kb.py`) is fully deterministic |
+
+Not yet built: a Flutter/Dart SDK client adapter (the doc's `PeliasClient`/
+`RoutingClient` boundary) — the REST contract in `openapi.yaml` is the
+integration surface until/unless that adapter is written.
 
 ## Ranking methodology
 

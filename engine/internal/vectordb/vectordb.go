@@ -27,9 +27,20 @@ type qdrantConfig struct {
 
 func loadQdrantConfig() qdrantConfig {
 	return qdrantConfig{
-		url:        strings.TrimRight(os.Getenv("QDRANT_URL"), "/"),
+		url:        normalizeURL(os.Getenv("QDRANT_URL")),
 		collection: config.Or("QDRANT_COLLECTION", "tascop11_pois"),
 	}
+}
+
+// normalizeURL prepends https:// to a bare host:port (e.g. a Railway/managed
+// Qdrant URL pasted without its scheme) so http.NewRequest doesn't fail with
+// "unsupported protocol scheme". Leaves an already-schemed URL untouched.
+func normalizeURL(u string) string {
+	u = strings.TrimRight(u, "/")
+	if u == "" || strings.Contains(u, "://") {
+		return u
+	}
+	return "https://" + u
 }
 
 // Enabled reports whether vector search should be attempted at all.

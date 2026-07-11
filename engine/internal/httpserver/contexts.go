@@ -29,7 +29,7 @@ func (s *Server) handleContexts(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		contexts, err := s.db.ListContexts(r.Context(), user.ID)
 		if err != nil {
-			writeError(w, r, http.StatusInternalServerError, "internal", "Không tải được contexts", err.Error())
+			writeError(w, r, http.StatusInternalServerError, "internal_error", "Không tải được contexts", err.Error())
 			return
 		}
 		writeJSON(w, r, http.StatusOK, map[string]any{"contexts": contexts})
@@ -42,7 +42,7 @@ func (s *Server) handleContexts(w http.ResponseWriter, r *http.Request) {
 		}
 		sc, err := s.db.SaveContext(r.Context(), user.ID, req.Name, req.Stated, req.CTX, req.Learned)
 		if err != nil {
-			writeError(w, r, http.StatusInternalServerError, "internal", "Không lưu được context", err.Error())
+			writeError(w, r, http.StatusInternalServerError, "internal_error", "Không lưu được context", err.Error())
 			return
 		}
 		writeJSON(w, r, http.StatusCreated, sc)
