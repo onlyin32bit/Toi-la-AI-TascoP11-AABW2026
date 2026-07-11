@@ -558,47 +558,47 @@ Response `/v1/recommend`:
 Không đủ giờ để chia phase tuần tự — 5 người chạy **song song ngay từ phút đầu** theo §10.5, chỉ đồng bộ ở 2 interface (`kb.json`, API contract §8). Danh sách việc dưới đây xếp theo **must-have (không có không nộp được) → should-have (đề yêu cầu, cắt được nếu cháy giờ) → nice-to-have (cắt đầu tiên)**. Mỗi người tự chạy list của mình, tick xong việc nào báo ngay để người phụ thuộc bắt đầu.
 
 ### Setup — làm trước, chặn mọi người (10–15 phút, cả team làm song song luôn phần của mình)
-- [ ] Copy 5 CSV từ `data/` → `preprocess/data/`. `go mod init` trong `engine/`. Skeleton `preprocess/*.py`.
-- [ ] `.gitignore`: `engine/build/`, `.env`, `node_modules/`, `preprocess/__pycache__/`. **Không commit key.**
-- [ ] `.env`: `DASHSCOPE_API_KEY=...`, đọc bằng `os.getenv`/`os.Getenv`, không hardcode.
-- [ ] UI: verify `npm run dev` chạy từ prototype có sẵn.
-- [ ] DEV1: verify `go run .` chạy skeleton HTTP.
-- [ ] DEV3: 1 call Qwen text test sống + 1 call vision test sống.
-- [ ] BIZ: đọc kỹ PROBLEM STATEMENT, hỏi BTC về Food Image Dataset ngay (đề nói có, repo chưa thấy), dựng khung deck.
-- [ ] **Chốt 2 interface trước khi ai code sâu:** schema `kb.json` (DEV2↔DEV1), API contract §8 (DEV1↔UI/DEV3).
+- [x] Copy 5 CSV từ `data/` → `preprocess/data/`. `go mod init` trong `engine/`. Skeleton `preprocess/*.py`.
+- [x] `.gitignore`: `engine/build/`, `.env`, `node_modules/`, `preprocess/__pycache__/`. **Không commit key.**
+- [x] `.env`: `DASHSCOPE_API_KEY=...`, đọc bằng `os.getenv`/`os.Getenv`, không hardcode.
+- [x] UI: verify `npm run dev` chạy từ prototype có sẵn.
+- [x] DEV1: verify `go run .` chạy skeleton HTTP.
+- [x] DEV3: 1 call Qwen text test sống + 1 call vision test sống.
+- [x] BIZ: đọc kỹ PROBLEM STATEMENT, hỏi BTC về Food Image Dataset ngay (đề nói có, repo chưa thấy), dựng khung deck.
+- [x] **Chốt 2 interface trước khi ai code sâu:** schema `kb.json` (DEV2↔DEV1), API contract §8 (DEV1↔UI/DEV3).
 
 ### MUST-HAVE — không có thì không thể nộp
-- [ ] **DEV2** — `build_kb.py`: CSV → `kb.json` (normalize taxonomy segment/diet/price/opening_hours).
-- [ ] **DEV1** — `kb.go` + `retrieve.go`: load kb.json, parseQuery, recall, HARD gate (kể cả bẫy Crystal BBQ / Halal-HCM).
-- [ ] **DEV1** — `rerank.go`: SOFT score + geo_decay + renormalize + anti-luxury + `why{}`.
-- [ ] **DEV1** — `main.go`: `/v1/recommend`, `/v1/poi`, `/health`. **DoD:** `curl /v1/recommend?q=quán chay&lat=..&lon=..` trả JSON đúng, có `why`.
-- [ ] **UI** — `api.ts` + nối search/recommend thật vào `ui/` có sẵn (thay mock), FilterChips, ResultCard hiện `why` breakdown.
-- [ ] **DEV3** — `assistant.go` RAG chống bịa (không có trong KB → not_found, cấm bịa).
-- [ ] **DEV3** — `summarize.py` batch AI summary + sentiment + cuisine_classification + dining_occasions cho 30 quán, ghi vào kb.json.
-- [ ] **DEV2** — `quality_completeness` score trong `build_kb.py` + badge hiển thị.
-- [ ] **BIZ** — demo script đủ đường đi cho các cảnh must-have; chạy thử end-to-end ngay khi UI+DEV1 xong phần recommend.
+- [x] **DEV2** — `build_kb.py`: CSV → `kb.json` (normalize taxonomy segment/diet/price/opening_hours).
+- [x] **DEV1** — `kb.go` + `retrieve.go`: load kb.json, parseQuery, recall, HARD gate (kể cả bẫy Crystal BBQ / Halal-HCM).
+- [x] **DEV1** — `rerank.go`: SOFT score + geo_decay + renormalize + anti-luxury + `why{}`.
+- [x] **DEV1** — `main.go`: `/v1/recommend`, `/v1/poi`, `/health`. **DoD:** `curl /v1/recommend?q=quán chay&lat=..&lon=..` trả JSON đúng, có `why`.
+- [x] **UI** — `api.ts` + nối search/recommend thật vào `ui/` có sẵn (thay mock), FilterChips, ResultCard hiện `why` breakdown.
+- [x] **DEV3** — `assistant.go` RAG chống bịa (không có trong KB → not_found, cấm bịa).
+- [x] **DEV3** — `summarize.py` batch AI summary + sentiment + cuisine_classification + dining_occasions cho 30 quán, ghi vào kb.json.
+- [x] **DEV2** — `quality_completeness` score trong `build_kb.py` + badge hiển thị.
+- [x] **BIZ** — demo script đủ đường đi cho các cảnh must-have; chạy thử end-to-end ngay khi UI+DEV1 xong phần recommend.
 
 ### SHOULD-HAVE — đề yêu cầu tường minh, ưu tiên cao nhưng cắt được nếu cháy giờ
-- [ ] **DEV1 + DEV2** — **LOCALIZE quick-wins (§1.5), differentiator BGK:** L2 slang/teencode map (`retrieve.go`) + L3 ontology đặc sản vùng miền + factor `local_specialty` (`taxonomy` + `rerank.go`, §7.2) + L4 meal-time prior (`retrieve.go`). Kèm test + `reasoning` tiếng Việt ("đặc sản Huế"). **Cảnh demo: cùng câu, khác tỉnh, khác đặc sản.**
-- [ ] **DEV1 + DEV3 + UI** — **UGC (§5.10):** `contribute.go` (`POST /v1/contribute` + `/v1/contribute/menu`) + OCR vision + `ContributeForm.tsx` (thả pin) + `MenuUpload.tsx`. **Cảnh demo chủ lực enrichment.**
-- [ ] **DEV3** — `vision.go` dish recognition (`POST /v1/dishes/recognize`) + cache sẵn kết quả cho 5–10 ảnh demo.
-- [ ] **DEV1** — `compare.go` (`GET /v1/compare?ids=...`) + **UI** `CompareView.tsx`.
-- [ ] **UI** — `AssistantBox.tsx` (chat + citations), `DishPhoto.tsx` (upload ảnh).
-- [ ] **UI** — badge provenance/verified trên card (UGC "chưa xác minh"); empty-state `not_found` hiện `message` + `suggestions` dạng chip.
-- [ ] **DEV3/DEV1** — chạy eval A/B/C (§11), tune weights SOFT score dựa trên kết quả.
+- [x] **DEV1 + DEV2** — **LOCALIZE quick-wins (§1.5), differentiator BGK:** L2 slang/teencode map (`retrieve.go`) + L3 ontology đặc sản vùng miền + factor `local_specialty` (`taxonomy` + `rerank.go`, §7.2) + L4 meal-time prior (`retrieve.go`). Kèm test + `reasoning` tiếng Việt ("đặc sản Huế"). **Cảnh demo: cùng câu, khác tỉnh, khác đặc sản.**
+- [x] **DEV1 + DEV3 + UI** — **UGC (§5.10):** `contribute.go` (`POST /v1/contribute` + `/v1/contribute/menu`) + OCR vision + `ContributeForm.tsx` (thả pin) + `MenuUpload.tsx`. **Cảnh demo chủ lực enrichment.**
+- [x] **DEV3** — `vision.go` dish recognition (`POST /v1/dishes/recognize`) + cache sẵn kết quả cho 5–10 ảnh demo.
+- [x] **DEV1** — `compare.go` (`GET /v1/compare?ids=...`) + **UI** `CompareView.tsx`.
+- [x] **UI** — `AssistantBox.tsx` (chat + citations), `DishPhoto.tsx` (upload ảnh).
+- [x] **UI** — badge provenance/verified trên card (UGC "chưa xác minh"); empty-state `not_found` hiện `message` + `suggestions` dạng chip.
+- [x] **DEV3/DEV1** — chạy eval A/B/C (§11), tune weights SOFT score dựa trên kết quả.
 
 ### NICE-TO-HAVE — cắt đầu tiên khi thiếu giờ
 - [ ] LLM rerank top-10 (§7.3).
-- [ ] **Social scraping enrichment** (`enrich.py`, §6.5): scrape 10–20 POI thật → `enrichment.json`, cảnh 0.6→0.9. *Đã hạ từ should-have — UGC §5.10 gánh câu chuyện enrichment.*
+- [x] **Social scraping enrichment / Live Enrichment** (`enrich.go`, §6.5): live POST `/v1/enrich` qua Apify + Split-View A/B comparison UI.
 - [ ] Social buzz signal (§6.5b).
 - [ ] Embedding semantic search qua Qwen API (giữ lexical token-match làm core).
 - [ ] Tauri desktop packaging (`ui/src-tauri/` đã có sẵn, build nếu còn giờ).
 - [ ] Style polish nâng cao: animation marker, transition đẹp.
 
 ### 30 phút cuối — chốt nộp (cả team)
-- [ ] Freeze code. Eval lần cuối, số liệu chốt cho BIZ.
-- [ ] README (methodology §13 + setup) — mỗi dev viết 3–5 gạch đầu dòng phần mình, BIZ biên tập.
-- [ ] Video demo + deck final. Kiểm tra lại: không commit API key.
+- [x] Freeze code. Eval lần cuối, số liệu chốt cho BIZ.
+- [x] README (methodology §13 + setup) — mỗi dev viết 3–5 gạch đầu dòng phần mình, BIZ biên tập.
+- [x] Video demo + deck final. Kiểm tra lại: không commit API key.
 
 **Đường cắt nếu cháy giờ (theo thứ tự):** LLM rerank (§7.3) → scraping enrichment (§6.5) → social buzz → embedding → Tauri packaging. **KHÔNG cắt:** demo tối thiểu, `why{}`, chống bịa (Crystal BBQ / Halal-HCM), seed data đúng, quality scoring, dish recognition + **UGC đóng góp quán + menu OCR (§5.10)** (đề yêu cầu tường minh + là cảnh demo chủ lực).
 

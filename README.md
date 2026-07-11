@@ -184,6 +184,46 @@ it degrades honestly:
 {"poi_id":"…","dishes":[],"needs_confirm":true,"note":"OCR chưa nối"}
 ```
 
+### `POST /v1/enrich` (On-Demand AI Enrichment)
+
+```bash
+curl -s -X POST http://localhost:8000/v1/enrich \
+  -H 'Content-Type: application/json' \
+  -d '{"poi_id":"poi:res001","name":"Phở Bếp Nhà","address":"2 Trần Phú, Hoàn Kiếm, Hà Nội","city":"Hà Nội","quality_before":0.61}'
+```
+
+Calls the Apify Google Places actor to retrieve real-time data for the specified venue, resolves field consensus, and returns a UI-friendly `EnrichmentResult`.
+
+Response:
+```json
+{
+  "poi_id": "poi:res001",
+  "quality_before": 0.61,
+  "quality_after": 0.71,
+  "provenance": {
+    "hours": {
+      "source": "google",
+      "confidence": 0.87,
+      "fetched_at": "2026-07-12T05:19:37Z"
+    },
+    "menu": {
+      "source": "google",
+      "confidence": 0.87,
+      "fetched_at": "2026-07-12T05:19:37Z"
+    }
+  },
+  "menu_items": ["Phở bò tái", "Bún chả", "Gỏi cuốn"],
+  "hours_open": "09:00 - 23:00",
+  "price_range": "80k – 100k VND",
+  "diet_tags": ["vegetarian"],
+  "rating": 4.5,
+  "source_url": "https://maps.google.com/..."
+}
+```
+
+If `APIFY_TOKEN` is unset in the environment, the endpoint returns a `503 Service Unavailable` with `service_unavailable` error code.
+
+
 ### `GET /v1/assistant` and `POST /v1/dishes/recognize`
 
 Both are fully implemented (RAG Q&A with citations; vision-LLM dish recognition +
