@@ -6,6 +6,9 @@ import { cn } from "../lib/utils";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
+import { QualityScoreBadge } from "./quality-score-badge";
+import { ProvenanceBadge } from "./provenance-badge";
+import { DEMO_POI_ID } from "../data/mock-enrichment";
 
 const VEHICLE_EMOJI: Record<Vehicle, string> = {
   walk: "🚶",
@@ -21,6 +24,8 @@ interface ResultCardProps {
   expanded: boolean;
   onSelect: () => void;
   onToggleExpand: () => void;
+  onEnrich?: (id: string) => void;
+  enriching?: boolean;
 }
 
 const WHY_ROWS: { key: keyof PlaceResult["meta"]["why"]; labelKey: string }[] = [
@@ -39,7 +44,16 @@ function formatMinute(min: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-export function ResultCard({ result, filters, active, expanded, onSelect, onToggleExpand }: ResultCardProps) {
+export function ResultCard({
+  result,
+  filters,
+  active,
+  expanded,
+  onSelect,
+  onToggleExpand,
+  onEnrich,
+  enriching,
+}: ResultCardProps) {
   const { t } = useI18n();
   const cardRef = useRef<HTMLDivElement | null>(null);
 
@@ -50,8 +64,6 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
   ];
 
   const reasoningParts: string[] = [];
-  // Prefer ETA when available; only fall back to raw distance line when
-  // there's no vehicle context (avoids saying both "12min" and "2.4km away").
   if (filters.vehicle && result.etaMinutes !== null) {
     reasoningParts.push(
       t("reason.eta", { min: result.etaMinutes, vehicle: t(`vehicle.${filters.vehicle}`) }),
@@ -69,7 +81,9 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
   );
   const reasoning = reasoningParts.join(" - ");
   const p11Score = (result.meta.why.final * 10).toFixed(1);
-  const quality = Math.round(result.meta.quality * 100);
+  // Prefer client-side enriched qualityScore over meta.quality so the badge
+  // can reflect the "before" downgrade and the "after" bump for the demo POI.
+  const currentQuality = result.qualityScore ?? result.meta.quality;
   const scorePercent = Math.max(8, Math.min(100, result.meta.why.final * 100));
 
   // Mouse-follow radial glow — the tech "sensor" feel.
@@ -82,6 +96,9 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
     el.style.setProperty("--mx", `${mx}%`);
     el.style.setProperty("--my", `${my}%`);
   };
+
+  const isDemoPoi = result.id === DEMO_POI_ID;
+  const showEnrichButton = isDemoPoi && !result.isEnriched;
 
   return (
     <Card
@@ -120,8 +137,12 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
 
       <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.055] p-2">
         <div>
-          <div className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-muted-foreground font-mono">Quality</div>
-          <div className="mt-0.5 font-display text-sm font-bold text-foreground">{quality}%</div>
+          <div className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-muted-foreground font-mono">
+            {t("quality.label")}
+          </div>
+          <div className="mt-0.5">
+            <QualityScoreBadge score={currentQuality} size="sm" />
+          </div>
         </div>
         <div>
           {result.etaMinutes !== null ? (
@@ -170,6 +191,65 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
         ))}
       </div>
 
+      {showEnrichButton && (
+        <button
+          type="button"
+          className="enrich-btn mt-3 w-full"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEnrich?.(result.id);
+          }}
+          disabled={!!enriching}
+        >
+          <span className="enrich-btn-sparkle" aria-hidden>
+            ✨
+          </span>
+          <span>{t("enrich.button")}</span>
+        </button>
+      )}
+
+      {result.isEnriched && result.provenance && (
+        <div className="card-details" aria-live="polite">
+          {result.enrichedMenuItems && result.provenance.menu && (
+            <DetailRow
+              label={t("field.menu")}
+              value={
+                result.enrichedMenuItems.slice(0, 3).join(" • ") +
+                (result.enrichedMenuItems.length > 3
+                  ? ` +${result.enrichedMenuItems.length - 3}`
+                  : "")
+              }
+              field={result.provenance.menu}
+              delayMs={400}
+            />
+          )}
+          {result.enrichedHours && result.provenance.hours && (
+            <DetailRow
+              label={t("field.hours")}
+              value={result.enrichedHours}
+              field={result.provenance.hours}
+              delayMs={480}
+            />
+          )}
+          {result.enrichedPriceRange && result.provenance.priceRange && (
+            <DetailRow
+              label={t("field.priceRange")}
+              value={result.enrichedPriceRange}
+              field={result.provenance.priceRange}
+              delayMs={560}
+            />
+          )}
+          {result.enrichedDietTags && result.provenance.dietTags && (
+            <DetailRow
+              label={t("field.dietTags")}
+              value={result.enrichedDietTags.join(", ")}
+              field={result.provenance.dietTags}
+              delayMs={640}
+            />
+          )}
+        </div>
+      )}
+
       <Button
         type="button"
         variant="glass"
@@ -215,5 +295,23 @@ export function ResultCard({ result, filters, active, expanded, onSelect, onTogg
         </div>
       )}
     </Card>
+  );
+}
+
+interface DetailRowProps {
+  label: string;
+  value: string;
+  field: import("../types").ProvenanceField;
+  delayMs: number;
+}
+
+function DetailRow({ label, value, field, delayMs }: DetailRowProps) {
+  const style = { ["--row-delay" as string]: `${delayMs}ms` } as React.CSSProperties;
+  return (
+    <div className="card-detail-row" style={style}>
+      <span className="card-detail-label">{label}</span>
+      <span className="card-detail-value">{value}</span>
+      <ProvenanceBadge field={field} delayMs={delayMs} compact />
+    </div>
   );
 }

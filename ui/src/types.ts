@@ -103,6 +103,70 @@ export interface PlaceResult {
     opening: { overnight: boolean; closeMin: number };
     matchedDishes: { dish: string; priceVnd: number }[];
   };
+  // Enrichment fields — only populated after the demo enrichment agent runs
+  // for a POI. qualityScore overrides meta.quality when present so the badge
+  // can display the enriched value without touching the ranker's numbers.
+  qualityScore?: number;
+  provenance?: ProvenanceMap;
+  isEnriched?: boolean;
+  enrichedMenuItems?: string[];
+  enrichedHours?: string;
+  enrichedPriceRange?: string;
+  enrichedDietTags?: string[];
+}
+
+// ── Enrichment agent types ────────────────────────────────────────────
+// Front-end-only for the demo: mock agent produces these events + result.
+
+export type EnrichmentSource =
+  | "google"
+  | "foody"
+  | "tiktok"
+  | "shopeefood"
+  | "ugc";
+
+export interface ProvenanceField {
+  source: EnrichmentSource;
+  confidence: number;
+  fetchedAt: string;
+}
+
+export type ProvenanceKey =
+  | "menu"
+  | "hours"
+  | "priceRange"
+  | "dietTags"
+  | "photos"
+  | "address";
+
+export type ProvenanceMap = Partial<Record<ProvenanceKey, ProvenanceField>>;
+
+export type EnrichmentStage =
+  | "searching"
+  | "parsing"
+  | "consensus"
+  | "quality-update"
+  | "done";
+
+export interface EnrichmentStageEvent {
+  stage: EnrichmentStage;
+  message: string;
+  sourcesFound?: EnrichmentSource[];
+  fieldsExtracted?: ProvenanceKey[];
+  consensusRate?: number;
+  qualityBefore?: number;
+  qualityAfter?: number;
+}
+
+export interface EnrichmentResult {
+  poiId: string;
+  qualityBefore: number;
+  qualityAfter: number;
+  provenance: ProvenanceMap;
+  menuItems: string[];
+  hoursOpen?: string;
+  priceRange?: string;
+  dietTags?: string[];
 }
 
 // Structured reason for an empty result set, localized in the UI. Preserves the

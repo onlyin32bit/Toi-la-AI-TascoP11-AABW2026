@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { PlaceResult, UserLocation } from "../types";
+import type { UgcEntry } from "../lib/ugc-queue";
 import { useI18n } from "../i18n/LanguageContext";
 
 const userIcon = L.divIcon({
@@ -10,6 +11,13 @@ const userIcon = L.divIcon({
   html: '<div class="user-dot"><span class="user-dot-pulse"></span></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
+});
+
+const ugcIcon = L.divIcon({
+  className: "ugc-pin-marker",
+  html: '<div class="ugc-pin-inner"></div>',
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 // Color by list rank rather than absolute score: real scores cluster in a
@@ -100,9 +108,31 @@ interface MapViewProps {
   satellite: boolean;
   focusMode: "results" | "user";
   onSelect: (id: string) => void;
+  ugcPins?: UgcEntry[];
 }
 
-export function MapView({ results, userLoc, selectedId, satellite, focusMode, onSelect }: MapViewProps) {
+// Flies to the newest UGC pin so the user sees their contribution land on the
+// map. Only fires when the pin count GROWS — a cold load with persisted pins
+// should not hijack FitToResults on boot. Seeds the seen-length ref from the
+// initial prop value so mount alone doesn't trigger a fly.
+function FlyToLatestUgc({ ugcPins }: { ugcPins: UgcEntry[] }) {
+  const map = useMap();
+  const seenLenRef = useRef(ugcPins.length);
+  useEffect(() => {
+    if (ugcPins.length <= seenLenRef.current) {
+      seenLenRef.current = ugcPins.length;
+      return;
+    }
+    seenLenRef.current = ugcPins.length;
+    const latest = ugcPins[ugcPins.length - 1];
+    const zoom = Math.max(map.getZoom(), 15);
+    map.flyTo(upperThirdCenter(map, [latest.lat, latest.lng], zoom), zoom, { duration: 0.8 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ugcPins.length]);
+  return null;
+}
+
+export function MapView({ results, userLoc, selectedId, satellite, focusMode, onSelect, ugcPins }: MapViewProps) {
   const { t } = useI18n();
   const center: [number, number] = userLoc
     ? [userLoc.lat, userLoc.lon]
@@ -143,9 +173,27 @@ export function MapView({ results, userLoc, selectedId, satellite, focusMode, on
           </Popup>
         </Marker>
       ))}
+      {ugcPins?.map((p) => (
+        <Marker key={p.id} position={[p.lat, p.lng]} icon={ugcIcon}>
+          <Popup>
+            <strong>{p.name}</strong>
+            <br />
+            <span style={{ color: "#a78bfa", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.4 }}>
+              {t("ugc.pending.badge")}
+            </span>
+            {p.dish && (
+              <>
+                <br />
+                {p.dish}
+              </>
+            )}
+          </Popup>
+        </Marker>
+      ))}
       <FitToResults results={results} userLoc={userLoc} enabled={focusMode === "results"} />
       <FlyToUserLocation userLoc={userLoc} enabled={focusMode === "user"} />
       <FlyToSelected results={results} selectedId={selectedId} />
+      {ugcPins && ugcPins.length > 0 && <FlyToLatestUgc ugcPins={ugcPins} />}
     </MapContainer>
   );
 }
