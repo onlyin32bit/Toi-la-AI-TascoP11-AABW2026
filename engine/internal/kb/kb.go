@@ -1,4 +1,8 @@
-package main
+// Package kb owns the POI schema, the in-memory knowledge base, Vietnamese
+// text normalization, and POI-level matching helpers (dish/diet/price) used
+// by both internal/retrieve (HARD gate) and internal/rerank (SOFT score).
+// Depends on nothing else in this module.
+package kb
 
 import (
 	"encoding/json"
@@ -71,6 +75,11 @@ type POI struct {
 	RawOCRText            *string         `json:"raw_ocr_text"`
 	Reviews               []Review        `json:"reviews"`
 
+	// BuzzScore is an optional social-buzz signal (§5.3 S_buzz, SYSTEM_FLOW.md
+	// tier 4b). Absent (nil) for every POI until a social enrichment pipeline
+	// populates it — the SOFT score renormalizes it away until then.
+	BuzzScore *float64 `json:"buzz_score,omitempty"`
+
 	// Provenance — benchmark POIs => tasco_csv/true; UGC => user_contributed/false.
 	Source    string `json:"source,omitempty"`
 	Verified  bool   `json:"verified,omitempty"`
@@ -86,6 +95,12 @@ type KB struct {
 	POIs      []*POI
 	byID      map[string]*POI
 	dishVocab map[string]struct{} // global normalized dish phrases (DetectDish)
+}
+
+// New returns an empty, ready-to-use KB — for tests and incremental
+// construction (e.g. internal/kb/kbfixture).
+func New() *KB {
+	return &KB{byID: map[string]*POI{}, dishVocab: map[string]struct{}{}}
 }
 
 // LoadKB reads <buildDir>/kb.json and, when includeUGC, appends
@@ -143,7 +158,7 @@ func (kb *KB) Add(p *POI) {
 	}
 	for _, d := range p.KnownEntities.Dishes {
 		if d != "" {
-			kb.dishVocab[norm(d)] = struct{}{}
+			kb.dishVocab[Norm(d)] = struct{}{}
 		}
 	}
 }
@@ -162,8 +177,36 @@ func (kb *KB) Get(id string) *POI {
 	return nil
 }
 
+// DishVocab exposes the global normalized dish-phrase set (internal/retrieve's
+// DetectDish walks n-grams of the query against this).
+func (kb *KB) DishVocab() map[string]struct{} {
+	return kb.dishVocab
+}
+
+// MatchName returns a POI whose name matches (equals/contains) the normalized
+// phrase, or nil. Used by internal/retrieve's anti-hallucination guard.
+func (kb *KB) MatchName(np string) *POI {
+	for _, p := range kb.POIs {
+		if p.nameNorm == np || strings.Contains(p.nameNorm, np) || strings.Contains(np, p.nameNorm) {
+			return p
+		}
+		for _, name := range p.KnownEntities.Names {
+			if Norm(name) == np {
+				return p
+			}
+		}
+	}
+	return nil
+}
+
+// Search exposes the POI's token search set (membership only).
+func (p *POI) Search() map[string]struct{} { return p.search }
+
+// NameNorm exposes the POI's precomputed normalized name.
+func (p *POI) NameNorm() string { return p.nameNorm }
+
 func (p *POI) buildIndex() {
-	p.nameNorm = norm(p.Name)
+	p.nameNorm = Norm(p.Name)
 	set := make(map[string]struct{})
 	add := func(toks []string) {
 		for _, t := range toks {
@@ -173,30 +216,34 @@ func (p *POI) buildIndex() {
 		}
 	}
 	add(p.Tokens)
-	add(tokenize(p.Name))
-	add(tokenize(p.CuisineType))
-	add(tokenize(p.Category))
-	add(tokenize(p.City))
-	add(tokenize(p.District))
+	add(Tokenize(p.Name))
+	add(Tokenize(p.CuisineType))
+	add(Tokenize(p.Category))
+	add(Tokenize(p.City))
+	add(Tokenize(p.District))
 	for _, d := range p.Dishes {
-		add(tokenize(d.Name))
+		add(Tokenize(d.Name))
 	}
 	for _, r := range p.Reviews {
 		for _, a := range r.Aspects {
-			add(tokenize(a))
+			add(Tokenize(a))
 		}
 	}
 	p.search = set
 }
 
-// dishSet returns the POI's normalized dish phrases (from known_entities + menu).
-func (p *POI) dishSet() map[string]struct{} {
+// BuildIndex re-derives the POI's search set/normalized name after its
+// Dishes/Tokens/etc. are mutated post-load (e.g. contribute/menu OCR attach).
+func (p *POI) BuildIndex() { p.buildIndex() }
+
+// DishSet returns the POI's normalized dish phrases (from known_entities + menu).
+func (p *POI) DishSet() map[string]struct{} {
 	s := make(map[string]struct{})
 	for _, d := range p.KnownEntities.Dishes {
-		s[norm(d)] = struct{}{}
+		s[Norm(d)] = struct{}{}
 	}
 	for _, d := range p.Dishes {
-		s[norm(d.Name)] = struct{}{}
+		s[Norm(d.Name)] = struct{}{}
 	}
 	return s
 }
@@ -238,6 +285,75 @@ func ensureSlices(p *POI) {
 	}
 }
 
+// --- POI-level matching helpers (shared by internal/retrieve + internal/rerank) ---
+
+// EffectivePrice is the cheapest main dish, falling back to avg_price_vnd.
+func EffectivePrice(p *POI) int {
+	min := 0
+	for _, d := range p.Dishes {
+		if d.PriceVND <= 0 {
+			continue
+		}
+		if min == 0 || d.PriceVND < min {
+			min = d.PriceVND
+		}
+	}
+	if min == 0 {
+		return p.AvgPriceVND
+	}
+	return min
+}
+
+// DietMatch reports whether a POI satisfies a diet, using veg-dish evidence.
+func DietMatch(p *POI, diet string) bool {
+	if ContainsStr(p.Diet, diet) {
+		return true
+	}
+	if diet == "vegetarian" {
+		for _, d := range p.Dishes {
+			if ContainsStr(d.Tags, "vegetarian") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// DishMatchAny reports whether the POI serves any of the given dishes.
+func DishMatchAny(p *POI, dishes []string) bool {
+	if len(dishes) == 0 {
+		return false
+	}
+	ds := p.DishSet()
+	for _, d := range dishes {
+		if _, ok := ds[Norm(d)]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+// LexOverlap counts how many of the given tokens are in the POI's search set.
+func LexOverlap(p *POI, tokens []string) int {
+	n := 0
+	for _, t := range tokens {
+		if _, ok := p.search[t]; ok {
+			n++
+		}
+	}
+	return n
+}
+
+// ContainsStr reports whether sl contains s.
+func ContainsStr(sl []string, s string) bool {
+	for _, x := range sl {
+		if x == s {
+			return true
+		}
+	}
+	return false
+}
+
 // --- Vietnamese text normalization (must match preprocess/taxonomy.norm) ---
 
 // diacriticMap lowercases + strips every Vietnamese diacritic to ASCII.
@@ -257,8 +373,8 @@ var diacriticMap = map[rune]rune{
 	'đ': 'd',
 }
 
-// norm lowercases, strips Vietnamese diacritics, and trims. Mirrors taxonomy.norm.
-func norm(s string) string {
+// Norm lowercases, strips Vietnamese diacritics, and trims. Mirrors taxonomy.norm.
+func Norm(s string) string {
 	s = strings.ToLower(s)
 	var b strings.Builder
 	b.Grow(len(s))
@@ -272,9 +388,9 @@ func norm(s string) string {
 	return strings.TrimSpace(b.String())
 }
 
-// tokenize normalizes, replaces every non [a-z0-9\s] rune with space, splits.
-func tokenize(s string) []string {
-	n := norm(s)
+// Tokenize normalizes, replaces every non [a-z0-9\s] rune with space, splits.
+func Tokenize(s string) []string {
+	n := Norm(s)
 	var b strings.Builder
 	b.Grow(len(n))
 	for _, r := range n {
@@ -287,9 +403,9 @@ func tokenize(s string) []string {
 	return strings.Fields(b.String())
 }
 
-// isOpenAt reports whether opening o covers the given minute-of-day. Overnight
+// IsOpenAt reports whether opening o covers the given minute-of-day. Overnight
 // spans (close_min <= open_min, e.g. 10:00-02:00) are handled. minute < 0 = unset.
-func isOpenAt(o Opening, minute int) bool {
+func IsOpenAt(o Opening, minute int) bool {
 	if minute < 0 {
 		return true
 	}
@@ -299,8 +415,8 @@ func isOpenAt(o Opening, minute int) bool {
 	return minute >= o.OpenMin && minute < o.CloseMin
 }
 
-// haversine returns the great-circle distance in meters between two coordinates.
-func haversine(lat1, lon1, lat2, lon2 float64) float64 {
+// Haversine returns the great-circle distance in meters between two coordinates.
+func Haversine(lat1, lon1, lat2, lon2 float64) float64 {
 	const r = 6371000.0 // earth radius, meters
 	rad := math.Pi / 180.0
 	dLat := (lat2 - lat1) * rad

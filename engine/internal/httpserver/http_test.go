@@ -1,4 +1,4 @@
-package main
+package httpserver
 
 import (
 	"bytes"
@@ -9,32 +9,41 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"tascop11/engine/internal/assistant"
+	"tascop11/engine/internal/contribute"
+	"tascop11/engine/internal/kb"
+	"tascop11/engine/internal/kb/kbfixture"
+	"tascop11/engine/internal/llmclient"
+	"tascop11/engine/internal/model"
 )
 
-// setupServer initializes the package-level globals the HTTP handlers rely on,
-// with a hermetic in-memory KB and a throwaway contributions dir per test.
-func setupServer(t *testing.T) {
+// newTestServer builds a *Server with a hermetic in-memory KB and a
+// throwaway contributions dir per test (no Postgres — db stays nil).
+func newTestServer(t *testing.T) *Server {
 	t.Helper()
-	kb = testKB()
-	hcmLoc = time.UTC
-	contrib = NewContribStore(t.TempDir(), kb)
+	store := kbfixture.New()
+	return &Server{
+		kb:      store,
+		contrib: contribute.New(t.TempDir(), store),
+		hcmLoc:  time.UTC,
+	}
 }
 
-func doGET(path string) *httptest.ResponseRecorder {
+func (s *Server) doGET(path string) *httptest.ResponseRecorder {
 	req := httptest.NewRequest(http.MethodGet, path, nil)
 	rec := httptest.NewRecorder()
-	// route manually (mirror main.go mux wiring)
 	switch {
 	case path == "/health" || strings.HasPrefix(path, "/health?"):
-		handleHealth(rec, req)
+		s.handleHealth(rec, req)
 	case strings.HasPrefix(path, "/v1/recommend"):
-		handleRecommend(rec, req)
+		s.handleRecommend(rec, req)
 	case strings.HasPrefix(path, "/v1/poi"):
-		handlePOI(rec, req)
+		s.handlePOI(rec, req)
 	case strings.HasPrefix(path, "/v1/compare"):
-		handleCompare(rec, req)
+		s.handleCompare(rec, req)
 	case strings.HasPrefix(path, "/v1/assistant"):
-		handleNotImplemented(rec, req)
+		s.handleAssistant(rec, req)
 	}
 	return rec
 }
@@ -42,8 +51,8 @@ func doGET(path string) *httptest.ResponseRecorder {
 // --- /health ---------------------------------------------------------------
 
 func TestHTTPHealth(t *testing.T) {
-	setupServer(t)
-	rec := doGET("/health")
+	s := newTestServer(t)
+	rec := s.doGET("/health")
 	if rec.Code != http.StatusOK {
 		t.Fatalf("health status = %d, want 200", rec.Code)
 	}
@@ -59,19 +68,19 @@ func TestHTTPHealth(t *testing.T) {
 	}
 }
 
-// --- /v1/recommend ---------------------------------------------------------
+// --- /v1/recommend -----------------------------------------------------------
 
 func TestHTTPRecommendOK(t *testing.T) {
-	setupServer(t)
+	s := newTestServer(t)
 	q := url.Values{}
 	q.Set("q", "quán chay")
 	q.Set("lat", "20.97")
 	q.Set("lon", "107.08")
-	rec := doGET("/v1/recommend?" + q.Encode())
+	rec := s.doGET("/v1/recommend?" + q.Encode())
 	if rec.Code != http.StatusOK {
 		t.Fatalf("recommend status = %d, want 200", rec.Code)
 	}
-	var resp RecommendResponse
+	var resp model.RecommendResponse
 	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("recommend body not RecommendResponse: %v", err)
 	}
@@ -97,8 +106,8 @@ func TestHTTPRecommendOK(t *testing.T) {
 }
 
 func TestHTTPRecommendCrystalBBQNotFound(t *testing.T) {
-	setupServer(t)
-	rec := doGET("/v1/recommend?" + url.Values{"q": {"Crystal BBQ có gì ngon"}}.Encode())
+	s := newTestServer(t)
+	rec := s.doGET("/v1/recommend?" + url.Values{"q": {"Crystal BBQ có gì ngon"}}.Encode())
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200 (honest not_found, not error)", rec.Code)
 	}
@@ -112,33 +121,33 @@ func TestHTTPRecommendCrystalBBQNotFound(t *testing.T) {
 	}
 }
 
-// --- /v1/poi ---------------------------------------------------------------
+// --- /v1/poi -----------------------------------------------------------------
 
 func TestHTTPPOIFoundAndMissing(t *testing.T) {
-	setupServer(t)
-	if rec := doGET("/v1/poi?id=RESA"); rec.Code != http.StatusOK {
+	s := newTestServer(t)
+	if rec := s.doGET("/v1/poi?id=RESA"); rec.Code != http.StatusOK {
 		t.Errorf("poi RESA status = %d, want 200", rec.Code)
 	}
-	rec := doGET("/v1/poi?id=ZZZ")
+	rec := s.doGET("/v1/poi?id=ZZZ")
 	if rec.Code != http.StatusNotFound {
 		t.Errorf("poi ZZZ status = %d, want 404", rec.Code)
 	}
-	var er ErrorResponse
+	var er model.ErrorResponse
 	json.Unmarshal(rec.Body.Bytes(), &er)
 	if er.Error.Code != "not_found" {
 		t.Errorf("error code = %q, want not_found", er.Error.Code)
 	}
 }
 
-// --- /v1/compare -----------------------------------------------------------
+// --- /v1/compare ---------------------------------------------------------------
 
 func TestHTTPCompare(t *testing.T) {
-	setupServer(t)
-	rec := doGET("/v1/compare?ids=RESA,RESB,NOPE")
+	s := newTestServer(t)
+	rec := s.doGET("/v1/compare?ids=RESA,RESB,NOPE")
 	if rec.Code != http.StatusOK {
 		t.Fatalf("compare status = %d, want 200", rec.Code)
 	}
-	var resp CompareResponse
+	var resp model.CompareResponse
 	json.Unmarshal(rec.Body.Bytes(), &resp)
 	if len(resp.Items) != 2 {
 		t.Errorf("compare items = %d, want 2", len(resp.Items))
@@ -149,26 +158,26 @@ func TestHTTPCompare(t *testing.T) {
 }
 
 func TestHTTPCompareMissingIDs(t *testing.T) {
-	setupServer(t)
-	if rec := doGET("/v1/compare"); rec.Code != http.StatusBadRequest {
+	s := newTestServer(t)
+	if rec := s.doGET("/v1/compare"); rec.Code != http.StatusBadRequest {
 		t.Errorf("compare without ids = %d, want 400", rec.Code)
 	}
 }
 
-// --- /v1/contribute --------------------------------------------------------
+// --- /v1/contribute ------------------------------------------------------------
 
 func TestHTTPContributeAddsUGC(t *testing.T) {
-	setupServer(t)
+	s := newTestServer(t)
 
 	body := `{"name":"Quán Cơm Tấm Thử","lat":21.02,"lon":105.84,"city":"Hà Nội","price_level":"budget"}`
 	req := httptest.NewRequest(http.MethodPost, "/v1/contribute", bytes.NewBufferString(body))
 	rec := httptest.NewRecorder()
-	contrib.HandleContribute(rec, req)
+	s.handleContribute(rec, req)
 
 	if rec.Code != http.StatusCreated {
 		t.Fatalf("contribute status = %d, want 201; body=%s", rec.Code, rec.Body.String())
 	}
-	var pr PlaceResult
+	var pr model.PlaceResult
 	if err := json.Unmarshal(rec.Body.Bytes(), &pr); err != nil {
 		t.Fatalf("contribute body not PlaceResult: %v", err)
 	}
@@ -180,7 +189,7 @@ func TestHTTPContributeAddsUGC(t *testing.T) {
 	}
 
 	// Now it should appear in the KB (health ugc count = 1).
-	hrec := doGET("/health")
+	hrec := s.doGET("/health")
 	var h map[string]any
 	json.Unmarshal(hrec.Body.Bytes(), &h)
 	if h["ugc"].(float64) != 1 {
@@ -189,58 +198,54 @@ func TestHTTPContributeAddsUGC(t *testing.T) {
 }
 
 func TestHTTPContributeRejectsOutOfVN(t *testing.T) {
-	setupServer(t)
+	s := newTestServer(t)
 	body := `{"name":"Somewhere","lat":48.85,"lon":2.35}` // Paris
 	req := httptest.NewRequest(http.MethodPost, "/v1/contribute", bytes.NewBufferString(body))
 	rec := httptest.NewRecorder()
-	contrib.HandleContribute(rec, req)
+	s.handleContribute(rec, req)
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("out-of-VN coords status = %d, want 400", rec.Code)
 	}
 }
 
 func TestHTTPContributeMissingFields(t *testing.T) {
-	setupServer(t)
+	s := newTestServer(t)
 	req := httptest.NewRequest(http.MethodPost, "/v1/contribute", bytes.NewBufferString(`{"name":"No coords"}`))
 	rec := httptest.NewRecorder()
-	contrib.HandleContribute(rec, req)
+	s.handleContribute(rec, req)
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("missing lat/lon status = %d, want 400", rec.Code)
 	}
 }
 
-// --- /v1/contribute/menu (OCR seam not wired -> graceful degrade) ----------
+// --- /v1/contribute/menu (OCR seam not wired -> graceful degrade) ------------
 
 func TestHTTPContributeMenuGracefulSeam(t *testing.T) {
-	setupServer(t)
+	s := newTestServer(t)
 
-	// First add a UGC POI to attach a menu to.
 	addReq := httptest.NewRequest(http.MethodPost, "/v1/contribute",
 		bytes.NewBufferString(`{"name":"Quán Menu Thử","lat":21.02,"lon":105.84}`))
 	addRec := httptest.NewRecorder()
-	contrib.HandleContribute(addRec, addReq)
-	var created PlaceResult
+	s.handleContribute(addRec, addReq)
+	var created model.PlaceResult
 	json.Unmarshal(addRec.Body.Bytes(), &created)
 
-	// Build a multipart form with poi_id + a dummy image.
 	var buf bytes.Buffer
 	boundary := "TESTBOUNDARY"
-	w := &buf
-	w.WriteString("--" + boundary + "\r\n")
-	w.WriteString("Content-Disposition: form-data; name=\"poi_id\"\r\n\r\n")
-	w.WriteString(created.ID + "\r\n")
-	w.WriteString("--" + boundary + "\r\n")
-	w.WriteString("Content-Disposition: form-data; name=\"image\"; filename=\"menu.jpg\"\r\n")
-	w.WriteString("Content-Type: image/jpeg\r\n\r\n")
-	w.WriteString("fakebytes\r\n")
-	w.WriteString("--" + boundary + "--\r\n")
+	buf.WriteString("--" + boundary + "\r\n")
+	buf.WriteString("Content-Disposition: form-data; name=\"poi_id\"\r\n\r\n")
+	buf.WriteString(created.ID + "\r\n")
+	buf.WriteString("--" + boundary + "\r\n")
+	buf.WriteString("Content-Disposition: form-data; name=\"image\"; filename=\"menu.jpg\"\r\n")
+	buf.WriteString("Content-Type: image/jpeg\r\n\r\n")
+	buf.WriteString("fakebytes\r\n")
+	buf.WriteString("--" + boundary + "--\r\n")
 
 	req := httptest.NewRequest(http.MethodPost, "/v1/contribute/menu", &buf)
 	req.Header.Set("Content-Type", "multipart/form-data; boundary="+boundary)
 	rec := httptest.NewRecorder()
-	contrib.HandleContributeMenu(rec, req)
+	s.handleContributeMenu(rec, req)
 
-	// OCRMenu seam returns an error by default -> graceful 200 with note.
 	if rec.Code != http.StatusOK {
 		t.Fatalf("contribute/menu status = %d, want 200 (graceful seam); body=%s", rec.Code, rec.Body.String())
 	}
@@ -255,19 +260,18 @@ func TestHTTPContributeMenuGracefulSeam(t *testing.T) {
 }
 
 func TestHTTPContributeMenuWiredOCR(t *testing.T) {
-	setupServer(t)
-	// Temporarily wire the OCRMenu seam (simulate DEV3's vision.go).
-	orig := OCRMenu
-	OCRMenu = func(img []byte) ([]Dish, error) {
-		return []Dish{{Name: "Phở bò", PriceVND: 50000}}, nil
+	s := newTestServer(t)
+	orig := contribute.OCRMenu
+	contribute.OCRMenu = func(img []byte) ([]kb.Dish, error) {
+		return []kb.Dish{{Name: "Phở bò", PriceVND: 50000}}, nil
 	}
-	defer func() { OCRMenu = orig }()
+	defer func() { contribute.OCRMenu = orig }()
 
 	addRec := httptest.NewRecorder()
-	contrib.HandleContribute(addRec,
+	s.handleContribute(addRec,
 		httptest.NewRequest(http.MethodPost, "/v1/contribute",
 			bytes.NewBufferString(`{"name":"Quán OCR Thử","lat":21.02,"lon":105.84}`)))
-	var created PlaceResult
+	var created model.PlaceResult
 	json.Unmarshal(addRec.Body.Bytes(), &created)
 
 	var buf bytes.Buffer
@@ -278,13 +282,13 @@ func TestHTTPContributeMenuWiredOCR(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/v1/contribute/menu", &buf)
 	req.Header.Set("Content-Type", "multipart/form-data; boundary="+b)
 	rec := httptest.NewRecorder()
-	contrib.HandleContributeMenu(rec, req)
+	s.handleContributeMenu(rec, req)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("wired OCR status = %d, want 200", rec.Code)
 	}
 	var body struct {
-		Dishes []Dish `json:"dishes"`
+		Dishes []kb.Dish `json:"dishes"`
 	}
 	json.Unmarshal(rec.Body.Bytes(), &body)
 	if len(body.Dishes) != 1 || body.Dishes[0].Name != "Phở bò" {
@@ -292,12 +296,88 @@ func TestHTTPContributeMenuWiredOCR(t *testing.T) {
 	}
 }
 
-// --- /v1/assistant stub ----------------------------------------------------
+// --- /v1/assistant -------------------------------------------------------------
 
-func TestHTTPAssistantStub501(t *testing.T) {
-	setupServer(t)
-	rec := doGET("/v1/assistant?q=hi")
-	if rec.Code != http.StatusNotImplemented {
-		t.Errorf("assistant status = %d, want 501", rec.Code)
+func TestHTTPAssistantCrystalBBQNotFound(t *testing.T) {
+	s := newTestServer(t)
+	rec := s.doGET("/v1/assistant?" + url.Values{"q": {"Crystal BBQ có gì ngon"}}.Encode())
+	if rec.Code != http.StatusOK {
+		t.Fatalf("assistant status = %d, want 200 (honest not_found, not error)", rec.Code)
+	}
+	var body assistant.NotFound
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("assistant body not assistant.NotFound: %v", err)
+	}
+	if body.Answer != "not_found" {
+		t.Errorf("answer = %q, want not_found", body.Answer)
+	}
+	if !strings.Contains(body.Message, "Crystal BBQ") {
+		t.Errorf("message = %q, want it to mention Crystal BBQ", body.Message)
+	}
+}
+
+func TestHTTPAssistantMissingQuery(t *testing.T) {
+	s := newTestServer(t)
+	rec := s.doGET("/v1/assistant")
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("assistant without q status = %d, want 400", rec.Code)
+	}
+}
+
+func TestHTTPAssistantWired(t *testing.T) {
+	s := newTestServer(t)
+	orig := llmclient.ChatText
+	llmclient.ChatText = func(messages []llmclient.ChatMessage) (string, error) {
+		return "Phở Bếp Nhà nổi bật với món Phở bò tái, phù hợp gia đình.", nil
+	}
+	defer func() { llmclient.ChatText = orig }()
+
+	rec := s.doGET("/v1/assistant?" + url.Values{"q": {"Phở Bếp Nhà có món gì ngon?"}}.Encode())
+	if rec.Code != http.StatusOK {
+		t.Fatalf("assistant status = %d, want 200; body=%s", rec.Code, rec.Body.String())
+	}
+	var body assistant.Response
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("assistant body not assistant.Response: %v", err)
+	}
+	if body.Answer == "" {
+		t.Errorf("answer is empty")
+	}
+	if body.POIID != "poi:resa" {
+		t.Errorf("poi_id = %q, want poi:resa", body.POIID)
+	}
+	if len(body.Sources) == 0 {
+		t.Errorf("sources is empty, want at least one citation")
+	}
+}
+
+// --- auth/contexts: DB not configured -> feature_disabled, never a panic -----
+
+func TestHTTPAuthFeatureDisabledWithoutDB(t *testing.T) {
+	s := newTestServer(t) // db is nil
+	for _, path := range []string{"/v1/auth/signup", "/v1/auth/login", "/v1/auth/logout"} {
+		req := httptest.NewRequest(http.MethodPost, path, bytes.NewBufferString(`{}`))
+		rec := httptest.NewRecorder()
+		switch path {
+		case "/v1/auth/signup":
+			s.handleSignup(rec, req)
+		case "/v1/auth/login":
+			s.handleLogin(rec, req)
+		case "/v1/auth/logout":
+			s.handleLogout(rec, req)
+		}
+		if rec.Code != http.StatusServiceUnavailable {
+			t.Errorf("%s without DB status = %d, want 503", path, rec.Code)
+		}
+	}
+	rec := httptest.NewRecorder()
+	s.handleMe(rec, httptest.NewRequest(http.MethodGet, "/v1/me", nil))
+	if rec.Code != http.StatusServiceUnavailable {
+		t.Errorf("/v1/me without DB status = %d, want 503", rec.Code)
+	}
+	rec2 := httptest.NewRecorder()
+	s.handleContexts(rec2, httptest.NewRequest(http.MethodGet, "/v1/contexts", nil))
+	if rec2.Code != http.StatusServiceUnavailable {
+		t.Errorf("/v1/contexts without DB status = %d, want 503", rec2.Code)
 	}
 }

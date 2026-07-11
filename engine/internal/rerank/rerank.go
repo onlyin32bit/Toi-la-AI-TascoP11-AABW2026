@@ -1,13 +1,26 @@
-package main
+// Package rerank implements the SOFT score (§7.2, upgraded per
+// SYSTEM_FLOW.md §5.3): a weighted sum over factors that are individually
+// optional. Any factor without data for a given request is dropped and the
+// remaining weights renormalized to sum to 1 — never zero-filled, never
+// guessed. This is what lets the same formula serve both the hackathon
+// (mostly anonymous, no route/crowd/behavior/buzz data) and a future
+// production deployment (all of it populated) without a code branch.
+package rerank
 
 import (
 	"fmt"
 	"math"
 	"sort"
 	"strings"
+
+	"tascop11/engine/internal/kb"
+	"tascop11/engine/internal/model"
 )
 
-// Positive SOFT-score weights (§7.2). luxury_penalty is subtractive.
+// Positive SOFT-score weights. luxury_penalty is subtractive. Route/Crowd/
+// Behavior/Buzz are §5.3 additions layered onto the original 6; they only
+// enter sumW (and thus the final score) when their data is present, so
+// existing anonymous/no-context requests score exactly as before.
 const (
 	wSemantic  = 0.30
 	wGeoDecay  = 0.20
@@ -15,6 +28,10 @@ const (
 	wPersona   = 0.15
 	wRatingPop = 0.10
 	wLocalness = 0.10
+	wRoute     = 0.15 // S_route (§5.3) — needs FilterSpec.DetourMin
+	wCrowd     = 0.05 // S_crowd (§5.3) — needs FilterSpec.Occupancy
+	wBehavior  = 0.15 // S_behavior (§5.3) — needs UserCtx.Behavior
+	wBuzz      = 0.05 // S_buzz (§5.3) — needs POI.BuzzScore
 	luxuryCoef = 0.25
 )
 
@@ -37,10 +54,10 @@ var priceVN = map[string]string{
 }
 
 // Rerank scores survivors with the SOFT model and returns sorted PlaceResults.
-func Rerank(survivors []*POI, f FilterSpec, u UserCtx, limit int) []PlaceResult {
+func Rerank(survivors []*kb.POI, f model.FilterSpec, u model.UserCtx, limit int) []model.PlaceResult {
 	type scored struct {
-		p   *POI
-		res PlaceResult
+		p   *kb.POI
+		res model.PlaceResult
 	}
 	items := make([]scored, 0, len(survivors))
 	for _, p := range survivors {
@@ -55,7 +72,7 @@ func Rerank(survivors []*POI, f FilterSpec, u UserCtx, limit int) []PlaceResult 
 	if limit > 0 && len(items) > limit {
 		items = items[:limit]
 	}
-	out := make([]PlaceResult, 0, len(items))
+	out := make([]model.PlaceResult, 0, len(items))
 	for _, it := range items {
 		out = append(out, it.res)
 	}
@@ -63,18 +80,34 @@ func Rerank(survivors []*POI, f FilterSpec, u UserCtx, limit int) []PlaceResult 
 }
 
 // scorePOI computes the SOFT score with availability-based weight renormalization.
-func scorePOI(p *POI, f FilterSpec, u UserCtx) PlaceResult {
+func scorePOI(p *kb.POI, f model.FilterSpec, u model.UserCtx) model.PlaceResult {
 	// Factor availability.
-	hasSemantic := len(f.Tokens) > 0 || len(f.Dish) > 0
+	hasSemantic := len(f.Tokens) > 0 || len(f.Dish) > 0 || len(f.VectorScores) > 0
 	hasGeo := u.Lat != nil && u.Lon != nil
 	hasPersona := u.Segment != "" || u.Diet != "" || u.Price != ""
+	hasRoute := f.DetourMin != nil
+	hasCrowd := f.Occupancy != nil
+	hasBehavior := u.Behavior != nil && (len(u.Behavior.RepeatPOIIDs) > 0 || len(u.Behavior.CuisineAffinity) > 0)
+	hasBuzz := p.BuzzScore != nil
 
 	// Factor values.
-	dishMatched := dishMatchAny(p, f.Dish)
+	dishMatched := kb.DishMatchAny(p, f.Dish)
 	sem := 0.0
 	if hasSemantic {
+		lexSem := 0.0
 		if len(f.Tokens) > 0 {
-			sem = float64(lexOverlap(p, f.Tokens)) / float64(len(f.Tokens))
+			lexSem = float64(kb.LexOverlap(p, f.Tokens)) / float64(len(f.Tokens))
+		}
+		sem = lexSem
+		// Optional Qdrant layer (internal/vectordb): catches paraphrases/
+		// synonyms lexical overlap misses. Blended, not replacing, so a
+		// down/disabled vector DB never changes lexical-only behavior.
+		if vs, ok := f.VectorScores[p.ID]; ok {
+			if lexSem == 0 {
+				sem = vs
+			} else {
+				sem = (lexSem + vs) / 2
+			}
 		}
 		if dishMatched {
 			sem = math.Min(1.0, sem+0.5)
@@ -85,7 +118,7 @@ func scorePOI(p *POI, f FilterSpec, u UserCtx) PlaceResult {
 	var distPtr *int
 	geo := 0.0
 	if hasGeo {
-		dist = haversine(*u.Lat, *u.Lon, p.Lat, p.Lon)
+		dist = kb.Haversine(*u.Lat, *u.Lon, p.Lat, p.Lon)
 		geo = math.Exp(-dist / 2000.0)
 		d := int(math.Round(dist))
 		distPtr = &d
@@ -103,16 +136,73 @@ func scorePOI(p *POI, f FilterSpec, u UserCtx) PlaceResult {
 		luxury = 1.0
 	}
 
+	// §5.3 additions — each 0 unless its data is present (hasX above).
+	route := 0.0
+	if hasRoute {
+		route = math.Exp(-*f.DetourMin / 5.0)
+	}
+	crowd := 0.0
+	if hasCrowd {
+		crowd = 1 - *f.Occupancy/100.0
+		if crowd < 0 {
+			crowd = 0
+		}
+	}
+	behavior := 0.0
+	if hasBehavior {
+		if kb.ContainsStr(u.Behavior.RepeatPOIIDs, p.ID) {
+			behavior = 1.0
+		}
+		if aff, ok := u.Behavior.CuisineAffinity[p.CuisineType]; ok && aff > behavior {
+			behavior = aff
+		}
+		if behavior > 1 {
+			behavior = 1
+		}
+	}
+	buzz := 0.0
+	if hasBuzz {
+		buzz = *p.BuzzScore
+		if buzz > 1 {
+			buzz = 1
+		} else if buzz < 0 {
+			buzz = 0
+		}
+	}
+
+	// Mode switch (§5.3): repeat trips weight behavior over discovery;
+	// explore trips weight semantic + buzz over behavior. Mode unset (the
+	// common case — no trip-repeat signal available) keeps the base weights.
+	modeSemantic, modeBehavior, modeBuzz := wSemantic, wBehavior, wBuzz
+	switch f.Mode {
+	case "repeat":
+		modeSemantic, modeBehavior, modeBuzz = 0.25, 0.25, 0.00
+	case "explore":
+		modeSemantic, modeBehavior, modeBuzz = 0.35, 0.05, 0.10
+	}
+
 	// Renormalize available positive weights to sum 1.
 	sumW := wQuality + wRatingPop + wLocalness // always available
 	if hasSemantic {
-		sumW += wSemantic
+		sumW += modeSemantic
 	}
 	if hasGeo {
 		sumW += wGeoDecay
 	}
 	if hasPersona {
 		sumW += wPersona
+	}
+	if hasRoute {
+		sumW += wRoute
+	}
+	if hasCrowd {
+		sumW += wCrowd
+	}
+	if hasBehavior {
+		sumW += modeBehavior
+	}
+	if hasBuzz {
+		sumW += modeBuzz
 	}
 	nw := func(w float64, avail bool) float64 {
 		if !avail || sumW == 0 {
@@ -121,18 +211,22 @@ func scorePOI(p *POI, f FilterSpec, u UserCtx) PlaceResult {
 		return w / sumW
 	}
 
-	final := nw(wSemantic, hasSemantic)*sem +
+	final := nw(modeSemantic, hasSemantic)*sem +
 		nw(wGeoDecay, hasGeo)*geo +
 		nw(wQuality, true)*quality +
 		nw(wPersona, hasPersona)*persona +
 		nw(wRatingPop, true)*ratingPop +
-		nw(wLocalness, true)*local -
+		nw(wLocalness, true)*local +
+		nw(wRoute, hasRoute)*route +
+		nw(wCrowd, hasCrowd)*crowd +
+		nw(modeBehavior, hasBehavior)*behavior +
+		nw(modeBuzz, hasBuzz)*buzz -
 		luxuryCoef*luxury
 	if final < 0 {
 		final = 0
 	}
 
-	why := Why{
+	why := model.Why{
 		Semantic:      round3(sem),
 		GeoDecay:      round3(geo),
 		Quality:       round3(quality),
@@ -140,22 +234,26 @@ func scorePOI(p *POI, f FilterSpec, u UserCtx) PlaceResult {
 		RatingPop:     round3(ratingPop),
 		Localness:     round3(local),
 		LuxuryPenalty: round3(luxury),
+		Route:         round3(route),
+		Crowd:         round3(crowd),
+		Behavior:      round3(behavior),
+		Buzz:          round3(buzz),
 		Final:         round3(final),
 	}
 
-	return PlaceResult{
+	return model.PlaceResult{
 		ID:             p.ID,
 		Type:           "poi",
 		Name:           p.Name,
 		Label:          p.Category,
 		Address:        p.Address,
 		Category:       p.CuisineType,
-		Coordinates:    Coordinates{Lat: p.Lat, Lon: p.Lon},
+		Coordinates:    model.Coordinates{Lat: p.Lat, Lon: p.Lon},
 		DistanceMeters: distPtr,
 		Score:          round3(final),
 		Source:         p.Source,
 		Tags:           buildTags(p),
-		Meta: PlaceMeta{
+		Meta: model.PlaceMeta{
 			Why:           why,
 			Reasoning:     buildReasoning(p, f, u, distPtr, personaBits),
 			Quality:       p.Quality,
@@ -172,20 +270,20 @@ type personaBreakdown struct {
 }
 
 // personaScore is the average match over the persona dimensions the user provided.
-func personaScore(p *POI, u UserCtx) (float64, personaBreakdown) {
+func personaScore(p *kb.POI, u model.UserCtx) (float64, personaBreakdown) {
 	var sum float64
 	var n int
 	var b personaBreakdown
 	if u.Segment != "" {
 		n++
-		if containsStr(p.Segments, u.Segment) {
+		if kb.ContainsStr(p.Segments, u.Segment) {
 			sum++
 			b.segmentOK = true
 		}
 	}
 	if u.Diet != "" {
 		n++
-		if dietMatch(p, u.Diet) {
+		if kb.DietMatch(p, u.Diet) {
 			sum++
 			b.dietOK = true
 		}
@@ -204,7 +302,7 @@ func personaScore(p *POI, u UserCtx) (float64, personaBreakdown) {
 }
 
 // localness favours affordable, high-quality local eateries (§7.2).
-func localness(p *POI) float64 {
+func localness(p *kb.POI) float64 {
 	switch {
 	case p.PriceLevel == "budget" && p.Quality >= 0.9:
 		return 1.0
@@ -215,7 +313,7 @@ func localness(p *POI) float64 {
 	}
 }
 
-func buildTags(p *POI) []string {
+func buildTags(p *kb.POI) []string {
 	tags := make([]string, 0, len(p.Segments)+len(p.Amenities))
 	tags = append(tags, p.Segments...)
 	tags = append(tags, p.Amenities...)
@@ -225,13 +323,13 @@ func buildTags(p *POI) []string {
 	return tags
 }
 
-func matchedDishes(p *POI, dishes []string) []MatchedDish {
-	out := []MatchedDish{}
+func matchedDishes(p *kb.POI, dishes []string) []model.MatchedDish {
+	out := []model.MatchedDish{}
 	for _, want := range dishes {
-		nw := norm(want)
+		nw := kb.Norm(want)
 		for _, d := range p.Dishes {
-			if norm(d.Name) == nw {
-				out = append(out, MatchedDish{Dish: d.Name, PriceVND: d.PriceVND})
+			if kb.Norm(d.Name) == nw {
+				out = append(out, model.MatchedDish{Dish: d.Name, PriceVND: d.PriceVND})
 				break
 			}
 		}
@@ -240,7 +338,7 @@ func matchedDishes(p *POI, dishes []string) []MatchedDish {
 }
 
 // buildReasoning renders a short Vietnamese explanation (distance/persona/price/open).
-func buildReasoning(p *POI, f FilterSpec, u UserCtx, distPtr *int, pb personaBreakdown) string {
+func buildReasoning(p *kb.POI, f model.FilterSpec, u model.UserCtx, distPtr *int, pb personaBreakdown) string {
 	var parts []string
 	if distPtr != nil {
 		km := float64(*distPtr) / 1000.0
@@ -266,7 +364,7 @@ func buildReasoning(p *POI, f FilterSpec, u UserCtx, distPtr *int, pb personaBre
 	// Opening context.
 	if p.Opening.Overnight {
 		parts = append(parts, "mở cửa khuya tới "+minToHHMM(p.Opening.CloseMin))
-	} else if u.TimeMin >= 0 && isOpenAt(p.Opening, u.TimeMin) {
+	} else if u.TimeMin >= 0 && kb.IsOpenAt(p.Opening, u.TimeMin) {
 		parts = append(parts, "còn mở tới "+minToHHMM(p.Opening.CloseMin))
 	}
 	return strings.Join(parts, " · ")

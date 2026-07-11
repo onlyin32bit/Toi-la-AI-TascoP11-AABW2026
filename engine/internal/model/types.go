@@ -1,4 +1,7 @@
-package main
+// Package model holds the wire/domain types shared across the engine's
+// packages (query specs, API response DTOs). It depends on nothing else in
+// this module, so any package may import it without risk of a cycle.
+package model
 
 // FilterSpec is the structured constraint set produced by ParseQuery + DetectDish.
 // It is consumed by the HARD gate (Recall) and the SOFT reranker (Rerank).
@@ -12,6 +15,18 @@ type FilterSpec struct {
 	MinRating float64  `json:"min_rating"`
 	OpenAfter int      `json:"open_after"` // minutes since midnight, -1 = unset
 	Tokens    []string `json:"tokens"`
+
+	// VectorScores is POI id -> cosine similarity from an optional Qdrant
+	// search (internal/vectordb). Never populated when QDRANT_URL is unset;
+	// omitted from the API response (internal to scoring only).
+	VectorScores map[string]float64 `json:"-"`
+
+	// DetourMin/Occupancy/Mode are optional §5.3 CTX/ranking inputs. Absent
+	// (DetourMin==nil, Occupancy==nil, Mode=="") means the corresponding SOFT
+	// factor has no data and is renormalized away — never defaulted/guessed.
+	DetourMin *float64 `json:"-"`
+	Occupancy *float64 `json:"-"` // 0..100, "% full at arrival"
+	Mode      string   `json:"-"` // "repeat" | "explore" | "" (unset -> explore weights)
 }
 
 // UserCtx carries per-request personalization/localization context.
@@ -22,9 +37,23 @@ type UserCtx struct {
 	Diet    string   // vegetarian|halal ("" = unset)
 	Price   string   // budget|mid|premium ("" = unset)
 	TimeMin int      // minutes since midnight, -1 = unset
+
+	// Behavior is an optional, authenticated-user-only §5.3 S_behavior input
+	// (from a saved context's "learned" data in Postgres). Nil = no signal,
+	// factor renormalizes away — the default, anonymous-user path.
+	Behavior *BehaviorSignal
 }
 
-// Why is the per-result score breakdown (§8). snake_case JSON keys.
+// BehaviorSignal is the subset of a saved context's "learned" data that
+// feeds §5.3 S_behavior: repeat visits and cuisine affinity for this user.
+type BehaviorSignal struct {
+	RepeatPOIIDs    []string           `json:"repeat_pois"`
+	CuisineAffinity map[string]float64 `json:"cuisine_affinity"`
+}
+
+// Why is the per-result score breakdown (§8, extended by §5.3). snake_case
+// JSON keys. Fields beyond the original 7 are 0 when their factor had no
+// data for this request (renormalized away, not faked).
 type Why struct {
 	Semantic      float64 `json:"semantic"`
 	GeoDecay      float64 `json:"geo_decay"`
@@ -33,6 +62,10 @@ type Why struct {
 	RatingPop     float64 `json:"rating_pop"`
 	Localness     float64 `json:"localness"`
 	LuxuryPenalty float64 `json:"luxury_penalty"`
+	Route         float64 `json:"route"`    // S_route (§5.3, needs DetourMin)
+	Crowd         float64 `json:"crowd"`    // S_crowd (§5.3, needs Occupancy)
+	Behavior      float64 `json:"behavior"` // S_behavior (§5.3, needs UserCtx.Behavior)
+	Buzz          float64 `json:"buzz"`     // S_buzz (§5.3, needs POI.BuzzScore)
 	Final         float64 `json:"final"`
 }
 
@@ -60,7 +93,7 @@ type PlaceMeta struct {
 // PlaceResult is Tasco Maps PlaceResult-compatible (§8 checklist).
 type PlaceResult struct {
 	ID             string      `json:"id"`
-	Type           string      `json:"type"`  // always "poi"
+	Type           string      `json:"type"` // always "poi"
 	Name           string      `json:"name"`
 	Label          string      `json:"label"` // = category
 	Address        string      `json:"address"`

@@ -1,4 +1,6 @@
-package main
+// Package retrieve implements query parsing, dish/entity detection, and the
+// HARD gate recall stage (§5.3/§7.1) — everything that runs before scoring.
+package retrieve
 
 import (
 	"fmt"
@@ -6,6 +8,9 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"tascop11/engine/internal/kb"
+	"tascop11/engine/internal/model"
 )
 
 // cityAlias maps a normalized (diacritic-free, lowercase) phrase to a canonical
@@ -72,13 +77,13 @@ var (
 
 // paddedTokens returns " a b c " for boundary-safe substring matching.
 func paddedTokens(q string) string {
-	return " " + strings.Join(tokenize(q), " ") + " "
+	return " " + strings.Join(kb.Tokenize(q), " ") + " "
 }
 
 // ParseQuery turns a free-text Vietnamese query into a FilterSpec (§5.3).
-func ParseQuery(q string) FilterSpec {
-	f := FilterSpec{OpenAfter: -1}
-	nq := norm(q)
+func ParseQuery(q string) model.FilterSpec {
+	f := model.FilterSpec{OpenAfter: -1}
+	nq := kb.Norm(q)
 	padded := paddedTokens(q)
 
 	// City alias (longest phrase first).
@@ -144,7 +149,7 @@ func ParseQuery(q string) FilterSpec {
 
 	// Semantic tokens: drop stopwords and consumed city tokens.
 	seen := map[string]struct{}{}
-	for _, t := range tokenize(q) {
+	for _, t := range kb.Tokenize(q) {
 		if _, stop := stopwords[t]; stop {
 			continue
 		}
@@ -163,19 +168,20 @@ func ParseQuery(q string) FilterSpec {
 // DetectDish finds named dishes from the global dish vocab. Whole-phrase grams
 // (len>=3), longest-first, dropping sub-tokens of matched phrases. A named dish
 // becomes a HARD constraint downstream.
-func DetectDish(kb *KB, q string) []string {
-	toks := tokenize(q)
+func DetectDish(k *kb.KB, q string) []string {
+	toks := kb.Tokenize(q)
 	n := len(toks)
 	used := make([]bool, n)
 	var matched []string
 	seen := map[string]struct{}{}
+	vocab := k.DishVocab()
 	for size := n; size >= 1; size-- {
 		for i := 0; i+size <= n; i++ {
 			phrase := strings.Join(toks[i:i+size], " ")
 			if len(phrase) < 3 {
 				continue
 			}
-			if _, ok := kb.dishVocab[phrase]; !ok {
+			if _, ok := vocab[phrase]; !ok {
 				continue
 			}
 			overlap := false
@@ -205,9 +211,9 @@ func DetectDish(kb *KB, q string) []string {
 // anti-hallucination guard (Crystal BBQ trap). It is deliberately conservative:
 // only multi-word capitalized runs are candidates, and city names /
 // function-word-led phrases are skipped so valid queries don't false-positive.
-func NamedEntities(kb *KB, q string) (found []*POI, missing []string) {
+func NamedEntities(k *kb.KB, q string) (found []*kb.POI, missing []string) {
 	for _, phrase := range capitalizedRuns(q) {
-		np := norm(phrase)
+		np := kb.Norm(phrase)
 		if np == "" || isCityPhrase(np) {
 			continue
 		}
@@ -216,28 +222,13 @@ func NamedEntities(kb *KB, q string) (found []*POI, missing []string) {
 				continue
 			}
 		}
-		if p := kb.matchName(np); p != nil {
+		if p := k.MatchName(np); p != nil {
 			found = append(found, p)
 		} else {
 			missing = append(missing, phrase)
 		}
 	}
 	return found, missing
-}
-
-// matchName returns a POI whose name matches (equals/contains) the normalized phrase.
-func (kb *KB) matchName(np string) *POI {
-	for _, p := range kb.POIs {
-		if p.nameNorm == np || strings.Contains(p.nameNorm, np) || strings.Contains(np, p.nameNorm) {
-			return p
-		}
-		for _, name := range p.KnownEntities.Names {
-			if norm(name) == np {
-				return p
-			}
-		}
-	}
-	return nil
 }
 
 // capitalizedRuns returns maximal runs (>=2 tokens) of capitalized words.
@@ -291,19 +282,19 @@ func isCityPhrase(np string) bool {
 }
 
 // Recall applies the HARD gate over the full KB (§5.3/§7.1).
-func Recall(kb *KB, f FilterSpec, q string) ([]*POI, *NotFound) {
-	return recallPool(kb.POIs, f)
+func Recall(k *kb.KB, f model.FilterSpec, q string) ([]*kb.POI, *model.NotFound) {
+	return RecallPool(k.POIs, f)
 }
 
-// recallPool runs the HARD gate over an explicit candidate pool. main uses this
-// directly to exclude UGC in eval mode.
-func recallPool(pool []*POI, f FilterSpec) ([]*POI, *NotFound) {
+// RecallPool runs the HARD gate over an explicit candidate pool. httpserver
+// uses this directly to exclude UGC in eval mode.
+func RecallPool(pool []*kb.POI, f model.FilterSpec) ([]*kb.POI, *model.NotFound) {
 	hasContent := len(f.Tokens) > 0 || len(f.Dish) > 0
 	hasStructured := f.City != "" || len(f.Diet) > 0 || len(f.Segments) > 0 ||
 		len(f.Amenities) > 0 || f.MaxPrice > 0 || f.MinRating > 0 ||
 		f.OpenAfter >= 0 || len(f.Dish) > 0
 
-	var survivors []*POI
+	var survivors []*kb.POI
 	for _, p := range pool {
 		if !passHardGate(p, f) {
 			continue
@@ -311,7 +302,7 @@ func recallPool(pool []*POI, f FilterSpec) ([]*POI, *NotFound) {
 		// Lexical relevance: only required for free-text queries with no
 		// structural intent (empty query = nearby mode, keep everything).
 		if hasContent && !hasStructured {
-			if !dishMatchAny(p, f.Dish) && lexOverlap(p, f.Tokens) == 0 {
+			if !kb.DishMatchAny(p, f.Dish) && kb.LexOverlap(p, f.Tokens) == 0 {
 				continue
 			}
 		}
@@ -325,14 +316,14 @@ func recallPool(pool []*POI, f FilterSpec) ([]*POI, *NotFound) {
 }
 
 // passHardGate enforces the non-negotiable constraints. Fail => reject.
-func passHardGate(p *POI, f FilterSpec) bool {
+func passHardGate(p *kb.POI, f model.FilterSpec) bool {
 	if f.City != "" && p.City != f.City {
 		return false
 	}
 	if len(f.Dish) > 0 {
-		ds := p.dishSet()
+		ds := p.DishSet()
 		for _, d := range f.Dish {
-			if _, ok := ds[norm(d)]; !ok {
+			if _, ok := ds[kb.Norm(d)]; !ok {
 				return false
 			}
 		}
@@ -340,80 +331,25 @@ func passHardGate(p *POI, f FilterSpec) bool {
 	if f.MinRating > 0 && p.Rating < f.MinRating {
 		return false
 	}
-	if f.MaxPrice > 0 && effectivePrice(p) > f.MaxPrice {
+	if f.MaxPrice > 0 && kb.EffectivePrice(p) > f.MaxPrice {
 		return false
 	}
-	if f.OpenAfter >= 0 && !isOpenAt(p.Opening, f.OpenAfter) {
+	if f.OpenAfter >= 0 && !kb.IsOpenAt(p.Opening, f.OpenAfter) {
 		return false
 	}
 	for _, d := range f.Diet {
-		if !dietMatch(p, d) {
+		if !kb.DietMatch(p, d) {
 			return false
 		}
 	}
 	return true
 }
 
-// effectivePrice is the cheapest main dish, falling back to avg_price_vnd.
-func effectivePrice(p *POI) int {
-	min := 0
-	for _, d := range p.Dishes {
-		if d.PriceVND <= 0 {
-			continue
-		}
-		if min == 0 || d.PriceVND < min {
-			min = d.PriceVND
-		}
-	}
-	if min == 0 {
-		return p.AvgPriceVND
-	}
-	return min
-}
-
-// dietMatch reports whether a POI satisfies a diet, using veg-dish evidence.
-func dietMatch(p *POI, diet string) bool {
-	if containsStr(p.Diet, diet) {
-		return true
-	}
-	if diet == "vegetarian" {
-		for _, d := range p.Dishes {
-			if containsStr(d.Tags, "vegetarian") {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func dishMatchAny(p *POI, dishes []string) bool {
-	if len(dishes) == 0 {
-		return false
-	}
-	ds := p.dishSet()
-	for _, d := range dishes {
-		if _, ok := ds[norm(d)]; ok {
-			return true
-		}
-	}
-	return false
-}
-
-func lexOverlap(p *POI, tokens []string) int {
-	n := 0
-	for _, t := range tokens {
-		if _, ok := p.search[t]; ok {
-			n++
-		}
-	}
-	return n
-}
-
 // buildNotFound produces an honest VN not_found body with relaxation hints.
-func buildNotFound(f FilterSpec) *NotFound {
+func buildNotFound(f model.FilterSpec) *model.NotFound {
 	// Special-case the Halal-in-HCM honesty trap (§5.3).
-	if containsStr(f.Diet, "halal") && f.City != "" {
-		return &NotFound{
+	if kb.ContainsStr(f.Diet, "halal") && f.City != "" {
+		return &model.NotFound{
 			Status: "not_found",
 			Reason: fmt.Sprintf("Không có quán Halal ở %s", f.City),
 			Suggestions: []string{
@@ -448,16 +384,7 @@ func buildNotFound(f FilterSpec) *NotFound {
 	if f.MinRating > 0 {
 		sugg = append(sugg, "Hạ yêu cầu điểm đánh giá")
 	}
-	return &NotFound{Status: "not_found", Reason: reason, Suggestions: sugg}
-}
-
-func containsStr(sl []string, s string) bool {
-	for _, x := range sl {
-		if x == s {
-			return true
-		}
-	}
-	return false
+	return &model.NotFound{Status: "not_found", Reason: reason, Suggestions: sugg}
 }
 
 func keys(m map[string]struct{}) []string {
