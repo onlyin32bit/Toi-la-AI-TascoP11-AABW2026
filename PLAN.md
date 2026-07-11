@@ -24,12 +24,13 @@
 **Chốt stack:**
 | Layer | Chọn | Lý do |
 |---|---|---|
-| Backend | Python 3.11 + `http.server` stdlib (zero-dep core) | offline-safe, không cần cài gì để chạy core |
-| Data | 5 CSV copy vào `engine/data/` | ground truth |
-| Semantic (core) | lexical token-match (như draft) | zero-dep, chạy chắc |
-| Semantic (nâng cao) | embedding `dangvantuan/vietnamese-embedding` cache ra đĩa | *Future Work* / nếu còn giờ |
-| LLM | **Qwen** (DashScope OpenAI-compatible) chính; Gemini Flash dự phòng — **cache-first ra đĩa** | query parse nâng cao + rerank + assistant; demo sống khi mất mạng |
-| Embedding (nâng cao) | Qwen `text-embedding-v3` (DashScope) hoặc `vietnamese-embedding` local | *Future Work* / nếu còn giờ |
+| Backend online | **Go** — serve HTTP / retrieve / rerank / geo → 1 binary tĩnh, nhanh, offline-safe | ăn điểm production-ready; ranh giới ở §3.3 |
+| Preprocess offline | **Python** — CSV→kb.json, embed, NER, enrich (chạy 1 lần) | hệ sinh thái ML ở Python; output là file, Go đọc |
+| Data | 5 CSV copy vào `preprocess/data/` | ground truth |
+| Semantic (core) | lexical token-match | zero-dep, chạy chắc, không cần ML runtime |
+| Semantic (nâng cao) | **Qwen `text-embedding-v3` (API)** hoặc `dangvantuan/vietnamese-embedding` (offline) | Go gọi API được; hoặc precompute offline. *Nếu còn giờ* |
+| NER / tách từ VN | **HuTieuBERT** (Python, offline/sidecar) | phát hiện tên quán/món → chống hallucination; KHÔNG dùng làm embedding — xem §5.4 |
+| LLM | **Qwen** (DashScope OpenAI-compatible) chính; Gemini Flash dự phòng — **cache-first ra đĩa** | query parse + rerank + assistant; demo sống khi mất mạng |
 | Enrichment / scraping | **Apify** (Google Places/FB/TikTok actors) + TinyFish/AgentQL (agentic) + ZenRows (anti-bot HTML) → LLM structure | **offline, cache-first, tier riêng** — xem §6.5 |
 | Frontend | React 19 + Vite (có sẵn) + `react-leaflet` | map "cool", localize trực quan |
 | Desktop wrap | Tauri | *Future Work* — chạy `vite dev` trong browser là đủ demo |
@@ -90,7 +91,20 @@ query + user_ctx (lat/lon, segment, diet, price, time)
 **Kết luận latency:**
 - Core (không LLM) = **gần như tức thời** với 30 POI, vì tính nặng đã đẩy sang offline.
 - Bottleneck duy nhất = LLM call (nếu bật). Giảm bằng: **cache theo query** (câu lặp → 0 latency) + **bỏ được LLM** (SOFT score thuần Python vẫn ra kết quả tốt).
-- A40 chỉ giúp nếu **self-host embedding/LLM**; nếu gọi Gemini API thì A40 vô dụng cho latency. → Core không phụ thuộc A40.
+- A40 chỉ giúp nếu **self-host embedding/LLM**; nếu gọi API thì A40 vô dụng cho latency. → Core không phụ thuộc A40.
+
+### 3.3 Phân chia ngôn ngữ — Go (online) + Python (offline ML)
+
+Ranh giới sạch: **cái gì cần ML runtime → Python offline; cái gì chạy mỗi query → Go**.
+
+| | Ngôn ngữ | Chạy khi | Làm gì |
+|---|---|---|---|
+| **Online serving** | **Go** | mỗi query | serve HTTP · parse_query · recall · HARD gate · SOFT score · geo · gọi Qwen/Apify (HTTP) |
+| **Offline preprocess** | **Python** | 1 lần (build) | CSV→kb.json · normalize · embed corpus (Qwen/ST) · NER tag (HuTieuBERT) · scrape enrich |
+
+- Go **không chạy model local** — embedding/NER làm sẵn offline (ghi vào kb.json), hoặc query-time gọi **Qwen embedding API** (Go gọi được vì là HTTP).
+- Nếu bỏ hẳn ML (core lexical) → **chỉ cần Go**, không cần Python runtime lúc chạy. Đây là đường an toàn nhất.
+- Lợi: 1 binary Go tĩnh, khởi động tức thì, offline-safe, "production-ready".
 
 ---
 
@@ -98,17 +112,20 @@ query + user_ctx (lat/lon, segment, diet, price, time)
 
 ```
 Toi-la-AI-TascoP11-AABW2026/
-├── engine/                      ← BACKEND MỚI (Python)
+├── engine/                      ← BACKEND online (Go)
+│   ├── main.go                  ← HTTP :8000, /v1/recommend ...
+│   ├── kb.go                    ← load kb.json, norm(), is_open_at(), haversine()
+│   ├── retrieve.go              ← parse_query + recall + HARD gate
+│   ├── rerank.go                ← SOFT score (personalize/localize/anti-luxury)
+│   ├── llm.go                   ← Qwen client (HTTP), cache-first ra đĩa  [optional]
+│   ├── assistant.go             ← RAG trả lời Q&A, trích nguồn            [optional]
+│   └── build/                   ← kb.json, enrichment.json, cache (git-ignored)
+├── preprocess/                  ← OFFLINE (Python, chạy 1 lần)
 │   ├── data/                    ← copy 5 CSV vào đây
-│   ├── build_kb.py              ← OFFLINE: CSV → build/kb.json
-│   ├── kb.py                    ← load KB, hàm norm(), is_open_at(), haversine()
-│   ├── retrieve.py              ← parse_query + recall + HARD gate
-│   ├── rerank.py                ← SOFT score (personalize/localize/anti-luxury)
-│   ├── llm.py                   ← Gemini client, cache-first ra đĩa   [optional]
-│   ├── assistant.py             ← RAG trả lời Q&A, trích nguồn          [optional]
-│   ├── enrich.py                ← OFFLINE: scrape POI thật → enrichment.json  [§6.5, optional]
-│   ├── serve.py                 ← HTTP :8000, /v1/recommend ...
-│   └── build/                   ← kb.json, enrichment.json, cache LLM (git-ignored)
+│   ├── build_kb.py              ← CSV → build/kb.json (normalize, embed, NER)
+│   ├── embed.py                 ← Qwen/ST embedding corpus            [optional]
+│   ├── ner_hutieubert.py        ← HuTieuBERT tag tên quán/món         [optional, §5.4]
+│   └── enrich.py                ← scrape POI thật → enrichment.json   [§6.5, optional]
 ├── ui/                          ← FRONTEND (scaffold có sẵn)
 │   └── src/
 │       ├── App.tsx              ← thay demo greet bằng app thật
@@ -128,57 +145,96 @@ Toi-la-AI-TascoP11-AABW2026/
 
 ## 5. Backend — từng module (I/O rõ ràng)
 
-### 5.1 `build_kb.py` (OFFLINE)
-- **In:** 5 CSV.
-- **Ra:** `build/kb.json` = list POI, mỗi POI:
+### 5.0 Data flow — mỗi phần output ra cái gì
+
+```
+[Python OFFLINE — chạy 1 lần]                    [Go ONLINE — mỗi query]
+ 5 CSV
+   │ build_kb.py                                   HTTP request
+   ▼                                                  │ main.go
+ build/kb.json ────────────┐                          ▼
+   │ embed.py    [opt]      │                     parseQuery() → FilterSpec
+   ▼                        │                          │ retrieve.go
+ build/vectors.json [opt]   ├──► kb.Load() ──► recall() → []ứng viên
+   │ ner_hutieubert.py [opt]│                          │ HARD gate
+   ▼                        │                          ▼
+ (kb.json + known_entities) │                     rerank.go → top-K + why{}
+                            │                          │ llm.go/assistant.go [opt]
+ enrich.py [opt] ──► build/enrichment.json ───────────┤
+                                                       ▼
+                                                  JSON response (§8)
+```
+
+Ranh giới: `build_kb / embed / ner / enrich` = **Python offline** (output = file JSON). `kb / retrieve / rerank / llm / assistant / main` = **Go online** (đọc file, không chạy model).
+
+---
+
+### 5.1 `build_kb.py` (Python, OFFLINE)
+- **Input:** 5 CSV trong `preprocess/data/`.
+- **Xử lý:** join POI ⋈ Menu ⋈ Reviews theo `restaurant_id`; normalize text VN → taxonomy tag; parse `opening_hours` → phút; tokenize tên+món cho lexical.
+- **Output:** `engine/build/kb.json` — list 30 POI, mỗi POI:
   ```json
   {
     "id": "poi:res001", "restaurant_id": "RES001",
     "name": "Phở Bếp Nhà", "category": "Nhà hàng", "cuisine_type": "Việt Nam",
-    "city": "Hà Nội", "district": "Hoàn Kiếm", "address": "...",
+    "city": "Hà Nội", "district": "Hoàn Kiếm", "address": "2 Trần Phú, Hoàn Kiếm, Hà Nội",
     "lat": 21.040388, "lon": 105.844615,
-    "price_level": "bình dân", "avg_price_vnd": 68289,
+    "price_level": "budget", "avg_price_vnd": 68289,
     "rating": 3.8, "review_count": 608, "popularity": 55,
     "opening": {"open_min": 540, "close_min": 1380, "overnight": false, "raw": "09:00-23:00"},
     "segments": ["family","fastfood","travel","budget"],
-    "amenities": ["nice_view","reservation","wifi","parking","kid_friendly"],
-    "diet": ["vegetarian"?],  "dishes": [{"name":"Phở bò","price":68289,"tags":[...]}],
-    "strengths": [...], "weaknesses": [...],
-    "quality": 0.88, "tokens": ["pho","bep","nha","bo",...],
-    "reviews": [{"text":"...","sentiment":"pos","aspects":[...]}]
+    "amenities": ["nice_view","reservation","wifi","music","parking","kid_friendly"],
+    "diet": [], "dishes": [{"name":"Phở bò tái","price_vnd":68289,"tags":[]}],
+    "strengths": ["thực đơn đa dạng","phù hợp gia đình"],
+    "weaknesses": ["ồn vào buổi tối"],
+    "quality": 0.88,
+    "tokens": ["pho","bep","nha","bo","tai"],
+    "known_entities": {"names":["pho bep nha"],"dishes":["pho bo tai"]},
+    "reviews": [{"text":"...","sentiment":"pos","aspects":["service","taste"]}]
   }
   ```
-- Normalize map (text VN → tag): "Bãi đỗ xe"→`parking`, "Phù hợp trẻ em"→`kid_friendly`, "Gia đình"→`family`, "Ăn chay"→`vegetarian`, "Cao cấp"→`premium`, ...
-- `price_level`: "Bình dân"→`budget`, "Trung bình"→`mid`, "Cao cấp"/"Sang trọng"→`premium`.
+- **Bảng normalize** (hằng số trong code):
+  - amenity: `Bãi đỗ xe→parking`, `Phù hợp trẻ em→kid_friendly`, `Có ghế trẻ em→baby_chair`, `Máy lạnh→air_con`, `Wi-Fi miễn phí→wifi`, `View đẹp→nice_view`, `Mở cửa khuya→late_night`, `Đặt bàn trước→reservation`, `Giao hàng→delivery`, `Phòng riêng→private_room`, `Không gian ngoài trời→outdoor`, `Thanh toán thẻ→card`, `Nhạc nhẹ→music`.
+  - segment: `Gia đình→family`, `Hẹn hò→romantic`, `Ăn nhanh→fastfood`, `Du lịch→travel`, `Tiết kiệm→budget`, `Cao cấp→premium`.
+  - price: `Bình dân→budget`, `Trung bình→mid`, `Cao cấp`/`Sang trọng→premium`.
+  - diet: suy ra `vegetarian` nếu `cuisine_type="Chay"` hoặc `category="Nhà hàng chay"` hoặc có món `dietary_tags` chứa chay.
 
-### 5.2 `kb.py`
-- `load()` → đọc kb.json (cache-first).
-- `norm(s)` → bỏ dấu, lowercase (khớp tiếng Việt có/không dấu).
-- `is_open_at(opening, minute)` → xử lý cả quán qua đêm (10:00-02:00).
-- `haversine(lat1,lon1,lat2,lon2)` → mét.
+### 5.2 `kb.go` (Go, ONLINE — nền)
+- **Output:** package cung cấp cho các module khác.
+  - `Load() ([]POI, error)` — đọc kb.json 1 lần lúc start vào slice struct.
+  - `norm(s string) string` — bỏ dấu + lowercase (`"Phở Bò"→"pho bo"`).
+  - `isOpenAt(o Opening, minute int) bool` — true/false, xử lý qua đêm (10:00-02:00 → mở lúc 00:30).
+  - `haversine(lat1,lon1,lat2,lon2 float64) float64` — trả mét.
 
-### 5.3 `retrieve.py`
-- `parse_query(q)` → FilterSpec `{city, dish, segments, diet, amenities, max_price, min_rating, open_after}` (regex, có sẵn logic tốt trong draft để mượn ý).
-- `recall(kb, filterspec)` → ứng viên (token match tên + món + review).
-- **HARD gate** (loại thẳng, không nới lỏng ngầm):
-  - dish nêu đích danh mà quán không có → loại.
-  - city, diet (chay/halal), max_price, min_rating, open_after → fail thì loại.
-  - **Rỗng sau gate → trả `not_found` + gợi ý nới lỏng có nhãn** (xử lý bẫy Halal-HCM, Crystal BBQ tại đây).
+### 5.3 `retrieve.go` (Go, ONLINE)
+- `parseQuery(q string) FilterSpec` —
+  - **Input:** `"quán chay ở Hà Nội dưới 100k"`
+  - **Output:** `{"city":"Hà Nội","diet":["vegetarian"],"max_price":100000,"segments":[],"dish":[],"tokens":["quan","chay"]}`
+- `recall(kb, f) []Candidate` — token match tên+món+review → danh sách thô.
+- **HARD gate** → lọc: dish đích danh không có / sai city / thiếu diet / giá>max / rating<min / không mở → **loại**.
+  - **Output khi có kết quả:** `[]Candidate` đã qua gate (input cho rerank).
+  - **Output khi rỗng:** `{"status":"not_found","reason":"Không có quán Halal ở TP.HCM","suggestions":["Bỏ lọc Halal","Mở rộng sang Hà Nội/Đà Lạt"]}` (bẫy Halal-HCM).
 
-### 5.4 `rerank.py` — SOFT score (§7 công thức)
-- **In:** ứng viên qua gate + user_ctx.
-- **Ra:** top-K sắp xếp, mỗi item kèm `why{}` breakdown từng factor + `reasoning` tiếng Việt.
+### 5.4 NER chống hallucination (`ner_hutieubert.py`) + `rerank.go`
+- **`ner_hutieubert.py` (Python, offline):**
+  - **Input:** tên 30 quán + 179 món.
+  - **Output:** ghi `known_entities` vào kb.json (đã thấy ở 5.1). Query-time Go chỉ **tra bảng**, không chạy model.
+  - Query nhắc tên KHÔNG có trong bảng → `{"status":"not_found","query_entity":"Crystal BBQ","message":"Không tìm thấy 'Crystal BBQ' trong dữ liệu"}` (bẫy Crystal BBQ). Fallback: rule-based nếu bỏ HuTieuBERT.
+- **`rerank.go` — SOFT score (§7):**
+  - **Input:** `[]Candidate` qua gate + `user_ctx{lat,lon,segment,diet,price,time}`.
+  - **Output:** top-K sắp xếp, mỗi item có `why{}` (điểm từng factor) + `reasoning` tiếng Việt (xem response §8).
 
-### 5.5 `llm.py` + `assistant.py` (optional, cắt được)
-- `llm.py`: client dùng chung, **OpenAI-compatible** → đổi provider chỉ bằng env, không sửa code.
-  - Provider chính: **Qwen / DashScope** — `base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, model `qwen-plus` (hoặc model theo docs QwenCloud), dùng `openai` SDK.
-  - Dự phòng: Gemini Flash.
-  - **Key qua env `DASHSCOPE_API_KEY`, KHÔNG hardcode, KHÔNG commit.** Thêm `.env` vào `.gitignore`. Key build-week hết hạn 14/7.
-  - `hash(model+prompt) → cache ra đĩa`; mất mạng / hết quota → đọc cache.
-- `assistant.py`: RAG — lấy top POI + evidence → prompt LLM → trả lời **có trích provenance**. Bẫy Crystal BBQ: không có trong KB → trả `not_found`, cấm bịa.
+### 5.5 `llm.go` + `assistant.go` (Go, ONLINE, optional — cắt được)
+- **`llm.go`:** HTTP client → **Qwen/DashScope** (OpenAI-compatible), `base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, model `qwen-plus` (xác nhận tên theo docs). Dự phòng Gemini.
+  - Key qua env `DASHSCOPE_API_KEY`, **không hardcode/commit**; `.env` vào `.gitignore`; key hết hạn 14/7.
+  - `hash(model+prompt)→cache đĩa`; mất mạng/hết quota → đọc cache.
+- **`assistant.go`:** RAG.
+  - **Input:** `q="Bún Chả Phố Cổ có món gì đáng thử?"`
+  - **Output:** `{"answer":"Bún Chả Phố Cổ nổi bật món Bún chả (99.797đ)...","sources":[{"field":"menu","source":"tasco_csv"}],"poi_id":"poi:res002"}`
+  - Bẫy Crystal BBQ: không có trong KB → `{"answer":"not_found","message":"..."}`, cấm bịa.
 
-### 5.6 `serve.py`
-- stdlib HTTP :8000, CORS mở (`*`) cho React gọi. Endpoints ở §8.
+### 5.6 `main.go` (Go, ONLINE)
+- **Output:** HTTP server :8000, CORS `*`. Route theo §8. `go build` → 1 binary tĩnh chạy độc lập.
 
 ---
 
@@ -214,7 +270,7 @@ Ta có tool scrape (TinyFish/AgentQL, ZenRows...). Đây là **deliverable "enri
 3. **Provenance hiển thị.** UI badge rõ "nguồn: Foody / TikTok / web", confidence — thứ Google Maps không show.
 4. **Consensus trước khi tin.** 1 nguồn social đơn lẻ không thắng; cần ≥2 nguồn đồng thuận cho fact (giờ mở, giá). Social buzz chỉ là signal mềm, không phải fact.
 
-### `engine/enrich.py` (làn offline, chạy tách khỏi core)
+### `preprocess/enrich.py` (Python, làn offline, chạy tách khỏi core)
 ```
 input: [POI thật: name + address + city]
   → Apify actors: Google Places (title, rating, reviews, openingHours,
@@ -224,6 +280,20 @@ input: [POI thật: name + address + city]
   → LLM (Qwen/Gemini) structure → JSON
   → resolver: gộp nguồn + confidence + consensus
   → build/enrichment.json  (KHÔNG merge vào kb.json benchmark)
+```
+**Output `enrichment.json`** (namespace riêng, key = POI thật, mỗi field có provenance):
+```json
+{
+  "real:pho-thin-lo-duc": {
+    "name": "Phở Thìn Lò Đúc",
+    "fields": {
+      "opening_hours": {"value":"06:00-21:00","source":"google_places","confidence":0.9,"fetched_at":"2026-07-11T09:00+07"},
+      "parking":       {"value":false,"source":"foody","confidence":0.6,"fetched_at":"..."},
+      "buzz_score":    {"value":0.82,"source":"tiktok","confidence":0.5,"mentions":37,"fetched_at":"..."}
+    },
+    "quality_before": 0.61, "quality_after": 0.90, "gaps_closed": ["opening_hours","menu"]
+  }
+}
 ```
 Ưu tiên tool: **Apify** cho nguồn có actor sẵn (Google/FB/TikTok — nhanh, ổn định); **TinyFish/AgentQL** cho trang schema-động không actor; **ZenRows** khi bị chặn bot.
 
@@ -270,7 +340,7 @@ score = 0.30·semantic     # khớp query↔(tên+món+review), token/embedding
 **Tune tay** trên 15 câu eval + 8 câu B/C (§11), không train. Cite: LM-Prior (Ju et al., [arXiv:2411.09065](https://arxiv.org/abs/2411.09065)) — semantic làm prior, các factor là adjustment.
 
 ### 7.3 LLM rerank (optional, cắt đầu tiên)
-Top-10 → Gemini structured JSON → thứ tự cuối + `reasoning` tiếng Việt. Cite KALM4Rec. Bỏ được: SOFT order vẫn tốt.
+Top-10 → Qwen structured JSON → thứ tự cuối + `reasoning` tiếng Việt. Cite KALM4Rec. Bỏ được: SOFT order vẫn tốt.
 
 ---
 
@@ -313,16 +383,24 @@ Response `/v1/recommend`:
 
 ---
 
-## 9. Frontend — component cụ thể
+## 9. Frontend — component cụ thể (props → render)
 
-- **`api.ts`**: `recommend(params)` → fetch `http://localhost:8000/v1/recommend`.
-- **`MapView.tsx`**: react-leaflet + OSM tiles. Marker mỗi POI, popup tên + score. Marker đổi khi kết quả đổi. Center theo vị trí user. *Tiles cần net; mất net → degrade sang list (vẫn chạy).*
-- **`SearchBar.tsx`**: input + nút **"Gần tôi"** (`navigator.geolocation`) + fallback dropdown chọn thành phố (HN/HCM/ĐN/NT/HL/ĐL/Huế) cho demo không cấp GPS.
-- **`FilterChips.tsx`**: 4 nhóm chip — Segment (Gia đình/Hẹn hò/Nhóm/Ăn nhanh), Diet (Chay/Halal), Price (Bình dân/Trung bình/Cao cấp), Time (Giờ hiện tại/Ăn khuya). Bấm = gửi lại request.
-- **`ResultCard.tsx`**: tên, ảnh placeholder, cuisine, khoảng cách, giá, badge chất lượng, nút **"Vì sao gợi ý?"** xổ ra `meta.why` breakdown + reasoning.
-- **`AssistantBox.tsx`** *(optional)*: ô chat → `/v1/assistant`, hiện câu trả lời + nguồn.
+**`types.ts`** — mirror response §8: `Poi`, `WhyBreakdown`, `RecommendParams`, `RecommendResponse`.
 
-Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + list dưới trên mobile).
+**`api.ts`**
+- `recommend(p: RecommendParams): Promise<RecommendResponse>` → GET `http://localhost:8000/v1/recommend` + querystring.
+- `assistant(q: string)`, `getPoi(id)`.
+- State chung ở `App.tsx`: `{query, userCtx, results, selectedPoi}` — đổi bất kỳ cái nào → gọi lại `recommend`.
+
+| Component | Props (input) | Render (output) |
+|---|---|---|
+| **`MapView.tsx`** | `results: Poi[]`, `center`, `selectedId`, `onSelect(id)` | react-leaflet + OSM tiles; 1 marker/POI, marker chọn đổi màu; popup tên+score; re-fit bounds khi results đổi. *Mất net → ẩn tiles, hiện list.* |
+| **`SearchBar.tsx`** | `value`, `onSearch(q)`, `onLocate()` | input + nút **"Gần tôi"** (`navigator.geolocation` → set lat/lon) + dropdown chọn thành phố (HN/HCM/ĐN/NT/HL/ĐL/Huế) khi không cấp GPS |
+| **`FilterChips.tsx`** | `active: UserCtx`, `onChange(ctx)` | 4 nhóm chip: Segment (Gia đình/Hẹn hò/Nhóm/Ăn nhanh) · Diet (Chay/Halal) · Price (Bình dân/Trung bình/Cao cấp) · Time (Giờ hiện tại/Ăn khuya). Bấm → `onChange` → gọi lại API |
+| **`ResultCard.tsx`** | `poi: Poi`, `onClick` | tên, cuisine, khoảng cách (`distanceMeters`), giá, badge `quality`, chip tags; nút **"Vì sao gợi ý?"** xổ `meta.why` (bar mỗi factor) + `reasoning` |
+| **`AssistantBox.tsx`** *(opt)* | — | ô chat → `/v1/assistant`; hiện `answer` + list `sources` (badge nguồn) |
+
+Layout: **map trái + list phải** (desktop) / map trên + list dưới (mobile). Theme dark/clean. Empty-state `not_found` hiển thị `message` + `suggestions` dạng chip bấm được (nới lỏng filter).
 
 ---
 
@@ -331,17 +409,17 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 Ước theo giờ-người. Điều chỉnh theo thời gian thật của bạn.
 
 ### Phase 0 — Setup (1h)
-- Copy 5 CSV vào `engine/data/`. Tạo skeleton `engine/*.py`.
-- Tạo `.gitignore`: `engine/build/`, `.env`, `node_modules/`. **Không commit key.**
-- `.env`: `DASHSCOPE_API_KEY=...` (Qwen). Đọc bằng `os.getenv`, không hardcode.
+- Copy 5 CSV vào `preprocess/data/`. `go mod init` trong `engine/`. Skeleton `preprocess/*.py`.
+- Tạo `.gitignore`: `engine/build/`, `.env`, `node_modules/`, `preprocess/__pycache__/`. **Không commit key.**
+- `.env`: `DASHSCOPE_API_KEY=...` (Qwen). Đọc bằng `os.getenv` (Python) / `os.Getenv` (Go), không hardcode.
 - `npm install` + thêm `react-leaflet leaflet` vào ui.
-- Verify `vite dev` chạy + Python `http.server` chạy + 1 call Qwen test sống.
+- Verify `vite dev` chạy + `go run .` chạy + 1 call Qwen test sống.
 
 ### Phase 1 — Backend core, KHÔNG LLM (3–4h) ★ MVP
-- `build_kb.py`: CSV → kb.json (normalize taxonomy).
-- `retrieve.py`: parse_query + recall + HARD gate.
-- `rerank.py`: SOFT score + geo_decay + renormalize + anti-luxury + `why`.
-- `serve.py`: `/v1/recommend`, `/v1/poi`, `/health`.
+- `preprocess/build_kb.py` (Python): CSV → kb.json (normalize taxonomy).
+- `engine/retrieve.go`: parseQuery + recall + HARD gate.
+- `engine/rerank.go`: SOFT score + geo_decay + renormalize + anti-luxury + `why`.
+- `engine/main.go`: `/v1/recommend`, `/v1/poi`, `/health`.
 - **DoD Phase 1:** `curl /v1/recommend?q=quán chay&lat=..&lon=..` trả JSON đúng, có why.
 
 ### Phase 2 — Frontend core (3–4h) ★ MVP
@@ -355,12 +433,13 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 - Style cho "cool": animation marker, badge, empty-state đẹp (not_found có gợi ý).
 
 ### Phase 4 — LLM assistant + rerank (2h) *(cắt được)*
-- `llm.py` cache-first + `assistant.py` RAG + `AssistantBox`.
+- `engine/llm.go` cache-first + `engine/assistant.go` RAG + `AssistantBox`.
+- `preprocess/ner_hutieubert.py`: tag tên quán/món → kb.json (nâng chất chống hallucination).
 - LLM rerank top-10.
 
 ### Phase 4b — Enrichment/scraping lane (offline, song song, cắt được) *(§6.5)*
 - Chạy **tách khỏi core**, bất cứ lúc nào sau Phase 0. Không chặn MVP.
-- `enrich.py`: scrape vài chục **POI thật** (không phải benchmark) → `build/enrichment.json` (cache).
+- `preprocess/enrich.py`: scrape vài chục **POI thật** (không phải benchmark) → `build/enrichment.json` (cache).
 - UI: badge nguồn + confidence trên card; nút demo "làm giàu" quán gap (chạy từ cache).
 - **DoD:** 1 cảnh demo quality 0.6→0.9 có provenance, chạy được khi rút mạng.
 
@@ -368,6 +447,31 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 - README (methodology §13 + setup), video demo, (optional) build Tauri desktop.
 
 **Đường MVP tối thiểu = Phase 0+1+2.** Có nó là đã có sản phẩm chạy + cool. 3,4,5 là cộng thêm.
+
+---
+
+## 10.5 Phân công 5 người (theo sở hữu file → zero conflict)
+
+Nguyên tắc: **mỗi người sở hữu 1 nhóm file, không ai sửa file người khác.** Chỉ có 2 interface phải chốt chung sớm: **(i) schema `kb.json`** (P2↔P1), **(ii) API contract §8** (P1↔P5). Chốt xong 2 cái đó, 5 người chạy độc lập.
+
+| Người | Vai trò | Sở hữu | Giao cho ai |
+|---|---|---|---|
+| **P1** | **Backend core — Retrieval & Ranking** (lõi thuật toán) | `retrieve.go`, `rerank.go`, `kb.go` — parse query, HARD gate, SOFT score, geo, `why{}` | dùng kb.json của P2; cấp `/v1/recommend` cho P5 |
+| **P2** | **Data & Preprocessing** | `build_kb.py`, `embed.py`, taxonomy normalize, schema `kb.json`, precompute embedding | kb.json → P1; entity list → P4 |
+| **P3** | **Enrichment & Scraping** (làn offline độc lập) | `enrich.py` (Apify/TinyFish/ZenRows), `enrichment.json`, provenance/confidence, demo 0.6→0.9 | enrichment.json → P5 (UI badge) |
+| **P4** | **LLM & Assistant & Ngôn ngữ VN** | `llm.go`, `assistant.go`, prompt, `ner_hutieubert.py` (NER chống hallucination), chạy **eval A/B/C** | rerank/assistant nối vào P1; số eval → P5 |
+| **P5** | **Frontend & Integration & Demo** | `main.go` (routing/CORS), toàn bộ `ui/`, `api.ts`, README, deck, video | ráp end-to-end, giữ API contract |
+
+**Vì sao chia thế này:**
+- P1 giữ lõi (điểm số + gate) — thứ quyết định chất lượng, không để ai khác đụng.
+- P2 tách hẳn vì offline preprocessing là interface (kb.json) — làm xong là P1 chạy được ngay.
+- P3 là làn offline hoàn toàn độc lập (scraping), cắt được mà không ảnh hưởng ai → giao người thích data/tự chủ cao.
+- P4 gom mọi thứ "AI ngôn ngữ" (LLM + NER + prompt + eval) vì cùng họ kỹ năng; sở hữu eval vì họ lo chất lượng câu trả lời.
+- P5 vừa frontend vừa integration/demo — người ráp cuối, giữ 2 binary (Go serve + vite) chạy chung, và làm phần "trông cool".
+
+**Nếu team yếu Go:** P1 + P5 (2 người đụng Go nhiều nhất) cần biết Go; P2/P3/P4 thuần Python + prompt, không cần Go. Nếu chỉ 1 người biết Go → cho P1 làm luôn `main.go`, P5 tập trung frontend + demo.
+
+**Nếu thiếu người (4 người):** gộp P3 vào P2 (data lo cả preprocess + enrich), cắt scraping trước.
 
 ---
 
@@ -387,7 +491,8 @@ Giao diện: dark/clean, layout **map trái + list phải** (hoặc map trên + 
 
 Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải làm:
 
-- **Embedding semantic search** (thay token-match) — `vietnamese-embedding` trên A40 hoặc Gemini embedding. Tăng chất lượng NL query. *Dễ thêm sau, đã chừa chỗ trong rerank.*
+- **Embedding semantic search** (thay token-match) — Qwen `text-embedding-v3` (API) hoặc `vietnamese-embedding` (local A40). Tăng chất lượng NL query. *Đã chừa chỗ trong rerank.*
+- **HuTieuBERT fine-tune SBERT-style** — hiện HuTieuBERT chỉ dùng cho NER/POS (thế mạnh). Muốn dùng làm embedding retrieval thì phải fine-tune contrastive (SBERT), ngoài phạm vi hackathon.
 - **Route-aware / along-route recommend** — cần Valhalla; gợi ý quán dọc hành trình liên tỉnh (differentiator VETC). Cite SYSTEM_FLOW draft.
 - **Behavior ranking** (Tire-Wear/Repeat kiểu Amap) — cần dữ liệu di chuyển thật từ VETC.
 - **Enrichment pipeline mở rộng** (§6.5) — scrape social/web quy mô lớn cho POI thật toàn VN (TinyFish/ZenRows), OCR menu ảnh. Hackathon chỉ demo vài chục POI từ cache.
@@ -412,27 +517,28 @@ Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải l
 1. Kieu, D. et al. **KALM4Rec** — Keyword-driven Retrieval-Augmented LLMs for Cold-start User Recommendations. [arXiv:2405.19612](https://arxiv.org/abs/2405.19612), 2024.
 2. Lian, D. et al. **GeoMF** — Joint Geographical Modeling and MF for POI Recommendation. [KDD 2014](https://dl.acm.org/doi/10.1145/2623330.2623638).
 3. Ju, J. et al. **Language-Model Prior Overcomes Cold-Start Items.** [arXiv:2411.09065](https://arxiv.org/abs/2411.09065), 2024.
-4. Reimers, N., Gurevych, I. **Sentence-BERT.** EMNLP 2019.
+4. Reimers, N., Gurevych, I. **Sentence-BERT.** EMNLP 2019. *(vì sao dùng sentence-transformer, không dùng BERT thô, cho embedding)*
 5. Cormack, G.V. et al. **Reciprocal Rank Fusion.** [SIGIR 2009](https://dl.acm.org/doi/10.1145/1571941.1572114). *(nếu dùng nhiều recall channel)*
+6. Dinh, A.T.D., Vo, K.H.N. et al. **HuTieuBERT — Morpheme-Aware Transformer for Vietnamese.** ACL 2026. *(dùng cho NER tên quán/món chống hallucination + POS tiếng Việt)*
 
 **Related / Future (why not deep models):**
-6. Li, P. et al. **LLMs for Next POI Recommendation.** [arXiv:2404.17591](https://arxiv.org/abs/2404.17591), SIGIR 2024.
-7. He, X. et al. **LightGCN.** [arXiv:2002.02126](https://arxiv.org/abs/2002.02126), SIGIR 2020.
-8. Yang, S. et al. **GETNext.** [SIGIR 2022](https://dl.acm.org/doi/10.1145/3477495.3531983).
-9. Kang & McAuley. **SASRec.** ICDM 2018.
-10. Kula, M. **LightFM.** RecSys 2015.
-11. **LLMTreeRec** — LLMs for Cold-Start. [arXiv:2404.00702](https://arxiv.org/abs/2404.00702), 2024.
-12. **A Survey on POI Recommendation.** [arXiv:2410.02191](https://arxiv.org/abs/2410.02191), 2024.
+7. Li, P. et al. **LLMs for Next POI Recommendation.** [arXiv:2404.17591](https://arxiv.org/abs/2404.17591), SIGIR 2024.
+8. He, X. et al. **LightGCN.** [arXiv:2002.02126](https://arxiv.org/abs/2002.02126), SIGIR 2020.
+9. Yang, S. et al. **GETNext.** [SIGIR 2022](https://dl.acm.org/doi/10.1145/3477495.3531983).
+10. Kang & McAuley. **SASRec.** ICDM 2018.
+11. Kula, M. **LightFM.** RecSys 2015.
+12. **LLMTreeRec** — LLMs for Cold-Start. [arXiv:2404.00702](https://arxiv.org/abs/2404.00702), 2024.
+13. **A Survey on POI Recommendation.** [arXiv:2410.02191](https://arxiv.org/abs/2410.02191), 2024.
 
 **Problem motivation (paper TASCO đưa):**
-13. Li, Y. et al. **Personalized Query Auto-Completion at Baidu Maps.** [ACM 2020](https://dl.acm.org/doi/10.1145/3394137).
+14. Li, Y. et al. **Personalized Query Auto-Completion at Baidu Maps.** [ACM 2020](https://dl.acm.org/doi/10.1145/3394137).
 
 ---
 
 ## 15. Trước khi code — chốt 3 việc
 
-1. **Copy 5 CSV** từ draft `tasco-map-food-intelligence/` → `Toi-la-AI-TascoP11-AABW2026/engine/data/`.
-2. **Chốt team/giờ:** ai làm backend (Phase 1), ai làm frontend (Phase 2)? 2 làn chạy song song sau Phase 0.
+1. **Copy 5 CSV** từ draft `tasco-map-food-intelligence/` → `Toi-la-AI-TascoP11-AABW2026/preprocess/data/`.
+2. **Chốt 5 vai trò (§10.5)** + 2 interface: schema `kb.json` (P2↔P1), API contract §8 (P1↔P5).
 3. **Chốt LLM:** key Qwen (`DASHSCOPE_API_KEY`) đưa vào `.env`, test 1 call sống. Hết hạn 14/7 → build xong trước hạn. Không có LLM → bỏ Phase 4, core vẫn đủ demo.
 
 Xong 3 việc → chạy Phase 0. Không code trước khi copy data. **Nhắc lại: không commit API key vào git.**
