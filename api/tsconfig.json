@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["ESNext"],
+    "types": [
+      "vite/client",
+      "@cloudflare/vitest-pool-workers/types",
+      "./worker-configuration.d.ts"
+    ],
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": [
+    "src",
+    "test",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "worker-configuration.d.ts"
+  ]
+}

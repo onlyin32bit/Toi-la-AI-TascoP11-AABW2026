@@ -1,0 +1,274 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tasco Restaurant Intelligence API",
+    "version": "1.0.0",
+    "description": "Evidence-backed restaurant POI, menu, claim, search, recommendation, and assistant API."
+  },
+  "servers": [{ "url": "http://localhost:8787" }],
+  "components": {
+    "securitySchemes": {
+      "adminBearer": { "type": "http", "scheme": "bearer" }
+    },
+    "schemas": {
+      "Location": {
+        "type": "object",
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+          "radiusMeters": { "type": "integer", "default": 10000 }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "meta"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "details": { "type": "array", "items": { "type": "object" } }
+            }
+          },
+          "meta": { "type": "object" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "responses": { "200": { "description": "Binding health" } }
+      }
+    },
+    "/api/v1/admin/imports/tasco-pois": {
+      "post": {
+        "operationId": "importTascoPois",
+        "security": [{ "adminBearer": [] }],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": {
+          "200": { "description": "Import summary" },
+          "400": { "$ref": "#/components/schemas/Error" }
+        }
+      }
+    },
+    "/api/v1/admin/restaurants/{restaurantId}/sources/upload": {
+      "post": {
+        "operationId": "uploadSource",
+        "security": [{ "adminBearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file", "sourceType"],
+                "properties": {
+                  "file": { "type": "string", "format": "binary" },
+                  "sourceType": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "202": { "description": "Source queued" } }
+      }
+    },
+    "/api/v1/admin/sources/{sourceId}": {
+      "get": {
+        "operationId": "getSourceState",
+        "security": [{ "adminBearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sourceId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Source state and claim counts" }
+        }
+      }
+    },
+    "/api/v1/admin/claims": {
+      "get": {
+        "operationId": "listClaims",
+        "security": [{ "adminBearer": [] }],
+        "responses": { "200": { "description": "Cursor-paginated claims" } }
+      }
+    },
+    "/api/v1/admin/claims/{claimId}/review": {
+      "post": {
+        "operationId": "reviewClaim",
+        "security": [{ "adminBearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "claimId",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["decision"],
+                "properties": {
+                  "decision": {
+                    "enum": ["accept", "reject", "correct_and_accept"]
+                  },
+                  "correctedValue": {},
+                  "note": { "type": ["string", "null"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Reviewed and materialized claim" }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}": {
+      "get": {
+        "operationId": "getRestaurant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Canonical restaurant profile" }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/menu": {
+      "get": {
+        "operationId": "getRestaurantMenu",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Filtered current menu" } }
+      }
+    },
+    "/api/v1/search": {
+      "post": {
+        "operationId": "searchRestaurants",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": { "type": "string" },
+                  "location": { "$ref": "#/components/schemas/Location" },
+                  "filters": { "type": "object" },
+                  "limit": { "type": "integer", "maximum": 20 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Ranked, explainable restaurant results" }
+        }
+      }
+    },
+    "/api/v1/search/dishes": {
+      "post": {
+        "operationId": "searchDishes",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": {
+          "200": { "description": "Dish results grouped by restaurant" }
+        }
+      }
+    },
+    "/api/v1/recommendations": {
+      "post": {
+        "operationId": "recommendRestaurants",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": {
+          "200": { "description": "Content-based recommendations" }
+        }
+      }
+    },
+    "/api/v1/restaurants/compare": {
+      "post": {
+        "operationId": "compareRestaurants",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": { "200": { "description": "Deterministic comparison" } }
+      }
+    },
+    "/api/v1/assistant/messages": {
+      "post": {
+        "operationId": "assistantMessage",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Retrieval-grounded answer with internal citations"
+          }
+        }
+      }
+    }
+  }
+}

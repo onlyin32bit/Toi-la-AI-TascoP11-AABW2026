@@ -1,0 +1,35 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format:check": "prettier --check .",
+    "db:migrate": "wrangler d1 migrations apply tasco-restaurant-intelligence --local",
+    "db:migrate:remote": "wrangler d1 migrations apply tasco-restaurant-intelligence --remote",
+    "seed:tasco": "node scripts/import-tasco.mjs",
+    "seed:menus": "node scripts/import-menus.mjs",
+    "seed:reviews": "node scripts/import-reviews.mjs",
+    "index:all": "node scripts/reindex.mjs",
+    "evaluate:search": "node scripts/evaluate-search.mjs",
+    "preview": "$npm_execpath run build && vite preview",
+    "deploy": "$npm_execpath run build && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "hono": "^4.12.28",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.2.3",
+    "@cloudflare/vitest-pool-workers": "^0.18.4",
+    "prettier": "^3.9.5",
+    "typescript": "^7.0.2",
+    "vite": "^6.3.5",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.17.0"
+  }
+}
