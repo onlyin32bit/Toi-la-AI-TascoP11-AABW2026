@@ -59,6 +59,11 @@ func testKB() *KB {
 		KnownEntities: KnownEntities{Names: []string{"nha hang hoang gia"}, Dishes: []string{"bit tet bo wagyu"}},
 	})
 
+	// Mirror LoadKB: benchmark POIs carry tasco_csv provenance (health counts by source).
+	for _, p := range kb.POIs {
+		p.Source = "tasco_csv"
+		p.Verified = true
+	}
 	return kb
 }
 

@@ -4,7 +4,8 @@
 > **Kiến trúc:** **Go engine (online) + Python (offline preprocessing/ML)** — build mới, KHÔNG dùng `api/` (CF Workers) làm backend chính.
 > **Team 5 người: 1 UI · 3 dev · 1 business/pitch** — phân công ở §10.5.
 > **Mục tiêu:** sản phẩm **chạy được + trông cool**, phủ đủ scope P11 chính thức (§1) — không chỉ recommender.
-> **Trạng thái:** plan final, chưa code engine.
+> **Kim chỉ nam — LOCALIZATION-FIRST (§1.5):** thứ khiến BGK thấy nổi bật KHÔNG phải "một recommender nữa", mà là **engine hiểu ẩm thực Việt ở tầng bản địa** — đặc sản vùng miền, tiếng Việt có/không dấu + teencode + tiếng lóng, văn hoá giờ ăn (sáng phở, tối nhậu, ăn khuya), chay kỳ, và stack NLP thuần Việt (HuTieuBERT, embedding Việt). Mọi quyết định thiết kế ưu tiên chiều sâu bản địa hoá.
+> **Trạng thái:** plan final; DEV1 engine + test đã xong (§5), localize là lớp tăng cường đang thêm.
 
 ---
 
@@ -60,6 +61,50 @@
 | 10 | **UI khám phá + assistant** | nối `ui/` (T Maps prototype có sẵn) vào Go engine (§9) | UI |
 | 11 | **Deck + video + README + methodology** | §10.5 BIZ + mỗi owner viết phần methodology của mình | BIZ |
 | 12 | **UGC: đóng góp quán + chụp menu OCR** (crowdsource enrichment) | `contribute.go` (add POI + attach menu) + OCR vision + UI form/upload (§5.10). **Thay làn scraping làm câu chuyện enrichment chính** | DEV1 (endpoint) + DEV3 (OCR) + UI (form) |
+
+---
+
+## 1.5 LOCALIZATION-FIRST — differentiator số 1 cho BGK
+
+Google Maps / Foody đối xử tiếng Việt như "một ngôn ngữ nữa". Ta đi sâu hơn: **hiểu ẩm thực Việt ở tầng bản địa**. Đây là câu chuyện bán cho BGK, và mỗi ý dưới đây gắn với 1 tính năng cụ thể trong engine.
+
+### Câu bán 1 dòng
+> *"Gõ `bun bo hue` không dấu ở Huế → lên đúng đặc sản bún bò, cơm hến; cùng câu `đặc sản gần đây` ở Đà Lạt lại ra lẩu gà lá é, bánh tráng nướng. Engine hiểu **món nào thuộc vùng nào, người Việt ăn gì theo giờ, và nói kiểu Việt** — thứ Google Maps VN không làm."*
+
+### 6 trụ localize (mỗi trụ = 1 feature, có mức độ ưu tiên)
+
+| # | Trụ localize | Làm gì trong engine | Nơi cắm | Mức |
+|---|---|---|---|---|
+| L1 | **Tiếng Việt có/không dấu** | `norm()` bỏ dấu 2 chiều — `bun bo` khớp `Bún Bò`. ĐÃ CÓ + test. | `kb.go norm` | ✅ done |
+| L2 | **Teencode + tiếng lóng** | bảng chuẩn hoá `k/ko→không, dc/đc→được, j→gì, bao nhiu→bao nhiêu`; lóng `quán ruột, ngon bổ rẻ, chặt chém(−), nhậu`. Chuẩn hoá TRƯỚC khi parse. | `retrieve.go` (slang map) | ⚡ quick win |
+| L3 | **Đặc sản vùng miền** | ontology `vùng → món đặc trưng`; boost quán phục vụ đặc sản của **thành phố user đang đứng**. Đây là **factor localize mạnh nhất để demo**. | `taxonomy` + `rerank.go` (`local_specialty`) | ⚡ quick win |
+| L4 | **Văn hoá giờ ăn Việt** | prior `giờ → intent`: sáng (phở/bún/bánh mì/xôi/cà phê), trưa (cơm), tối (lẩu/nướng/nhậu), khuya (cháo/phở đêm/ốc). Khi query mơ hồ + có `time` → gợi ý đúng nếp ăn. | `retrieve.go` (meal-time prior) | ⚡ quick win |
+| L5 | **Phân loại ẩm thực theo vùng** | `cuisine_classification` ghi rõ "Việt Nam — miền Trung (Huế)" thay vì chỉ "Việt Nam". | `summarize.py` (DEV3) | should |
+| L6 | **Chay kỳ (âm lịch)** | mùng 1 & rằm ÂL → boost quán chay (người Việt ăn chay theo kỳ). | `rerank.go` + lunar util | 🔭 stretch |
+
+### L3 — đặc sản vùng miền (ontology cho đúng 7 tỉnh trong dataset)
+
+```
+Hà Nội   → phở, bún chả, bún thang, chả cá
+Huế      → bún bò Huế, cơm hến, bánh bèo/nậm/lọc
+Đà Nẵng  → mì Quảng, bánh xèo, bún mắm
+Nha Trang→ hải sản, bún cá, nem nướng
+Hạ Long  → hải sản, chả mực, bánh cuốn chả mực
+Đà Lạt   → đồ nướng, bánh tráng nướng, atiso, lẩu gà lá é
+TP.HCM   → cơm tấm, hủ tiếu, bánh mì
+```
+`local_specialty(poi, user_city)` = 1.0 nếu quán phục vụ món đặc sản của thành phố user đang đứng, ngược lại 0. Vào SOFT score (§7.2) như 1 factor renormalize được → **cùng query `"đặc sản gần đây"` cho kết quả khác nhau theo tỉnh** (khoảnh khắc demo đắt nhất).
+
+### Stack NLP thuần Việt (kể trong deck)
+- **HuTieuBERT** (ACL 2026, morpheme-aware tiếng Việt) → NER tên quán/món (chống hallucination) + tách từ.
+- **Embedding Việt**: Qwen `text-embedding-v3` (API) hoặc `AITeamVN/Vietnamese_Embedding` (BGE-M3, SOTA VN). Benchmark VN-MTEB.
+- **Qwen** mạnh tiếng Việt cho assistant + reasoning; output **giữ nguyên dấu**.
+- Roadmap: **ViSoBERT / ViGSA** cho sentiment/aspect review tiếng Việt (§12).
+
+### Ưu tiên build (12h)
+- **Làm ngay (⚡):** L2 slang map + L3 đặc sản vùng miền + L4 meal-time prior — đều rule-based, rẻ, DEV1/DEV2, ~2–3h, và là 3 khoảnh khắc demo localize rõ nhất.
+- **Should:** L5 phân loại vùng (DEV3 summarize).
+- **Stretch (🔭):** L6 chay kỳ âm lịch.
 
 ---
 
@@ -337,6 +382,9 @@ POST /v1/contribute/menu     (multipart: poi_id + image)
 | **Personalize: time** | `opening_hours` = "09:00-23:00", "10:00-02:00" (qua đêm) | |
 | **Localize: geo** | `latitude`, `longitude` | haversine → geo_decay |
 | **Localize: city** | `city` (7 tỉnh) | city_match |
+| **Localize: đặc sản vùng (L3)** | `city` × ontology vùng→món + `dishes[].name`/`cuisine_type` | `local_specialty` boost khi quán phục vụ đặc sản của tỉnh user (§1.5) |
+| **Localize: giờ ăn Việt (L4)** | `time` × prior giờ→món + `opening_hours` | gợi ý theo nếp ăn (sáng phở, tối nhậu, khuya cháo) |
+| **Localize: ngôn ngữ (L1/L2)** | query text | bỏ dấu 2 chiều + teencode/lóng → chuẩn hoá trước parse |
 | **Anti-luxury** | `price_level`="Cao cấp" → penalty; "Bình dân"+quality cao → boost | yêu cầu riêng TASCO |
 | **Trust** | `poi_quality_score` (0.86–0.99), `rating`, `popularity_score` | có sẵn |
 
@@ -417,16 +465,19 @@ fail nếu: dish yêu cầu mà không có · sai city · thiếu diet bắt bu�
 
 ### 7.2 SOFT score (chỉ trên quán qua gate)
 ```
-score = 0.30·semantic     # khớp query↔(tên+món+review), token/embedding
-      + 0.20·geo_decay     # exp(-d/2km); THIẾU lat/lon → bỏ factor, renormalize
-      + 0.15·quality       # poi_quality_score
-      + 0.15·persona       # khớp segment+diet+price (0..1)
-      + 0.10·rating_pop    # (rating/5 + popularity/100)/2
-      + 0.10·localness      # bình dân + quality≥0.9 → +; family-run → +
-      − 0.25·luxury_penalty # price_level=cao cấp → trừ
+score = 0.28·semantic        # khớp query↔(tên+món+review), token/embedding
+      + 0.18·geo_decay        # exp(-d/2km); THIẾU lat/lon → bỏ factor, renormalize
+      + 0.14·quality          # poi_quality_score
+      + 0.14·persona          # khớp segment+diet+price (0..1)
+      + 0.12·local_specialty  # L3: quán phục vụ đặc sản của tỉnh user đang đứng (0/1)
+      + 0.08·rating_pop       # (rating/5 + popularity/100)/2
+      + 0.06·localness        # bình dân + quality≥0.9 → +; family-run → +
+      − 0.25·luxury_penalty   # price_level=cao cấp → trừ
 ```
 
-**Luật renormalize (mượn từ SYSTEM_FLOW — quan trọng):** factor nào **thiếu data** (vd user không gửi vị trí → không có geo_decay) thì **bỏ hẳn và chia lại trọng số các factor còn lại** (`wᵢ' = wᵢ/Σw_có_data`), **không** điền 0 giả (điền 0 sẽ dìm oan quán).
+**`local_specialty` (mới — trụ localize L3, §1.5):** = 1.0 nếu quán phục vụ món đặc sản của **thành phố user đang đứng** (theo ontology vùng→món), ngược lại 0. Chỉ khả dụng khi biết `city`/vị trí user → **renormalize** như các factor khác. Đây là tín hiệu tạo khoảnh khắc demo "cùng câu, khác tỉnh, khác kết quả". DEV1 thêm vào `rerank.go` (factor + trọng số + đưa vào `why{}` và `reasoning`: "đặc sản Huế").
+
+**Luật renormalize (mượn từ SYSTEM_FLOW — quan trọng):** factor nào **thiếu data** (vd user không gửi vị trí → không có geo_decay/local_specialty) thì **bỏ hẳn và chia lại trọng số các factor còn lại** (`wᵢ' = wᵢ/Σw_có_data`), **không** điền 0 giả (điền 0 sẽ dìm oan quán).
 
 **Tune tay** trên 15 câu eval + 8 câu B/C (§11), không train. Cite: LM-Prior (Ju et al., [arXiv:2411.09065](https://arxiv.org/abs/2411.09065)) — semantic làm prior, các factor là adjustment.
 
@@ -528,6 +579,7 @@ Không đủ giờ để chia phase tuần tự — 5 người chạy **song son
 - [ ] **BIZ** — demo script đủ đường đi cho các cảnh must-have; chạy thử end-to-end ngay khi UI+DEV1 xong phần recommend.
 
 ### SHOULD-HAVE — đề yêu cầu tường minh, ưu tiên cao nhưng cắt được nếu cháy giờ
+- [ ] **DEV1 + DEV2** — **LOCALIZE quick-wins (§1.5), differentiator BGK:** L2 slang/teencode map (`retrieve.go`) + L3 ontology đặc sản vùng miền + factor `local_specialty` (`taxonomy` + `rerank.go`, §7.2) + L4 meal-time prior (`retrieve.go`). Kèm test + `reasoning` tiếng Việt ("đặc sản Huế"). **Cảnh demo: cùng câu, khác tỉnh, khác đặc sản.**
 - [ ] **DEV1 + DEV3 + UI** — **UGC (§5.10):** `contribute.go` (`POST /v1/contribute` + `/v1/contribute/menu`) + OCR vision + `ContributeForm.tsx` (thả pin) + `MenuUpload.tsx`. **Cảnh demo chủ lực enrichment.**
 - [ ] **DEV3** — `vision.go` dish recognition (`POST /v1/dishes/recognize`) + cache sẵn kết quả cho 5–10 ảnh demo.
 - [ ] **DEV1** — `compare.go` (`GET /v1/compare?ids=...`) + **UI** `CompareView.tsx`.
@@ -596,6 +648,8 @@ Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải l
 - **Embedding semantic search** (thay token-match) — Qwen `text-embedding-v3` (API) hoặc `AITeamVN/Vietnamese_Embedding` (BGE-M3, local A40, SOTA VN). Benchmark tham chiếu: VN-MTEB ([arXiv:2507.21500](https://arxiv.org/abs/2507.21500)). *Đã chừa chỗ trong rerank.*
 - **UGC verification & moderation** — quán user đóng góp (§5.10) hiện `verified=false`; production cần luồng duyệt/kiểm chứng (consensus nhiều user, bot gọi điện xác minh kiểu Baidu DuIVRS) trước khi lên `verified=true`.
 - **HuTieuBERT fine-tune SBERT-style** — hiện HuTieuBERT chỉ dùng cho NER/POS (thế mạnh). Muốn dùng làm embedding retrieval thì phải fine-tune contrastive (SBERT), ngoài phạm vi hackathon.
+- **Localize L6 — chay kỳ âm lịch (§1.5):** mùng 1 & rằm ÂL → tự động boost quán chay. Cần lunar-calendar util; deeply Vietnamese, để lại roadmap.
+- **Review sentiment/aspect tiếng Việt** — ViSoBERT / ViGSA cho slang + aspect-based sentiment review VN (nuôi `S_buzz` + tóm tắt điểm mạnh/yếu). Hackathon dùng Qwen; production chuyển model VN chuyên biệt.
 - **Route-aware / along-route recommend** — cần Valhalla; gợi ý quán dọc hành trình liên tỉnh (differentiator VETC, khớp Route API trong doc Tasco). Cite SYSTEM_FLOW draft.
 - **Behavior ranking** (Tire-Wear/Repeat kiểu Amap) — cần dữ liệu di chuyển thật từ VETC.
 - **Enrichment pipeline mở rộng** (§6.5) — scrape social/web quy mô lớn cho POI thật toàn VN (TinyFish/ZenRows), OCR menu ảnh hàng loạt. Hackathon chỉ demo vài chục POI từ cache.
@@ -611,6 +665,8 @@ Ghi vào deck slide "Roadmap" để thể hiện tầm nhìn mà không phải l
 ## 13. Methodology narrative (dán vào README + deck)
 
 > The recommender follows the **retrieve-then-rerank cold-start paradigm** of KALM4Rec (Kieu et al., 2024), built for restaurant recommendation with no user history. Stage 1 does rule-based candidate recall then a **hard-constraint gate** (dietary, city, price, opening hours) that rejects rather than silently relaxes — this is where we handle honesty traps (a queried restaurant absent from the knowledge base returns not_found, never a fabrication). Stage 2 ranks survivors with a linear **soft score** combining lexical relevance, geographic decay (`exp(-d/2km)`), POI quality, persona match (segment/diet/price), and an anti-luxury term that favors small local eateries per the TASCO brief. Missing signals are dropped and weights renormalized rather than zero-filled. An optional LLM stage re-ranks the top candidates and generates a Vietnamese explanation. Dish recognition and image-based menu OCR use zero-shot vision-LLM inference, cached to disk so the live demo never depends on network availability. Restaurant summaries, sentiment, cuisine classification, and dining-occasion tags are generated once per POI in an offline batch pass, not at query time.
+>
+> **Localization is a first-class design axis, not an afterthought.** The engine matches Vietnamese with and without diacritics, normalizes teencode/slang before parsing, and encodes a province→specialty-dish ontology that boosts regional specialties for the user's current city (so the same query surfaces different local dishes in Huế vs. Đà Lạt). A Vietnamese meal-time intent prior reflects local eating culture (phở at breakfast, nhậu in the evening, cháo late at night). The NLP stack is Vietnamese-native: HuTieuBERT (morpheme-aware, ACL 2026) for proper-noun NER and tokenization, plus a Vietnamese sentence-embedding model — chosen over generic multilingual pipelines that treat Vietnamese as just one more language.
 >
 > Geographic weighting follows GeoMF (Lian et al., KDD 2014); using LLM/semantic similarity as a prior over classical ranking follows the Language-Model Prior framework (Ju et al., 2024). We deliberately avoid training deep recommenders (LightGCN, GETNext, SASRec, LightFM) because 30 POIs and 150 reviews cause overfitting; these are cited as the scaling roadmap once the POI base grows.
 
