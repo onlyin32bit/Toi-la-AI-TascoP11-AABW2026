@@ -18,6 +18,7 @@ import { FilterChips } from "./components/FilterChips";
 import { ResultCard } from "./components/ResultCard";
 import { AssistantBox } from "./components/AssistantBox";
 import { EnrichmentTerminal } from "./components/enrichment-terminal";
+import { EnrichmentSplitView } from "./components/enrichment-split-view";
 import { UgcContributeForm } from "./components/ugc-contribute-form";
 import { DemoResetButton } from "./components/demo-reset-button";
 import { Button } from "./components/ui/button";
@@ -36,6 +37,7 @@ import type {
 } from "./types";
 import { DEMO_POI_ID, MOCK_ENRICHMENT_RESULT } from "./data/mock-enrichment";
 import { loadEnriched, saveEnriched } from "./lib/enrichment-runner";
+import type { EnrichApiRequest } from "./lib/enrich-api-client";
 import { enqueueUgc, listUgc, type UgcEntry } from "./lib/ugc-queue";
 import "./App.css";
 
@@ -146,6 +148,7 @@ function App() {
   const [ugcOpen, setUgcOpen] = useState(false);
   const [ugcSuggested, setUgcSuggested] = useState("");
   const [ugcPins, setUgcPins] = useState<UgcEntry[]>(() => listUgc());
+  const [compareOpenId, setCompareOpenId] = useState<string | null>(null);
 
   const dockRef = useRef<HTMLElement | null>(null);
   const dragStart = useRef<{ y: number; pointerId: number; moved: boolean } | null>(null);
@@ -269,6 +272,14 @@ function App() {
     window.location.reload();
   };
 
+  // ── Compare handlers ───────────────────────────────────────────────
+  const handleCompareOpen = useCallback((id: string) => {
+    setCompareOpenId(id);
+  }, []);
+  const handleCompareClose = useCallback(() => {
+    setCompareOpenId(null);
+  }, []);
+
   // Grip handles both a tap-to-cycle and a drag gesture.
   //   tap          → cycle down (expanded → half → hidden → half)
   //   drag up      → step up   (hidden → half → expanded)
@@ -369,10 +380,36 @@ function App() {
 
   // Memoize the enrichment payload so EnrichmentTerminal's effect doesn't
   // restart the runner whenever App re-renders (results reference changes).
+  // qualityBefore is pulled from the target POI's own quality so the terminal
+  // log matches whatever number the card badge is currently showing.
   const activeEnrichmentPayload = useMemo(() => {
     if (!enrichingId) return MOCK_ENRICHMENT_RESULT;
-    return { ...MOCK_ENRICHMENT_RESULT, poiId: enrichingId };
-  }, [enrichingId]);
+    const target = rawResults.find((r) => r.id === enrichingId);
+    const currentQuality = target?.qualityScore ?? target?.meta.quality ?? MOCK_ENRICHMENT_RESULT.qualityBefore;
+    return {
+      ...MOCK_ENRICHMENT_RESULT,
+      poiId: enrichingId,
+      qualityBefore: currentQuality,
+      qualityAfter: Math.min(0.98, currentQuality + 0.1),
+    };
+  }, [enrichingId, rawResults]);
+
+  // Live enrich request — sent to POST /v1/enrich when the engine base URL
+  // env var is set. Absent env => undefined => terminal falls back to the
+  // fixed mock schedule (offline demo).
+  const activeLiveRequest = useMemo<EnrichApiRequest | undefined>(() => {
+    if (!enrichingId) return undefined;
+    if (!import.meta.env.VITE_ENGINE_BASE_URL) return undefined;
+    const target = rawResults.find((r) => r.id === enrichingId);
+    if (!target) return undefined;
+    return {
+      poiId: target.id,
+      name: target.name,
+      address: target.address,
+      city: target.city,
+      qualityBefore: activeEnrichmentPayload.qualityBefore,
+    };
+  }, [enrichingId, rawResults, activeEnrichmentPayload.qualityBefore]);
 
   return (
     <div className="relative h-[100dvh] overflow-hidden bg-background text-foreground app-ambient">
@@ -584,6 +621,7 @@ function App() {
                   onToggleExpand={() => setExpandedId(expandedId === r.id ? null : r.id)}
                   onEnrich={handleEnrichClick}
                   enriching={enrichingId === r.id}
+                  onCompare={handleCompareOpen}
                 />
               ))
             )}
@@ -641,6 +679,7 @@ function App() {
           open={terminalOpen}
           poiName={enrichingResult.name}
           result={activeEnrichmentPayload}
+          liveRequest={activeLiveRequest}
           onComplete={handleTerminalComplete}
           onClose={handleTerminalClose}
         />
@@ -657,6 +696,22 @@ function App() {
       />
 
       {hasDemoState && <DemoResetButton onReset={handleDemoReset} />}
+
+      {compareOpenId && (() => {
+        const poi = results.find((r) => r.id === compareOpenId);
+        if (!poi) return null;
+        const patch = enrichmentPatches[compareOpenId];
+        const qualityBefore = patch?.qualityBefore ?? poi.meta.quality;
+        return (
+          <EnrichmentSplitView
+            open
+            poi={poi}
+            qualityBefore={qualityBefore}
+            onClose={handleCompareClose}
+            t={t}
+          />
+        );
+      })()}
     </div>
   );
 }

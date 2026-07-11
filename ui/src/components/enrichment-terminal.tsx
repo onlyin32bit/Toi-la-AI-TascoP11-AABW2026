@@ -3,12 +3,23 @@
 // StageEvent as a colored terminal line with a blinking caret.
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { EnrichmentResult, EnrichmentStage, EnrichmentStageEvent } from "../types";
-import { ENRICHMENT_TOTAL_LINES, runMockEnrichment } from "../lib/enrichment-runner";
+import {
+  ENRICHMENT_TOTAL_LINES,
+  runLiveEnrichment,
+  runMockEnrichment,
+} from "../lib/enrichment-runner";
+import type { EnrichApiRequest } from "../lib/enrich-api-client";
 
 interface Props {
   open: boolean;
   poiName: string;
+  /** Mock fixture used both as fallback if the backend fails and as source
+   *  for the mock runner when no liveRequest is provided. */
   result: EnrichmentResult;
+  /** When present, the terminal calls POST /v1/enrich in the background
+   *  and swaps in the real result on completion. When absent, streams the
+   *  fixed mock schedule (offline demo mode). */
+  liveRequest?: EnrichApiRequest;
   onComplete: (result: EnrichmentResult) => void;
   onClose: () => void;
 }
@@ -22,18 +33,31 @@ interface TerminalLine {
 // Intermediate "thinking" lines all use the `searching` stage — they render
 // with a compact "▸" prompt instead of a category tag. Only the payoff line
 // (quality-update) and the finale (done) get an explicit labelled tag.
+// Labels are used verbatim (no bracket wrapping in JSX) so thinking lines can
+// stay short and payoff lines can carry their own brackets.
 const STAGE_LABEL: Record<EnrichmentStage, string> = {
-  searching: "▸        ",
-  parsing:   "▸        ",
-  consensus: "▸        ",
+  searching: "▸",
+  parsing:   "▸",
+  consensus: "▸",
   "quality-update": "[QUALITY]",
-  done:            "[DONE   ]",
+  done:            "[DONE]",
 };
 
-export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose }: Props) {
+export function EnrichmentTerminal({
+  open,
+  poiName,
+  result,
+  liveRequest,
+  onComplete,
+  onClose,
+}: Props) {
   const [lines, setLines] = useState<TerminalLine[]>([]);
   const [running, setRunning] = useState(false);
+  const [finished, setFinished] = useState(false);
   const [maxStageIndex, setMaxStageIndex] = useState(-1);
+  // Live runners deliver the final Result at completion — keep it here so the
+  // OK button propagates the real backend data instead of the mock fixture.
+  const [finalResult, setFinalResult] = useState<EnrichmentResult | null>(null);
   const cancelRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const idRef = useRef(0);
@@ -43,14 +67,16 @@ export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose 
       setLines([]);
       setMaxStageIndex(-1);
       setRunning(false);
+      setFinished(false);
+      setFinalResult(null);
       return;
     }
     setRunning(true);
+    setFinished(false);
+    setFinalResult(null);
     setLines([]);
     setMaxStageIndex(-1);
     idRef.current = 0;
-
-    let closeTimer: ReturnType<typeof setTimeout> | null = null;
 
     const onStage = (ev: EnrichmentStageEvent) => {
       idRef.current += 1;
@@ -58,20 +84,25 @@ export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose 
       setMaxStageIndex((prev) => prev + 1);
       if (ev.stage === "done") {
         setRunning(false);
-        closeTimer = setTimeout(() => {
-          onComplete(result);
-          onClose();
-        }, 900);
+        setFinished(true);
       }
     };
+    const onResult = (r: EnrichmentResult) => setFinalResult(r);
 
-    cancelRef.current = runMockEnrichment(result, onStage);
+    cancelRef.current = liveRequest
+      ? runLiveEnrichment(liveRequest, result, { onStage, onResult })
+      : runMockEnrichment(result, { onStage, onResult });
+
     return () => {
       cancelRef.current?.();
       cancelRef.current = null;
-      if (closeTimer) clearTimeout(closeTimer);
     };
-  }, [open, result, onComplete, onClose]);
+  }, [open, result, liveRequest]);
+
+  const handleOk = () => {
+    onComplete(finalResult ?? result);
+    onClose();
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -83,10 +114,15 @@ export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose 
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      // Enter after finished = confirm OK
+      if (e.key === "Enter" && finished) {
+        onComplete(finalResult ?? result);
+        onClose();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, finished, onComplete, result, finalResult]);
 
   // Line-based progress — smoother than stage-based since most emitted lines
   // share the same "searching" stage now.
@@ -126,7 +162,7 @@ export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose 
         <div ref={scrollRef} className="enrich-terminal-body">
           {lines.map((line) => (
             <div key={line.id} className="term-line" data-stage={line.stage}>
-              <span className="term-line-tag">[{STAGE_LABEL[line.stage]}]</span>
+              <span className="term-line-tag">{STAGE_LABEL[line.stage]}</span>
               <span className="term-line-msg">{line.text}</span>
             </div>
           ))}
@@ -134,10 +170,23 @@ export function EnrichmentTerminal({ open, poiName, result, onComplete, onClose 
         </div>
 
         <footer className="enrich-terminal-footer">
-          <div className="enrich-progress">
-            <div className="enrich-progress-fill" style={{ width: `${progressPct}%` }} />
-          </div>
-          <span className="enrich-progress-label">{progressPct}%</span>
+          {finished ? (
+            <button
+              type="button"
+              className="enrich-terminal-ok"
+              onClick={handleOk}
+              autoFocus
+            >
+              ✓ OK
+            </button>
+          ) : (
+            <>
+              <div className="enrich-progress">
+                <div className="enrich-progress-fill" style={{ width: `${progressPct}%` }} />
+              </div>
+              <span className="enrich-progress-label">{progressPct}%</span>
+            </>
+          )}
         </footer>
       </div>
     </div>

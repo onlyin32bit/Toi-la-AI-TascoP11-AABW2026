@@ -12,6 +12,7 @@ import (
 	"tascop11/engine/internal/config"
 	"tascop11/engine/internal/contribute"
 	"tascop11/engine/internal/db"
+	"tascop11/engine/internal/enrich"
 	"tascop11/engine/internal/httpserver"
 	"tascop11/engine/internal/kb"
 	"tascop11/engine/internal/vision"
@@ -65,10 +66,21 @@ func main() {
 		}
 	}
 
+	// Optional Apify-backed enrichment layer. Absent APIFY_TOKEN => route
+	// serves 503 feature_disabled, boot continues (mirrors the DB path).
+	var enrichEngine *enrich.Engine
+	if e, err := enrich.NewEngine(); err != nil {
+		log.Printf("enrich disabled (%v)", err)
+	} else {
+		enrichEngine = e
+		log.Printf("enrich enabled (apify google places)")
+	}
+
 	handler := httpserver.New(httpserver.Deps{
 		KB:      store,
 		Contrib: contribStore,
 		DB:      database,
+		Enrich:  enrichEngine,
 		HCMLoc:  hcmLoc,
 		UIDist:  uiDist,
 	})

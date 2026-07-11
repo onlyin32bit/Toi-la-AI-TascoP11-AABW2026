@@ -8,7 +8,6 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { QualityScoreBadge } from "./quality-score-badge";
 import { ProvenanceBadge } from "./provenance-badge";
-import { DEMO_POI_ID } from "../data/mock-enrichment";
 
 const VEHICLE_EMOJI: Record<Vehicle, string> = {
   walk: "🚶",
@@ -26,6 +25,7 @@ interface ResultCardProps {
   onToggleExpand: () => void;
   onEnrich?: (id: string) => void;
   enriching?: boolean;
+  onCompare?: (id: string) => void;
 }
 
 const WHY_ROWS: { key: keyof PlaceResult["meta"]["why"]; labelKey: string }[] = [
@@ -53,6 +53,7 @@ export function ResultCard({
   onToggleExpand,
   onEnrich,
   enriching,
+  onCompare,
 }: ResultCardProps) {
   const { t } = useI18n();
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -97,8 +98,7 @@ export function ResultCard({
     el.style.setProperty("--my", `${my}%`);
   };
 
-  const isDemoPoi = result.id === DEMO_POI_ID;
-  const showEnrichButton = isDemoPoi && !result.isEnriched;
+  const showEnrichButton = !result.isEnriched;
 
   return (
     <Card
@@ -205,6 +205,22 @@ export function ResultCard({
             ✨
           </span>
           <span>{t("enrich.button")}</span>
+        </button>
+      )}
+
+      {result.isEnriched && onCompare && (
+        <button
+          type="button"
+          className="compare-btn mt-3 w-full"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCompare(result.id);
+          }}
+        >
+          <span className="compare-btn-lens" aria-hidden>
+            🔍
+          </span>
+          <span>{t("compare.button")}</span>
         </button>
       )}
 

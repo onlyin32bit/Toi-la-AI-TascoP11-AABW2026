@@ -1170,7 +1170,10 @@
   to   { opacity: 1; transform: none; }
 }
 
-/* ── Enrichment Terminal (cyan neon panel) ───────────────────────── */
+/* ── Enrichment Terminal (theme-aware neon panel) ────────────────── */
+/* All accent colors resolve from --color-primary (accent picker), so
+   the terminal follows whichever theme the user selected. Base panel
+   stays dark for the "console" feel. */
 .enrich-terminal-backdrop {
   position: fixed;
   inset: 0;
@@ -1186,19 +1189,22 @@
   to   { opacity: 1; }
 }
 .enrich-terminal-panel {
+  --term-accent: var(--color-primary);
+  --term-accent-bright: color-mix(in srgb, var(--color-primary) 88%, white);
+  --term-accent-soft:   color-mix(in srgb, var(--color-primary) 55%, white);
   width: min(560px, 92vw);
   max-height: 78vh;
   display: flex;
   flex-direction: column;
   background: color-mix(in srgb, #050a15 92%, transparent);
-  border: 1px solid color-mix(in srgb, #22d3ee 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--term-accent) 45%, transparent);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
   font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
-  color: #cff9ff;
+  color: var(--term-accent-soft);
   box-shadow:
-    0 0 40px color-mix(in srgb, #22d3ee 32%, transparent),
-    inset 0 0 30px color-mix(in srgb, #22d3ee 8%, transparent);
+    0 0 40px color-mix(in srgb, var(--term-accent) 32%, transparent),
+    inset 0 0 30px color-mix(in srgb, var(--term-accent) 8%, transparent);
   animation: term-panel-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 @keyframes term-panel-in {
@@ -1210,25 +1216,25 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid color-mix(in srgb, #22d3ee 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--term-accent) 22%, transparent);
   font-size: 12px;
 }
 .enrich-terminal-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #67e8f9;
+  color: var(--term-accent-bright);
   font-weight: 700;
   letter-spacing: 0.03em;
 }
 .enrich-terminal-prompt {
-  color: #a7f3d0;
-  text-shadow: 0 0 8px color-mix(in srgb, #10b981 60%, transparent);
+  color: var(--term-accent-bright);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--term-accent) 60%, transparent);
 }
 .enrich-terminal-close {
   background: transparent;
   border: none;
-  color: color-mix(in srgb, #cff9ff 70%, transparent);
+  color: color-mix(in srgb, var(--term-accent-soft) 70%, transparent);
   font-size: 14px;
   cursor: pointer;
   padding: 4px 10px;
@@ -1237,7 +1243,7 @@
 }
 .enrich-terminal-close:hover {
   color: #fff;
-  background: color-mix(in srgb, #22d3ee 20%, transparent);
+  background: color-mix(in srgb, var(--term-accent) 20%, transparent);
 }
 .enrich-terminal-body {
   flex: 1;
@@ -1248,7 +1254,7 @@
 }
 .enrich-terminal-body::-webkit-scrollbar { width: 6px; }
 .enrich-terminal-body::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, #22d3ee 40%, transparent);
+  background: color-mix(in srgb, var(--term-accent) 40%, transparent);
   border-radius: 4px;
 }
 .term-line {
@@ -1263,23 +1269,24 @@
   to   { opacity: 1; transform: none; }
 }
 .term-line-tag {
-  color: #67e8f9;
+  color: var(--term-accent-bright);
   font-weight: 700;
   white-space: pre;
   flex-shrink: 0;
 }
-.term-line-msg { color: #cff9ff; }
-.term-line[data-stage="searching"] .term-line-tag { color: #67e8f9; }
-.term-line[data-stage="parsing"]   .term-line-tag { color: #a78bfa; }
-.term-line[data-stage="consensus"] .term-line-tag { color: #eab308; }
+.term-line-msg { color: var(--term-accent-soft); }
 .term-line[data-stage="quality-update"] {
-  color: #a7f3d0;
-  text-shadow: 0 0 8px color-mix(in srgb, #10b981 55%, transparent);
+  color: var(--term-accent-bright);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--term-accent) 65%, transparent);
+  font-weight: 700;
 }
-.term-line[data-stage="quality-update"] .term-line-tag { color: #10b981; }
-.term-line[data-stage="done"] .term-line-tag { color: #10b981; }
+.term-line[data-stage="quality-update"] .term-line-tag,
+.term-line[data-stage="done"] .term-line-tag {
+  color: var(--term-accent-bright);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--term-accent) 50%, transparent);
+}
 .term-caret {
-  color: #67e8f9;
+  color: var(--term-accent-bright);
   animation: term-blink 1s steps(2) infinite;
   padding-left: 12px;
   font-weight: 900;
@@ -1290,21 +1297,25 @@
   align-items: center;
   gap: 12px;
   padding-top: 0.75rem;
-  border-top: 1px solid color-mix(in srgb, #22d3ee 22%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--term-accent) 22%, transparent);
   font-size: 11px;
-  color: #67e8f9;
+  color: var(--term-accent-bright);
 }
 .enrich-progress {
   flex: 1;
   height: 4px;
-  background: color-mix(in srgb, #22d3ee 14%, transparent);
+  background: color-mix(in srgb, var(--term-accent) 14%, transparent);
   border-radius: 999px;
   overflow: hidden;
 }
 .enrich-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #22d3ee, #10b981);
-  box-shadow: 0 0 8px #22d3ee;
+  background: linear-gradient(
+    90deg,
+    var(--term-accent),
+    color-mix(in srgb, var(--term-accent) 60%, white)
+  );
+  box-shadow: 0 0 8px var(--term-accent);
   transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .enrich-progress-label {
@@ -1312,6 +1323,38 @@
   min-width: 3ch;
   text-align: right;
   font-family: var(--font-mono);
+}
+.enrich-terminal-ok {
+  flex: 1;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--term-accent) 60%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--term-accent) 32%, transparent),
+    color-mix(in srgb, var(--term-accent) 12%, transparent)
+  );
+  color: var(--term-accent-bright);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--term-accent) 30%, transparent);
+  animation: enrich-ok-glow 1.8s ease-in-out infinite;
+}
+.enrich-terminal-ok:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--term-accent) 55%, transparent);
+}
+.enrich-terminal-ok:focus-visible {
+  outline: 2px solid var(--term-accent);
+  outline-offset: 3px;
+}
+@keyframes enrich-ok-glow {
+  0%, 100% { box-shadow: 0 0 24px color-mix(in srgb, var(--term-accent) 25%, transparent); }
+  50%      { box-shadow: 0 0 36px color-mix(in srgb, var(--term-accent) 50%, transparent); }
 }
 
 /* ── Assistant messages (chat log + honesty trap) ────────────────── */
@@ -1546,13 +1589,276 @@
   transform: rotate(-90deg);
 }
 
+/* ── Compare button on enriched card ─────────────────────────────── */
+.compare-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+.compare-btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+.compare-btn-lens { animation: compare-lens-swing 3s ease-in-out infinite; }
+@keyframes compare-lens-swing {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+/* ── Split-view modal (Before/After compare) ─────────────────────── */
+.split-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 940;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, black 60%, transparent);
+  backdrop-filter: blur(12px) saturate(1.3);
+  animation: term-backdrop-in 200ms ease-out;
+  padding: 16px;
+}
+.split-modal-panel {
+  --term-accent: var(--color-primary);
+  width: min(720px, 96vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: color-mix(in srgb, var(--color-card) 95%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem 1.1rem;
+  box-shadow: 0 30px 80px color-mix(in srgb, var(--color-primary) 22%, transparent);
+  animation: term-panel-in 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.split-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.split-modal-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-foreground);
+}
+.split-modal-lens { font-size: 18px; animation: compare-lens-swing 3s ease-in-out infinite; }
+.split-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-muted-foreground);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.split-modal-close:hover { color: var(--color-foreground); background: color-mix(in srgb, var(--color-primary) 12%, transparent); }
+.split-modal-hint {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.split-modal-footer { display: flex; justify-content: center; }
+
+/* Container: two full layers stacked; after clipped by --split-x */
+.split-container {
+  position: relative;
+  width: 100%;
+  min-height: 340px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 100%, transparent);
+  background: var(--color-background);
+  touch-action: none;
+}
+.split-layer {
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+  overflow: hidden;
+}
+/* BEFORE (bottom, gray/desaturated) */
+.split-layer-before {
+  filter: grayscale(0.85) brightness(0.85);
+  background: color-mix(in srgb, var(--color-muted) 40%, transparent);
+}
+/* AFTER (top, clipped to right side of divider) */
+.split-layer-after {
+  clip-path: inset(0 0 0 var(--split-x, 50%));
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  box-shadow: inset 0 0 40px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+.split-label {
+  position: absolute;
+  top: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  z-index: 3;
+}
+.split-label-before {
+  left: 12px;
+  background: color-mix(in srgb, #64748b 40%, transparent);
+  color: #e2e8f0;
+  border: 1px solid color-mix(in srgb, #64748b 60%, transparent);
+}
+.split-label-after {
+  right: 12px;
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* Divider handle */
+.split-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split-x, 50%);
+  width: 40px;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+.split-divider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary) 30%, transparent),
+    var(--color-primary),
+    color-mix(in srgb, var(--color-primary) 30%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 50%, transparent);
+}
+.split-divider-handle {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 10px;
+  font-weight: 900;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-primary) 55%, transparent);
+  animation: split-handle-pulse 2s ease-in-out infinite;
+}
+@keyframes split-handle-pulse {
+  0%, 100% { box-shadow: 0 0 16px color-mix(in srgb, var(--color-primary) 45%, transparent); }
+  50%      { box-shadow: 0 0 26px color-mix(in srgb, var(--color-primary) 65%, transparent); }
+}
+
+/* Card face inside a split layer */
+.split-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 40px;
+  height: 100%;
+}
+.split-card-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-foreground);
+  line-height: 1.2;
+}
+.split-card-header p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+}
+.split-card-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.split-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.split-detail-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+}
+.split-detail-label {
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+  font-family: var(--font-mono);
+}
+.split-detail-value {
+  color: var(--color-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.split-detail-missing {
+  color: var(--score-low);
+  font-style: italic;
+  font-size: 11px;
+}
+
+@media (max-width: 640px) {
+  .split-container { min-height: 380px; }
+  .split-layer { padding: 14px; }
+  .split-detail-row { grid-template-columns: 70px 1fr auto; font-size: 11px; }
+}
+
 /* Reduced-motion overrides for demo animations */
 @media (prefers-reduced-motion: reduce) {
   .enrich-btn,
   .quality-badge-dot,
   .ugc-chip,
   .ugc-pin-inner,
-  .term-caret {
+  .term-caret,
+  .compare-btn-lens,
+  .split-modal-lens,
+  .split-divider-handle {
     animation: none !important;
   }
   .card-detail-row,
@@ -1561,7 +1867,9 @@
   .enrich-terminal-panel,
   .enrich-terminal-backdrop,
   .ugc-modal-panel,
-  .ugc-modal-backdrop {
+  .ugc-modal-backdrop,
+  .split-modal-panel,
+  .split-modal-backdrop {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

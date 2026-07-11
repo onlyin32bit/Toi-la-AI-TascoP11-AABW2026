@@ -95,6 +95,15 @@ const vi: Dict = {
   "ugc.submit": "Gửi đóng góp",
   "ugc.cancel": "Hủy",
   "ugc.pending.badge": "Chờ xác thực",
+
+  "compare.button": "So sánh Before / After",
+  "compare.modal.title": "So sánh Before / After",
+  "compare.before": "TRƯỚC",
+  "compare.after": "SAU",
+  "compare.missing": "Thiếu dữ liệu",
+  "compare.close": "Đóng",
+  "compare.hint": "Kéo thanh giữa để so sánh trước và sau khi làm giàu",
+  "compare.slider.aria": "Kéo để so sánh trước/sau",
 };
 
 const en: Dict = {
@@ -186,6 +195,15 @@ const en: Dict = {
   "ugc.submit": "Submit",
   "ugc.cancel": "Cancel",
   "ugc.pending.badge": "Pending",
+
+  "compare.button": "Compare Before / After",
+  "compare.modal.title": "Before / After Comparison",
+  "compare.before": "BEFORE",
+  "compare.after": "AFTER",
+  "compare.missing": "Missing data",
+  "compare.close": "Close",
+  "compare.hint": "Drag the divider to compare before and after enrichment",
+  "compare.slider.aria": "Drag to compare before / after",
 };
 
 export const translations: Record<Lang, Dict> = { vi, en };

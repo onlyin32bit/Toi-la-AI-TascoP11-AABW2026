@@ -18,17 +18,20 @@ import (
 
 	"tascop11/engine/internal/contribute"
 	"tascop11/engine/internal/db"
+	"tascop11/engine/internal/enrich"
 	"tascop11/engine/internal/kb"
 	"tascop11/engine/internal/model"
 )
 
-// Deps bundles every dependency the HTTP layer needs. DB is nil when
-// Postgres isn't configured (DATABASE_URL unset) — every DB-backed handler
-// degrades to a clear "feature_disabled" response in that case, never a panic.
+// Deps bundles every dependency the HTTP layer needs. DB / Enrich are nil
+// when their upstream isn't configured (DATABASE_URL / APIFY_TOKEN unset) —
+// each dependent handler degrades to a clear "feature_disabled" (503)
+// response in that case, never a panic.
 type Deps struct {
 	KB      *kb.KB
 	Contrib *contribute.Store
 	DB      *db.DB
+	Enrich  *enrich.Engine
 	HCMLoc  *time.Location
 	UIDist  string
 }
@@ -37,12 +40,19 @@ type Server struct {
 	kb      *kb.KB
 	contrib *contribute.Store
 	db      *db.DB
+	enrich  *enrich.Engine
 	hcmLoc  *time.Location
 }
 
 // New builds the full route table + middleware chain as an http.Handler.
 func New(deps Deps) http.Handler {
-	s := &Server{kb: deps.KB, contrib: deps.Contrib, db: deps.DB, hcmLoc: deps.HCMLoc}
+	s := &Server{
+		kb:      deps.KB,
+		contrib: deps.Contrib,
+		db:      deps.DB,
+		enrich:  deps.Enrich,
+		hcmLoc:  deps.HCMLoc,
+	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", s.handleHealth)
@@ -53,6 +63,7 @@ func New(deps Deps) http.Handler {
 	mux.HandleFunc("/v1/contribute/menu", methodPost(s.handleContributeMenu))
 	mux.HandleFunc("/v1/assistant", s.handleAssistant)
 	mux.HandleFunc("/v1/dishes/recognize", methodPost(s.handleDishesRecognize))
+	mux.HandleFunc("/v1/enrich", s.handleEnrich)
 	mux.HandleFunc("/v1/auth/signup", methodPost(s.handleSignup))
 	mux.HandleFunc("/v1/auth/login", methodPost(s.handleLogin))
 	mux.HandleFunc("/v1/auth/logout", methodPost(s.handleLogout))
@@ -107,6 +118,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 		"pois":   s.countSource("tasco_csv"),
 		"ugc":    s.countSource("user_contributed"),
 		"db":     s.db != nil,
+		"enrich": s.enrich != nil,
 	})
 }
 
