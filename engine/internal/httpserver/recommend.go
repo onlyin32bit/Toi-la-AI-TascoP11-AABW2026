@@ -32,7 +32,11 @@ func (s *Server) handleRecommend(w http.ResponseWriter, r *http.Request) {
 	u.Diet = q.Get("diet")
 	u.Price = q.Get("price")
 
-	limit := 12
+	// Default 30 — matches the current benchmark KB size so a caller that
+	// doesn't pass ?limit sees the full ranked pool, not a top-N slice.
+	// MAP_ALL_POIS=true bumps to the full loaded pool (handy when the KB
+	// grows past 30, e.g. Thu Duc data merged in alongside benchmark).
+	limit := 30
 	if isTruthy(os.Getenv("MAP_ALL_POIS")) {
 		limit = len(s.kb.POIs)
 	}

@@ -29,6 +29,10 @@ function timeParam(filters: SearchFilters): string | undefined {
   return undefined;
 }
 
+// Backend default is 12 — force 30 so deployed engine doesn't cap us below
+// the full benchmark KB (matches what the offline mock rank returns).
+const RECOMMEND_LIMIT = 30;
+
 function buildRecommendQuery(query: string, filters: SearchFilters, userLoc?: UserLocation): string {
   const params = new URLSearchParams();
   if (query) params.set("q", query);
@@ -41,6 +45,7 @@ function buildRecommendQuery(query: string, filters: SearchFilters, userLoc?: Us
   if (filters.price) params.set("price", filters.price);
   const time = timeParam(filters);
   if (time) params.set("time", time);
+  params.set("limit", String(RECOMMEND_LIMIT));
   return params.toString();
 }
 
