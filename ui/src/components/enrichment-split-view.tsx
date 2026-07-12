@@ -1,8 +1,8 @@
-// Before/After split-slider modal for the enrichment demo. Two full-card
-// layers are stacked in the same container; the "after" layer is clipped
-// left-to-right based on a draggable divider so BGK can visually A/B the
-// data richness in ~2 seconds.
-import { useEffect, useRef, useState } from "react";
+// Before/After compare modal for the enrichment demo. Renders two full
+// cards side-by-side (grays-out "before", accent-tinted "after") so BGK
+// can A/B the data richness in ~2 seconds without any drag interaction.
+// Stacks vertically on narrow viewports where side-by-side is unreadable.
+import { useEffect } from "react";
 import type { PlaceResult } from "../types";
 import { ProvenanceBadge } from "./provenance-badge";
 import { QualityScoreBadge } from "./quality-score-badge";
@@ -15,53 +15,17 @@ interface Props {
   t: (key: string) => string;
 }
 
-// Default divider position — 50/50 read, user can drag to either extreme.
-const DEFAULT_SPLIT_PCT = 50;
-
 export function EnrichmentSplitView({ open, poi, qualityBefore, onClose, t }: Props) {
-  const [splitPct, setSplitPct] = useState(DEFAULT_SPLIT_PCT);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const dragActive = useRef(false);
-
-  useEffect(() => {
-    if (open) setSplitPct(DEFAULT_SPLIT_PCT);
-  }, [open]);
-
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") setSplitPct((p) => Math.max(0, p - 5));
-      if (e.key === "ArrowRight") setSplitPct((p) => Math.min(100, p + 5));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
   if (!open) return null;
-
-  const updateFromClientX = (clientX: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const pct = ((clientX - rect.left) / rect.width) * 100;
-    setSplitPct(Math.max(0, Math.min(100, pct)));
-  };
-
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
-    dragActive.current = true;
-    updateFromClientX(e.clientX);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragActive.current) return;
-    updateFromClientX(e.clientX);
-  };
-  const onPointerUp = () => {
-    dragActive.current = false;
-  };
-
-  const containerStyle = { ["--split-x" as string]: `${splitPct}%` } as React.CSSProperties;
 
   return (
     <div
@@ -89,54 +53,29 @@ export function EnrichmentSplitView({ open, poi, qualityBefore, onClose, t }: Pr
           </button>
         </header>
 
-        <div
-          ref={containerRef}
-          className="split-container"
-          style={containerStyle}
-          role="slider"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(splitPct)}
-          aria-label={t("compare.slider.aria")}
-        >
-          {/* BEFORE layer (bottom, always fully visible) */}
-          <div className="split-layer split-layer-before" aria-hidden={splitPct === 100}>
+        <div className="split-grid">
+          <section className="split-side split-side-before" aria-label={t("compare.before")}>
+            <div className="split-label split-label-before">{t("compare.before")}</div>
             <SplitCard variant="before" poi={poi} qualityBefore={qualityBefore} t={t} />
-            <span className="split-label split-label-before">{t("compare.before")}</span>
+          </section>
+          <div className="split-divider-arrow-badge" aria-hidden>
+            →
           </div>
-
-          {/* AFTER layer (top, clipped by --split-x) */}
-          <div className="split-layer split-layer-after" aria-hidden={splitPct === 0}>
+          <section className="split-side split-side-after" aria-label={t("compare.after")}>
+            <div className="split-label split-label-after">{t("compare.after")}</div>
             <SplitCard variant="after" poi={poi} qualityBefore={qualityBefore} t={t} />
-            <span className="split-label split-label-after">{t("compare.after")}</span>
-          </div>
-
-          {/* Draggable divider handle */}
-          <div
-            className="split-divider"
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-            aria-hidden
-          >
-            <span className="split-divider-line" />
-            <span className="split-divider-handle">
-              <span className="split-divider-arrow">◂</span>
-              <span className="split-divider-arrow">▸</span>
-            </span>
-          </div>
+          </section>
         </div>
 
         <footer className="split-modal-footer">
-          <span className="split-modal-hint">{t("compare.hint")}</span>
+          <span className="split-modal-hint">{t("compare.hint.sideBySide")}</span>
         </footer>
       </div>
     </div>
   );
 }
 
-// ── Card faces for each side of the split ────────────────────────────
+// ── Card faces for each side of the compare ──────────────────────────
 
 interface SplitCardProps {
   variant: "before" | "after";
@@ -161,65 +100,62 @@ function SplitCard({ variant, poi, qualityBefore, t }: SplitCardProps) {
       </div>
 
       <div className="split-card-details">
-        {/* Menu */}
-        <div className="split-detail-row">
-          <span className="split-detail-label">{t("field.menu")}</span>
-          {isBefore ? (
-            <span className="split-detail-missing">⚠️ {t("compare.missing")}</span>
-          ) : (
-            <span className="split-detail-value">
-              {poi.enrichedMenuItems?.slice(0, 3).join(" • ") ?? "—"}
-              {poi.enrichedMenuItems && poi.enrichedMenuItems.length > 3
-                ? ` +${poi.enrichedMenuItems.length - 3}`
-                : ""}
-            </span>
-          )}
-          {!isBefore && poi.provenance?.menu && (
-            <ProvenanceBadge field={poi.provenance.menu} compact delayMs={0} />
-          )}
-        </div>
-
-        {/* Hours */}
-        <div className="split-detail-row">
-          <span className="split-detail-label">{t("field.hours")}</span>
-          {isBefore ? (
-            <span className="split-detail-missing">⚠️ {t("compare.missing")}</span>
-          ) : (
-            <span className="split-detail-value">{poi.enrichedHours ?? "—"}</span>
-          )}
-          {!isBefore && poi.provenance?.hours && (
-            <ProvenanceBadge field={poi.provenance.hours} compact delayMs={0} />
-          )}
-        </div>
-
-        {/* Price range */}
-        <div className="split-detail-row">
-          <span className="split-detail-label">{t("field.priceRange")}</span>
-          {isBefore ? (
-            <span className="split-detail-missing">⚠️ {t("compare.missing")}</span>
-          ) : (
-            <span className="split-detail-value">{poi.enrichedPriceRange ?? "—"}</span>
-          )}
-          {!isBefore && poi.provenance?.priceRange && (
-            <ProvenanceBadge field={poi.provenance.priceRange} compact delayMs={0} />
-          )}
-        </div>
-
-        {/* Diet tags */}
-        <div className="split-detail-row">
-          <span className="split-detail-label">{t("field.dietTags")}</span>
-          {isBefore ? (
-            <span className="split-detail-missing">⚠️ {t("compare.missing")}</span>
-          ) : (
-            <span className="split-detail-value">
-              {poi.enrichedDietTags?.join(", ") ?? "—"}
-            </span>
-          )}
-          {!isBefore && poi.provenance?.dietTags && (
-            <ProvenanceBadge field={poi.provenance.dietTags} compact delayMs={0} />
-          )}
-        </div>
+        <DetailRow
+          label={t("field.menu")}
+          isBefore={isBefore}
+          value={
+            poi.enrichedMenuItems
+              ? poi.enrichedMenuItems.slice(0, 3).join(" • ") +
+                (poi.enrichedMenuItems.length > 3 ? ` +${poi.enrichedMenuItems.length - 3}` : "")
+              : "—"
+          }
+          field={poi.provenance?.menu}
+          t={t}
+        />
+        <DetailRow
+          label={t("field.hours")}
+          isBefore={isBefore}
+          value={poi.enrichedHours ?? "—"}
+          field={poi.provenance?.hours}
+          t={t}
+        />
+        <DetailRow
+          label={t("field.priceRange")}
+          isBefore={isBefore}
+          value={poi.enrichedPriceRange ?? "—"}
+          field={poi.provenance?.priceRange}
+          t={t}
+        />
+        <DetailRow
+          label={t("field.dietTags")}
+          isBefore={isBefore}
+          value={poi.enrichedDietTags?.join(", ") ?? "—"}
+          field={poi.provenance?.dietTags}
+          t={t}
+        />
       </div>
+    </div>
+  );
+}
+
+interface DetailRowProps {
+  label: string;
+  isBefore: boolean;
+  value: string;
+  field: import("../types").ProvenanceField | undefined;
+  t: (key: string) => string;
+}
+
+function DetailRow({ label, isBefore, value, field, t }: DetailRowProps) {
+  return (
+    <div className="split-detail-row">
+      <span className="split-detail-label">{label}</span>
+      {isBefore ? (
+        <span className="split-detail-missing">⚠️ {t("compare.missing")}</span>
+      ) : (
+        <span className="split-detail-value">{value}</span>
+      )}
+      {!isBefore && field && <ProvenanceBadge field={field} compact delayMs={0} />}
     </div>
   );
 }

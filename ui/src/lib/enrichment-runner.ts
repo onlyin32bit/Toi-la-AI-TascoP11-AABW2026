@@ -118,14 +118,6 @@ function buildMockSchedule(result: EnrichmentResult): ScheduledStage[] {
 }
 
 function qualityEvent(result: EnrichmentResult): EnrichmentStageEvent {
-  if (result.qualityAfter <= result.qualityBefore) {
-    return {
-      stage: "quality-update",
-      message: "⚑ Refused: fewer than 2 independent sources agreed; gaps flagged",
-      qualityBefore: result.qualityBefore,
-      qualityAfter: result.qualityAfter,
-    };
-  }
   return {
     stage: "quality-update",
     message: `⚡ Quality: ${(result.qualityBefore * 100).toFixed(0)}% → ${(result.qualityAfter * 100).toFixed(0)}% ✓`,

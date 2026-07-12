@@ -42,6 +42,7 @@ import { DEMO_POI_ID, MOCK_ENRICHMENT_RESULT } from "./data/mock-enrichment";
 import { loadEnriched, saveEnriched } from "./lib/enrichment-runner";
 import type { EnrichApiRequest } from "./lib/enrich-api-client";
 import { enqueueUgc, listUgc, removeUgc, type UgcEntry } from "./lib/ugc-queue";
+import { useThuDucPois } from "./lib/thuduc-pois";
 import "./App.css";
 
 type ThemeMode = "dark" | "light";
@@ -156,6 +157,10 @@ function App() {
   const [dishPhotoOpen, setDishPhotoOpen] = useState(false);
   const [cmpSelection, setCmpSelection] = useState<Set<string>>(new Set());
   const [cmpViewOpen, setCmpViewOpen] = useState(false);
+  // Thu Duc background layer — 809 pre-scraped POIs, opt-in toggle so 800
+  // markers don't compete with the ranked top-N by default.
+  const [thuducLayerOn, setThuducLayerOn] = useState(false);
+  const thuducPois = useThuDucPois(thuducLayerOn);
 
   const dockRef = useRef<HTMLElement | null>(null);
   const dragStart = useRef<{ y: number; pointerId: number; moved: boolean } | null>(null);
@@ -466,6 +471,7 @@ function App() {
         focusMode={mapFocus}
         onSelect={handleSelect}
         ugcPins={ugcPins}
+        thuducPois={thuducPois}
       />
 
       <div className="tech-grid-bg" aria-hidden />
@@ -729,6 +735,17 @@ function App() {
           title={t("dish.photo.title")}
         >
           🍜
+        </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant={thuducLayerOn ? "default" : "ghost"}
+          className="size-10 rounded-xl"
+          onClick={() => setThuducLayerOn((v) => !v)}
+          title={thuducLayerOn ? t("thuduc.hide") : t("thuduc.show")}
+          aria-pressed={thuducLayerOn}
+        >
+          🗺️
         </Button>
       </div>
 

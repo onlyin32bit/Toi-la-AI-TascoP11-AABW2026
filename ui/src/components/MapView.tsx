@@ -4,6 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { PlaceResult, UserLocation } from "../types";
 import type { UgcEntry } from "../lib/ugc-queue";
+import type { ThuDucPoi } from "../lib/thuduc-pois";
 import { useI18n } from "../i18n/LanguageContext";
 
 const userIcon = L.divIcon({
@@ -18,6 +19,15 @@ const ugcIcon = L.divIcon({
   html: '<div class="ugc-pin-inner"></div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
+});
+
+// Small dot for the 809-strong Thu Duc background layer. Deliberately quieter
+// than the ranked results so 800 markers don't drown the top-N selection.
+const thuducIcon = L.divIcon({
+  className: "thuduc-pin-marker",
+  html: '<div class="thuduc-pin-dot"></div>',
+  iconSize: [10, 10],
+  iconAnchor: [5, 5],
 });
 
 // Color by list rank rather than absolute score: real scores cluster in a
@@ -109,6 +119,7 @@ interface MapViewProps {
   focusMode: "results" | "user";
   onSelect: (id: string) => void;
   ugcPins?: UgcEntry[];
+  thuducPois?: ThuDucPoi[];
 }
 
 // Flies to the newest UGC pin so the user sees their contribution land on the
@@ -132,7 +143,7 @@ function FlyToLatestUgc({ ugcPins }: { ugcPins: UgcEntry[] }) {
   return null;
 }
 
-export function MapView({ results, userLoc, selectedId, satellite, focusMode, onSelect, ugcPins }: MapViewProps) {
+export function MapView({ results, userLoc, selectedId, satellite, focusMode, onSelect, ugcPins, thuducPois }: MapViewProps) {
   const { t } = useI18n();
   const center: [number, number] = userLoc
     ? [userLoc.lat, userLoc.lon]
@@ -185,6 +196,27 @@ export function MapView({ results, userLoc, selectedId, satellite, focusMode, on
               <>
                 <br />
                 {p.dish}
+              </>
+            )}
+          </Popup>
+        </Marker>
+      ))}
+      {thuducPois?.map((p) => (
+        <Marker key={p.id} position={[p.lat, p.lon]} icon={thuducIcon}>
+          <Popup>
+            <strong>{p.name}</strong>
+            <br />
+            <span style={{ fontSize: 11, color: "#94a3b8" }}>{p.address}</span>
+            {p.cuisine && (
+              <>
+                <br />
+                <span style={{ fontSize: 11, color: "#94a3b8" }}>{p.cuisine}</span>
+              </>
+            )}
+            {p.rating !== null && (
+              <>
+                <br />
+                <span style={{ fontSize: 11, color: "#94a3b8" }}>★ {p.rating}{p.reviewCount ? ` (${p.reviewCount})` : ""}</span>
               </>
             )}
           </Popup>

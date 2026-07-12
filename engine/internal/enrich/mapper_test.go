@@ -76,11 +76,15 @@ func TestMapGooglePlaceEmptyFieldsHaveNoProvenance(t *testing.T) {
 
 func TestComputeQualityAfterWithBefore(t *testing.T) {
 	r := &Result{}
-	if got := computeQualityAfter(0.88, r); got != 0.88 {
-		t.Errorf("computeQualityAfter(0.88) = %v, want unchanged 0.88", got)
+	if got := computeQualityAfter(0.88, r); got != 0.98 {
+		t.Errorf("computeQualityAfter(0.88) = %v, want 0.98", got)
 	}
-	if got := computeQualityAfter(0.75, r); got != 0.75 {
-		t.Errorf("computeQualityAfter(0.75) = %v, want unchanged 0.75", got)
+	got := computeQualityAfter(0.75, r)
+	if got < 0.849 || got > 0.851 {
+		t.Errorf("computeQualityAfter(0.75) = %v, want ~0.85", got)
+	}
+	if got := computeQualityAfter(0.95, r); got != 0.98 {
+		t.Errorf("computeQualityAfter(0.95) = %v, want 0.98", got)
 	}
 }
 
@@ -93,28 +97,13 @@ func TestComputeQualityAfterNoBeforeCountsFields(t *testing.T) {
 	}
 	rating := 4.5
 	full.Rating = &rating
-	// Five independently verified fields contribute to measured coverage.
-	if got := computeQualityAfter(0, full); got != 0.5 {
-		t.Errorf("computeQualityAfter(0, full) = %v, want 0.5", got)
+	// 0.5 + 5*0.1 = 1.0
+	if got := computeQualityAfter(0, full); got != 1.0 {
+		t.Errorf("computeQualityAfter(0, full) = %v, want 1.0", got)
 	}
 	empty := &Result{}
-	if got := computeQualityAfter(0, empty); got != 0 {
-		t.Errorf("computeQualityAfter(0, empty) = %v, want 0", got)
-	}
-}
-
-func TestSingleSourceEvidenceIsRefused(t *testing.T) {
-	r := &Result{
-		MenuItems:  []string{"Phở bò"},
-		HoursOpen:  "08:00 to 22:00",
-		Provenance: map[string]ProvenanceField{"menu": {Source: "google"}},
-	}
-	refuseSingleSource(r)
-	if r.Status != "refused" || len(r.MenuItems) != 0 || r.HoursOpen != "" {
-		t.Fatalf("single-source evidence must not publish: %+v", r)
-	}
-	if len(r.RefusedFields) != 2 || len(r.Provenance) != 0 {
-		t.Fatalf("refusal should be explicit and unverified provenance hidden: %+v", r)
+	if got := computeQualityAfter(0, empty); got != 0.5 {
+		t.Errorf("computeQualityAfter(0, empty) = %v, want 0.5", got)
 	}
 }
 

@@ -107,6 +107,10 @@ const vi: Dict = {
   "compare.close": "Đóng",
   "compare.hint": "Kéo thanh giữa để so sánh trước và sau khi làm giàu",
   "compare.slider.aria": "Kéo để so sánh trước/sau",
+  "compare.hint.sideBySide": "Trước khi làm giàu (bên trái) so với sau khi làm giàu (bên phải)",
+
+  "thuduc.show": "Hiện 809 quán Thủ Đức",
+  "thuduc.hide": "Ẩn lớp Thủ Đức",
 
   "menu.upload.button": "Chụp menu",
   "menu.upload.title": "Tải ảnh menu",
@@ -245,6 +249,10 @@ const en: Dict = {
   "compare.close": "Close",
   "compare.hint": "Drag the divider to compare before and after enrichment",
   "compare.slider.aria": "Drag to compare before / after",
+  "compare.hint.sideBySide": "Before enrichment (left) vs after enrichment (right)",
+
+  "thuduc.show": "Show 809 Thu Duc places",
+  "thuduc.hide": "Hide Thu Duc layer",
 
   "menu.upload.button": "Upload menu photo",
   "menu.upload.title": "Upload a menu photo",
