@@ -66,12 +66,27 @@ function upperThirdCenter(map: L.Map, latlng: L.LatLngExpression, zoom: number):
   return map.unproject(worldPoint.add([0, offsetY]), zoom);
 }
 
-function FitToResults({ results, userLoc, enabled }: { results: PlaceResult[]; userLoc: UserLocation | null; enabled: boolean }) {
+function FitToResults({
+  results,
+  userLoc,
+  enabled,
+  thuducPois,
+}: {
+  results: PlaceResult[];
+  userLoc: UserLocation | null;
+  enabled: boolean;
+  thuducPois: ThuDucPoi[];
+}) {
   const map = useMap();
   useEffect(() => {
     if (!enabled) return;
-    const points: [number, number][] = results.map((r) => [r.coordinates.lat, r.coordinates.lon]);
-    if (userLoc) points.push([userLoc.lat, userLoc.lon]);
+    // When the Thu Duc coverage layer is enabled, fit to that corpus rather
+    // than the unrelated benchmark top-N. This runs again after the async
+    // static JSON load completes, bringing all 809 dots into view.
+    const points: [number, number][] = thuducPois.length > 0
+      ? thuducPois.map((p) => [p.lat, p.lon])
+      : results.map((r) => [r.coordinates.lat, r.coordinates.lon]);
+    if (userLoc && thuducPois.length === 0) points.push([userLoc.lat, userLoc.lon]);
     if (points.length === 0) return;
     if (points.length === 1) {
       const zoom = 15;
@@ -84,7 +99,7 @@ function FitToResults({ results, userLoc, enabled }: { results: PlaceResult[]; u
         paddingBottomRight: [40, isMobile ? Math.round(map.getSize().y * 0.5) : 40],
       });
     }
-  }, [enabled, results, userLoc, map]);
+  }, [enabled, results, userLoc, thuducPois, map]);
   return null;
 }
 
@@ -222,7 +237,12 @@ export function MapView({ results, userLoc, selectedId, satellite, focusMode, on
           </Popup>
         </Marker>
       ))}
-      <FitToResults results={results} userLoc={userLoc} enabled={focusMode === "results"} />
+      <FitToResults
+        results={results}
+        userLoc={userLoc}
+        enabled={focusMode === "results"}
+        thuducPois={thuducPois ?? []}
+      />
       <FlyToUserLocation userLoc={userLoc} enabled={focusMode === "user"} />
       <FlyToSelected results={results} selectedId={selectedId} />
       {ugcPins && ugcPins.length > 0 && <FlyToLatestUgc ugcPins={ugcPins} />}

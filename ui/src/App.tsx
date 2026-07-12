@@ -157,9 +157,9 @@ function App() {
   const [dishPhotoOpen, setDishPhotoOpen] = useState(false);
   const [cmpSelection, setCmpSelection] = useState<Set<string>>(new Set());
   const [cmpViewOpen, setCmpViewOpen] = useState(false);
-  // Thu Duc background layer — 809 pre-scraped POIs, opt-in toggle so 800
-  // markers don't compete with the ranked top-N by default.
-  const [thuducLayerOn, setThuducLayerOn] = useState(false);
+  // Thu Duc map mode defaults on: all 809 geolocated cached POIs should be
+  // visible immediately. The user can still hide the background layer.
+  const [thuducLayerOn, setThuducLayerOn] = useState(true);
   const thuducPois = useThuDucPois(thuducLayerOn);
 
   const dockRef = useRef<HTMLElement | null>(null);
