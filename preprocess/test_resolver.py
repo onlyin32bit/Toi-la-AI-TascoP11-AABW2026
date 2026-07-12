@@ -79,12 +79,23 @@ class TestResolveField(unittest.TestCase):
         cands = [
             {"value": "budget", "source": "tasco_csv", "tier": 3, "confidence": 0.8, "fetched_at": "2026-01-01T00:00:00+00:00"},
         ] + [
-            {"value": "premium", "source": "user_contributed", "tier": 1, "confidence": 0.55, "fetched_at": f"2026-02-0{i}T00:00:00+00:00"}
-            for i in range(1, 4)  # 3 independent agreeing sources = CONSENSUS_MIN
+            {"value": "premium", "source": f"user_contributed:{i}", "tier": 1, "confidence": 0.55, "fetched_at": f"2026-02-0{i}T00:00:00+00:00"}
+            for i in range(1, 3)  # 2 independent agreeing sources = CONSENSUS_MIN
         ]
         winner = resolver.resolve_field(cands)
         self.assertEqual(winner["value"], "premium")
-        self.assertEqual(winner["candidates"], 4)
+        self.assertEqual(winner["candidates"], 3)
+
+    def test_repeated_same_source_is_not_independent_consensus(self):
+        cands = [
+            {"value": "budget", "source": "tasco_csv", "tier": 3, "confidence": 0.8,
+             "fetched_at": "2026-01-01T00:00:00+00:00"},
+            {"value": "premium", "source": "user_contributed", "tier": 1, "confidence": 0.55,
+             "fetched_at": "2026-02-01T00:00:00+00:00"},
+            {"value": "premium", "source": "user_contributed", "tier": 1, "confidence": 0.55,
+             "fetched_at": "2026-02-02T00:00:00+00:00"},
+        ]
+        self.assertEqual(resolver.resolve_field(cands)["value"], "budget")
 
     def test_tie_breaks_on_most_recent(self):
         cands = [

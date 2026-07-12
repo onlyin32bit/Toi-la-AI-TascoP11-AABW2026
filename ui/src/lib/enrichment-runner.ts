@@ -1,14 +1,12 @@
 // Runners that drive the EnrichmentTerminal's line stream.
 //
 // Two implementations:
-//   1. `runMockEnrichment` — schedule-driven, purely client-side. Fixed
-//      random verb-ing lines + a synthesized quality-update from the mock
-//      fixture. Used when the backend is unavailable or the demo runs
-//      offline.
+//   1. `runMockEnrichment` — offline refusal path. It never synthesizes facts
+//      or a quality increase when source evidence is unavailable.
 //   2. `runLiveEnrichment` — kicks off POST /v1/enrich in the background,
 //      streams random verb-ing "thinking" lines at 1.3s intervals while
 //      waiting, then swaps in the real quality-update + done events when
-//      the backend responds. Falls back to the mock quality bump on error.
+//      the backend responds. Falls back to an explicit refusal on error.
 //
 // Both share the same StageListener contract so the terminal is agnostic
 // to the source. Both return a cancel fn that MUST be called on unmount.
@@ -120,6 +118,14 @@ function buildMockSchedule(result: EnrichmentResult): ScheduledStage[] {
 }
 
 function qualityEvent(result: EnrichmentResult): EnrichmentStageEvent {
+  if (result.qualityAfter <= result.qualityBefore) {
+    return {
+      stage: "quality-update",
+      message: "⚑ Refused: fewer than 2 independent sources agreed; gaps flagged",
+      qualityBefore: result.qualityBefore,
+      qualityAfter: result.qualityAfter,
+    };
+  }
   return {
     stage: "quality-update",
     message: `⚡ Quality: ${(result.qualityBefore * 100).toFixed(0)}% → ${(result.qualityAfter * 100).toFixed(0)}% ✓`,
@@ -228,7 +234,7 @@ export function runLiveEnrichment(
       if (controller.signal.aborted) return;
       const errorLine: EnrichmentStageEvent = {
         stage: "quality-update",
-        message: `⚠️  Enrich upstream lỗi: ${(err as Error).message} — dùng mock fallback`,
+        message: `⚠️  Enrich upstream lỗi: ${(err as Error).message} — refuse + flag`,
       };
       finalize(fallback, errorLine);
     });

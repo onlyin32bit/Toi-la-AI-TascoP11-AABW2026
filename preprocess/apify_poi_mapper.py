@@ -96,6 +96,34 @@ def _map_review(raw_review: dict) -> dict:
     }
 
 
+def _menu_items(place: dict) -> list[dict]:
+    """Use only explicit actor menu fields; category names are not dishes."""
+    raw_items = place.get("menuItems") or place.get("menu") or place.get("dishes") or []
+    out = []
+    for item in raw_items:
+        if isinstance(item, str):
+            name, price, tags = item.strip(), None, []
+        elif isinstance(item, dict):
+            name = str(item.get("name") or item.get("title") or "").strip()
+            price = item.get("price_vnd") or item.get("price")
+            tags = item.get("tags") or item.get("dietaryTags") or []
+        else:
+            continue
+        if name:
+            out.append({"name": name, "price_vnd": price, "tags": tags})
+    return out
+
+
+def _diet_tags(place: dict) -> list[str]:
+    text = " ".join([str(place.get("categoryName") or ""), *(place.get("categories") or [])]).lower()
+    tags = []
+    if "chay" in text or "vegetarian" in text or "vegan" in text:
+        tags.append("vegetarian")
+    if "halal" in text or "hồi giáo" in text:
+        tags.append("halal")
+    return tags
+
+
 def map_place_to_poi(place: dict, fetched_at: str) -> dict:
     name = (place.get("title") or "").strip()
     address = (place.get("address") or "").strip()
@@ -123,8 +151,8 @@ def map_place_to_poi(place: dict, fetched_at: str) -> dict:
         "segments": [],
         "amenities": _f(_amenities_from_additional_info(additional_info), fetched_at),
         "car_parking": _f(_car_parking(additional_info), fetched_at),
-        "diet": [],
-        "dishes": [],
+        "diet": _diet_tags(place),
+        "dishes": _menu_items(place),
         "strengths": [],
         "weaknesses": [],
         "quality": None,

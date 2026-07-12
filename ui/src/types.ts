@@ -116,7 +116,7 @@ export interface PlaceResult {
 }
 
 // ── Enrichment agent types ────────────────────────────────────────────
-// Front-end-only for the demo: mock agent produces these events + result.
+// Agent trace/result types shared by the live path and honest offline refusal.
 
 export type EnrichmentSource =
   | "google"

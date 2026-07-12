@@ -127,7 +127,7 @@ Tiền nằm ở dịch vụ xung quanh ranking.
 |---|---|
 | Scraping ToS (Google/FB) khi lên production | Hackathon: Apify credit là chấp nhận được để chứng minh cơ chế. Production: chuyển tier 3 sang **Google Places API (New) trả phí** + OSM + dữ liệu tự sinh (tier 1/2 ngày càng gánh nhiều) — cascade thiết kế sẵn cho việc swap nguồn |
 | Cold start tier 1/2 (chưa có merchant/driver thật) | Wedge B tự giải: mỗi kỳ lễ là một đợt data; bot xác minh kiểu **Baidu DuIVRS** (gọi điện/Zalo tự động hỏi giờ mở + chỗ đỗ) bootstrap tier 1 không cần quán cài app |
-| Tin sai từ social | Kiến trúc đã chặn: 4b không bao giờ sửa fact, chỉ reinforce; consensus ≥3; provenance công khai |
+| Tin sai từ social | Kiến trúc đã chặn: 4b không bao giờ sửa fact, chỉ reinforce; consensus ≥2 nguồn độc lập; provenance công khai |
 | "Google Maps làm được không?" | Tín hiệu sau trạm thu phí + detour thật + phương ngữ Việt: Google có thể xấp xỉ geofence nhưng **không có giao dịch VETC, không structure amenity ô tô ở VN, không ưu tiên thị trường này** — và Amap đã chứng minh map-behavior ranking đánh được incumbent review |
 
 ---

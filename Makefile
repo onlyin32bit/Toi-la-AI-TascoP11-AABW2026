@@ -8,7 +8,7 @@ PREP_DIR   := preprocess
 
 .DEFAULT_GOAL := help
 
-.PHONY: help kb thuduc build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich docker-up docker-down seed-contrib seed-db demo thuduc-compile thuduc-embed
+.PHONY: help kb thuduc thuduc-agent build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich docker-up docker-down seed-contrib seed-db demo thuduc-compile thuduc-embed
 
 help: ## Liệt kê các target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -29,8 +29,11 @@ thuduc: ## Scrape Foody Thủ Đức qua TinyFish -> engine/build/thuduc_enrichm
 thuduc-apify: ## Scrape Google Places (Apify) Thủ Đức, merge vào cùng thuduc_enrichment.json (cần APIFY_TOKEN)
 	cd $(PREP_DIR) && scrape_env/bin/python scrape_thuduc_apify.py $(ARGS)
 
-thuduc-compile: ## Structured facts -> thuduc_resolved.json (provenance) + thuduc_kb.json (buzz_score, flat)
-	cd $(PREP_DIR) && $(PYTHON) compile_thuduc_kb.py && $(PYTHON) resolve_thuduc.py
+thuduc-agent: ## Per-POI plan -> source tools -> >=2-source verify/refuse report (cached by default; ARGS=--live for APIs)
+	cd $(PREP_DIR) && $(PYTHON) agent_loop.py $(ARGS)
+
+thuduc-compile: thuduc-agent ## Verified facts -> thuduc_resolved.json + serving KB
+	cd $(PREP_DIR) && $(PYTHON) resolve_thuduc.py && $(PYTHON) compile_thuduc_kb.py
 
 thuduc-embed: ## Descriptive text ONLY (searchableText) -> Qdrant, collection riêng tascop11_thuduc
 	cd $(ENGINE_DIR) && $(GO) run ./cmd/embed -kb-file ../data/thuduc/thuduc_kb.json -collection tascop11_thuduc

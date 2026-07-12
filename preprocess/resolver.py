@@ -10,7 +10,7 @@ is supplementary provenance/dedup output.
 - Resolver (§6): for a handful of contested fields (name/address/
   opening_hours/price_level), collects every known candidate value with its
   source/tier/confidence/fetched_at, and picks a winner by tier-priority with
-  a consensus override (>=3 independent lower-tier sources agreeing beats a
+  a consensus override (>=2 independent lower-tier sources agreeing beats a
   stale higher tier). With today's dataset (0-few UGC contributions) this
   almost always resolves to the single tasco_csv candidate — that's the
   correct, honest behavior, not a bug: nothing to reconcile yet.
@@ -53,7 +53,8 @@ CONFIDENCE = {
     "apify:google_places": 0.80,
     "tinyfish:foody": 0.60,
 }
-CONSENSUS_MIN = 3
+# FINAL_PITCH.pdf promises >=2 independent agreeing sources before publication.
+CONSENSUS_MIN = 2
 
 GEO_MATCH_METERS = 50
 NAME_MATCH_MIN_OVERLAP = 0.6
@@ -156,8 +157,9 @@ def resolve_field(cands: list[dict]) -> dict | None:
         for c in by_tier[tier]:
             by_value.setdefault(norm(str(c["value"])), []).append(c)
         for group in by_value.values():
-            if len(group) >= CONSENSUS_MIN:
-                winner_pool, top_tier = group, tier
+            independent = {candidate["source"]: candidate for candidate in group}
+            if len(independent) >= CONSENSUS_MIN:
+                winner_pool, top_tier = list(independent.values()), tier
                 break
 
     winner = max(winner_pool, key=lambda c: c["fetched_at"])

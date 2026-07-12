@@ -34,6 +34,19 @@ RESTAURANT_LIST_SCHEMA = {
                     "amenities": {"type": "array", "items": {"type": "string"}},
                     "car_parking": {"type": "boolean", "nullable": True},
                     "description": {"type": "string"},
+                    "menu_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "price_vnd": {"type": "number", "nullable": True},
+                                "dietary_tags": {"type": "array", "items": {"type": "string"}},
+                            },
+                            "required": ["name"],
+                        },
+                    },
+                    "dietary_tags": {"type": "array", "items": {"type": "string"}},
                 },
                 "required": ["name", "address"],
             },
@@ -48,7 +61,8 @@ def build_extraction_goal() -> str:
         "Tìm và trích xuất danh sách nhà hàng/quán ăn CÓ THẬT nằm ở Quận/Thành phố "
         "Thủ Đức, TP. Hồ Chí Minh, Việt Nam trên trang này. Với mỗi quán, lấy: tên, "
         "địa chỉ đầy đủ, loại hình (nhà hàng/quán ăn/quán cà phê...), loại ẩm thực, "
-        "khoảng giá, điểm đánh giá (0-5), số lượt đánh giá, giờ mở cửa, tiện ích "
+        "khoảng giá, điểm đánh giá (0-5), số lượt đánh giá, giờ mở cửa, tiện ích, "
+        "menu_items (tên món, giá, dietary_tags) và dietary_tags cấp quán "
         "(wifi, máy lạnh, phòng riêng...), mô tả ngắn. "
         "QUAN TRỌNG — car_parking: xác định riêng xem quán có BÃI ĐỖ Ô TÔ hay không "
         "(khác với chỗ để xe máy) — true nếu có ghi rõ bãi đỗ ô tô/sân đỗ xe hơi/parking "
@@ -122,8 +136,15 @@ def map_to_poi(raw: dict, source_url: str, fetched_at: str) -> dict:
         "segments": [],
         "amenities": _field(amenities, fetched_at),
         "car_parking": _field(raw.get("car_parking"), fetched_at),
-        "diet": [],
-        "dishes": [],
+        "diet": sorted({norm(tag) for tag in (raw.get("dietary_tags") or []) if tag}),
+        "dishes": [
+            {
+                "name": item.get("name", "").strip(),
+                "price_vnd": item.get("price_vnd"),
+                "tags": sorted({norm(tag) for tag in (item.get("dietary_tags") or []) if tag}),
+            }
+            for item in (raw.get("menu_items") or []) if item.get("name")
+        ],
         "strengths": [],
         "weaknesses": [],
         "quality": None,

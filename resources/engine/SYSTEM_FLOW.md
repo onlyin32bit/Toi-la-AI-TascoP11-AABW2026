@@ -30,7 +30,7 @@ flowchart TD
         ER["S1 Entity Resolution\ngeo <50m + name embedding + LLM tie-break\n→ canonical_id"]
         EX["S2 Extraction\nOCR (Gemini vision) · review→aspect (Groq)\nweb→structured (Gemini)"]
         NORM["S3 Normalization\ntaxonomy đóng + chuẩn hoá phương ngữ\n(ngon vãi/peak → aspect chuẩn)"]
-        RES["RESOLVER (lõi cascade)\nmỗi field: lọc TTL → tier cao nhất thắng\n→ đồng thuận N>=3 cho tier 2/4a\n→ không có nguồn = KHÔNG BỊA"]
+        RES["RESOLVER (lõi cascade)\nmỗi field: lọc TTL → tier cao nhất thắng\n→ đồng thuận N>=2 nguồn độc lập\n→ không có nguồn = KHÔNG BỊA"]
         QS["S4 Quality Score\ncompleteness × source_agreement × freshness"]
         IDX["S5 Index\nBM25 + Jina v3 vector + geo R-tree\n+ route-corridor index (Valhalla)"]
     end
@@ -254,7 +254,7 @@ map/hạ tầng sinh ra — đối thủ muốn copy công thức cũng không c
 candidates(field) = [{value, source, tier, confidence, fetched_at}, ...]
 1. Loại candidate quá TTL (theo bảng T3).
 2. Chọn tier cao nhất còn sống. Hoà tier → chọn fetched_at mới nhất.
-3. Luật đồng thuận: tier 2 (driver) và 4a (agentic) chỉ ĐÈ tier dưới khi ≥3 nguồn/lượt
+3. Luật đồng thuận: fact chỉ được publish khi ≥2 nguồn độc lập
    độc lập đồng ý. 1 nguồn agentic đơn lẻ không thắng nổi API còn tươi.
 4. 0 candidate sống → field VẮNG. Không suy đoán, không điền mặc định.
    (bẫy Crystal BBQ: enrichment không tìm thấy gì → not_found, demo được live)

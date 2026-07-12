@@ -35,6 +35,11 @@ the knowledge base returns `not_found`, never a fabrication.
   5 CSVs, normalize Vietnamese taxonomy (segments/diet/price/opening hours), tokenize
   names/dishes, compute a quality-completeness score, and emit `engine/build/kb.json`
   (an array of POI objects). This is **not** modified by the engine.
+- **Agentic enrichment (Python):** `preprocess/agent_loop.py` inspects each
+  Thu Đức POI, plans source calls by unresolved field, invokes cached or live
+  Google Places/Foody tools, retries another independent source, and publishes
+  only facts with two-source agreement. Refused fields remain absent and are
+  written to a review report with the attempted sources.
 - **Online (Go):** loads `kb.json` once at start, indexes it, and serves requests with
   no ML runtime and no database.
 
@@ -192,31 +197,21 @@ curl -s -X POST http://localhost:8000/v1/enrich \
   -d '{"poi_id":"poi:res001","name":"Phở Bếp Nhà","address":"2 Trần Phú, Hoàn Kiếm, Hà Nội","city":"Hà Nội","quality_before":0.61}'
 ```
 
-Calls the Apify Google Places actor to retrieve real-time data for the specified venue, resolves field consensus, and returns a UI-friendly `EnrichmentResult`.
+Calls the Apify Google Places actor to collect real-time evidence. Because the
+online route currently has only one independent source, it returns
+`status:"refused"`, lists `refused_fields`, and leaves quality unchanged.
+Run the full multi-source loop with `make thuduc-agent` (cached evidence) or
+`make thuduc-agent ARGS=--live` (real Apify + TinyFish calls).
 
 Response:
 ```json
 {
   "poi_id": "poi:res001",
   "quality_before": 0.61,
-  "quality_after": 0.71,
-  "provenance": {
-    "hours": {
-      "source": "google",
-      "confidence": 0.87,
-      "fetched_at": "2026-07-12T05:19:37Z"
-    },
-    "menu": {
-      "source": "google",
-      "confidence": 0.87,
-      "fetched_at": "2026-07-12T05:19:37Z"
-    }
-  },
-  "menu_items": ["Phở bò tái", "Bún chả", "Gỏi cuốn"],
-  "hours_open": "09:00 - 23:00",
-  "price_range": "80k – 100k VND",
-  "diet_tags": ["vegetarian"],
-  "rating": 4.5,
+  "quality_after": 0.61,
+  "provenance": {},
+  "status": "refused",
+  "refused_fields": ["menu", "hours", "priceRange"],
   "source_url": "https://maps.google.com/..."
 }
 ```

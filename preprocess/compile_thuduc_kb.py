@@ -1,8 +1,9 @@
-"""Flatten data/thuduc/thuduc_enrichment.json (provenance-wrapped) into a flat JSON
-ARRAY matching preprocess/build_kb.py::build_poi()'s field shape — usable as a knowledge
-base the same way engine/build/kb.json is (see PLAN.md §5.1), while keeping a couple of
-forward-compatible extra fields (car_parking, source_url) that the current Go POI struct
-simply ignores until it's extended (see phase-01 plan "Next Steps").
+"""Compile independently verified Thu Duc facts into the serving knowledge base.
+
+Raw scrape winners are never flattened directly. agent_loop.py first gathers
+candidates and requires two independent agreeing sources; resolve_thuduc.py
+publishes those decisions. POIs without a verified identity and address remain in
+the refusal report and are excluded from this KB.
 
 Split by kind (not "put it all in Qdrant" — see resolve_thuduc.py's docstring for the
 structured-fact half of this split):
@@ -19,8 +20,9 @@ structured-fact half of this split):
 
 Usage:
     python merge_thuduc.py       # fold parallel shards first, if any
-    python compile_thuduc_kb.py
-    python resolve_thuduc.py     # structured facts -> thuduc_resolved.json (provenance)
+    python agent_loop.py          # per-POI plan/tools/retry/verify/refuse
+    python resolve_thuduc.py      # verified decisions + refusal report
+    python compile_thuduc_kb.py   # publish verified POIs only
 
 Reminder (staleness, no automatic trigger exists for this yet): if a rerun of this script
 changes any POI's name/cuisine_type/city/district/dishes/strengths (the fields
@@ -32,7 +34,10 @@ import json
 import math
 from datetime import datetime, timezone
 
+from agent_loop import FACT_FIELDS
 from poi_provenance import ENRICHMENT_PATH, KB_PATH, SIGNALS_PATH
+
+RESOLVED_PATH = ENRICHMENT_PATH.parent / "thuduc_resolved.json"
 
 PROVENANCE_KEYS = {"value", "source", "confidence", "fetched_at"}
 
@@ -50,9 +55,20 @@ def _flatten(value):
     return value
 
 
-def compile_poi(poi: dict, buzz_score: float | None) -> dict:
-    flat = {key: _flatten(val) for key, val in poi.items()}
+def compile_poi(poi: dict, verified_fields: dict, refused_fields: dict,
+                buzz_score: float | None) -> dict:
+    """Build a serving record from verified facts, never raw winners."""
+    flat = {key: _flatten(val) for key, val in poi.items() if key not in FACT_FIELDS}
+    for field_name in FACT_FIELDS:
+        decision = verified_fields.get(field_name)
+        flat[field_name] = decision.get("value") if decision else None
     flat["buzz_score"] = buzz_score
+    flat["verified"] = bool(verified_fields)
+    flat["verification"] = {
+        "verified_fields": sorted(verified_fields),
+        "refused_fields": sorted(refused_fields),
+        "consensus_min": 2,
+    }
     return flat
 
 
@@ -95,15 +111,29 @@ def load_buzz_scores() -> dict[str, float]:
 def main() -> None:
     if not ENRICHMENT_PATH.exists():
         raise SystemExit(f"{ENRICHMENT_PATH} not found — run a scrape + merge_thuduc.py first")
+    if not RESOLVED_PATH.exists():
+        raise SystemExit(f"{RESOLVED_PATH} not found — run agent_loop.py and resolve_thuduc.py first")
 
     enrichment = json.loads(ENRICHMENT_PATH.read_text(encoding="utf-8"))
+    resolved = json.loads(RESOLVED_PATH.read_text(encoding="utf-8"))
     buzz = load_buzz_scores()
-    kb = [compile_poi(poi, buzz.get(poi_id)) for poi_id, poi in enrichment.items()]
+    fields = resolved.get("fields", {})
+    refused = resolved.get("refused_fields", {})
+    # A POI without independently verified identity/address is not safe to
+    # publish. It remains in the agent report with an explicit refusal.
+    publishable_ids = [
+        poi_id for poi_id in enrichment
+        if "name" in fields.get(poi_id, {}) and "address" in fields.get(poi_id, {})
+    ]
+    kb = [compile_poi(enrichment[poi_id], fields[poi_id], refused.get(poi_id, {}), buzz.get(poi_id))
+          for poi_id in publishable_ids]
 
     KB_PATH.parent.mkdir(parents=True, exist_ok=True)
     KB_PATH.write_text(json.dumps(kb, ensure_ascii=False, indent=2), encoding="utf-8")
     matched = sum(1 for p in kb if p["buzz_score"] is not None)
-    print(f"compiled {len(kb)} POI(s) -> {KB_PATH} ({matched} with a computed buzz_score)")
+    skipped = len(enrichment) - len(kb)
+    print(f"compiled {len(kb)} verified POI(s) -> {KB_PATH} "
+          f"({matched} with buzz_score, {skipped} refused/unpublishable)")
 
 
 if __name__ == "__main__":
