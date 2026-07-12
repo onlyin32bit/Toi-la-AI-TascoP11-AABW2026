@@ -8,7 +8,7 @@ PREP_DIR   := preprocess
 
 .DEFAULT_GOAL := help
 
-.PHONY: help kb thuduc thuduc-agent build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich docker-up docker-down seed-contrib seed-db demo thuduc-compile thuduc-embed
+.PHONY: help kb thuduc thuduc-agent thuduc-map-kb thuduc-map build run test vet tidy fmt clean check qdrant-up qdrant-down embed enrich docker-up docker-down seed-contrib seed-db demo thuduc-compile thuduc-embed
 
 help: ## Liệt kê các target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -34,6 +34,12 @@ thuduc-agent: ## Per-POI plan -> source tools -> >=2-source verify/refuse report
 
 thuduc-compile: thuduc-agent ## Verified facts -> thuduc_resolved.json + serving KB
 	cd $(PREP_DIR) && $(PYTHON) resolve_thuduc.py && $(PYTHON) compile_thuduc_kb.py
+
+thuduc-map-kb: ## Build demo KB with all geolocated Thu Duc POIs (explicitly unverified)
+	cd $(PREP_DIR) && $(PYTHON) compile_thuduc_map_kb.py
+
+thuduc-map: thuduc-map-kb ## Run API with all Thu Duc POIs so they appear on the map
+	cd $(ENGINE_DIR) && KB_DIR=build/thuduc MAP_ALL_POIS=1 $(GO) run ./cmd/server
 
 thuduc-embed: ## Descriptive text ONLY (searchableText) -> Qdrant, collection riêng tascop11_thuduc
 	cd $(ENGINE_DIR) && $(GO) run ./cmd/embed -kb-file ../data/thuduc/thuduc_kb.json -collection tascop11_thuduc

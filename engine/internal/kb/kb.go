@@ -117,8 +117,13 @@ func LoadKB(buildDir string, includeUGC bool) (*KB, error) {
 		return nil, fmt.Errorf("parse kb.json: %w", err)
 	}
 	for _, p := range pois {
-		p.Source = "tasco_csv"
-		p.Verified = true
+		// Preserve explicit provenance for alternate KBs such as the full
+		// unverified Thu Duc map-demo corpus. Legacy benchmark records have no
+		// source tag, so retain the historical tasco_csv/verified defaults.
+		if p.Source == "" {
+			p.Source = "tasco_csv"
+			p.Verified = true
+		}
 	}
 
 	if includeUGC {

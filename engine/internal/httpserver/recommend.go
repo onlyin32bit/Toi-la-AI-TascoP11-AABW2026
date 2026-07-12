@@ -3,6 +3,7 @@ package httpserver
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -32,6 +33,9 @@ func (s *Server) handleRecommend(w http.ResponseWriter, r *http.Request) {
 	u.Price = q.Get("price")
 
 	limit := 12
+	if isTruthy(os.Getenv("MAP_ALL_POIS")) {
+		limit = len(s.kb.POIs)
+	}
 	if l, err := strconv.Atoi(q.Get("limit")); err == nil && l > 0 {
 		limit = l
 	}

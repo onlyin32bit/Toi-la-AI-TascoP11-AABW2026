@@ -89,7 +89,18 @@ Configuration is env-only (see `.env.example`):
 
 ```bash
 make demo           # kb + demo UGC contributions + run — no Postgres/Qdrant needed
+make thuduc-map     # run API with all cached Thu Duc POIs, marked unverified
 ```
+
+`make thuduc-map` writes an isolated demo KB to
+`engine/build/thuduc/kb.json` and starts the API with that directory. Point
+the UI at `http://localhost:8000`; `MAP_ALL_POIS=1` makes an empty search
+return the entire geolocated corpus instead of the normal top 12, so every
+valid pin appears. Records lacking coordinates are listed in
+`engine/build/thuduc/unlocated.json` rather than being fabricated at `0,0`.
+This is
+for map coverage/demo inspection; it does not bypass or overwrite the strict
+two-source publication output.
 
 - `make seed-contrib` writes 2 sample UGC restaurants to `engine/build/contributions.json`:
   one is a near-duplicate of an existing benchmark POI (~15m away, same name) to
