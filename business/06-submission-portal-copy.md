@@ -12,17 +12,17 @@ Tôi là AI
 **Tasco Maps — the Vietnamese-first food intelligence that never lies**
 
 ## Elevator Pitch (1–2 sentences)
-For young Vietnamese who find food by vibe and slang, Tasco Maps is an end-to-end personalization engine that understands how they actually search, ranks for their taste, and refuses to recommend a place it can't verify is real and open.
+For young Vietnamese food-discoverers, Tasco Maps is an end-to-end personalization engine that understands how they search, ranks for their taste, and refuses to recommend a place it can't verify is real and accurately rated.
 
 ---
 
 ## Project Story ("About the project")
 
 ### Inspiration
-Every Vietnamese conversation about food sounds the same: *"bát phở hôm trước ngon nhỉ", "quán nào clean không?"* — by memory, by vibe, in slang. None of it fits a maps search bar. World-class food-intelligence engines already exist; they just aren't built for how we talk about or discover food here. And 30,000 outlets closed in Vietnam in just H1 2024 (iPOS) — so the map you trust is often already wrong. The tech isn't missing. The localization, the personalization, and the honesty are.
+It started when one of out team's member says: *"đá bát phở không?" (Do you want to kick a bowl of phở?) — a Northern slang for eating. We realized many of our POI do not fit a maps search bar and recommendations, given all the local constraints, such as like unreliable and diverse dialect, unclear preferences, or our real-time journey. We then discover world-class food-intelligence engines already exist; they just aren't built for how we talk about or discover food here in Vietnam. And as food lovers, we got to build something about this.
 
 ### What it does
-Type a real Vietnamese query — slang, no diacritics, teencode — and Tasco Maps resolves it to the right places, ranks them **for you** (location, time-of-day, diet, price, parking), and shows a plain-language *why* for every result. Ask about a place it hasn't verified, and it says **"Không tìm thấy trong dữ liệu"** instead of making something up. It also does menu OCR, dish recognition from a photo, POI comparison, and quality scoring — the full Tasco P11 brief.
+Type a Vietnamese query and Tasco Maps resolves it (your un-filled intention) to the right places, ranks them **for you** (location, time-of-day, diet, price, parking), and shows a plain-language *why* for every result. Ask about a place it hasn't verified, and it says **"Không tìm thấy trong dữ liệu"** instead of making something up. It also does menu OCR, dish recognition from a photo, POI comparison, and quality scoring — so that the recommendations ca reliably cover as many users' needs as possible.
 
 ### How we built it
 A **Go online engine** (Go standard library only — one static binary, zero external deps, offline-safe) runs the request path: recall → a **Hard-Constraint Gate** that *rejects* rather than silently relaxes a constraint → a **Soft-Scoring** stage that renormalizes weights for missing signals and personalizes → serve, each field carrying its source. Behind it, a **trust-tiered resolver (S0–S7)**: an agent pulls from multiple sources, and a highest-confidence **consensus rule** decides each field — no source, no write. Localization runs through the whole stack: diacritic-insensitive matching, slang/teencode normalization, a regional-specialty ontology, and Vietnamese meal-time priors. Vision (Gemini/Qwen-VL) handles OCR and dish recognition; a Python pipeline builds the knowledge base offline.
