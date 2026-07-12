@@ -1,111 +1,142 @@
-# 5-Minute Pitch Script — Round 1 (AABW time map)
+# 5-Minute Pitch Script — Round 1 (AABW)
 
-Format: 5:00 pitch + 2:00 Q&A + 1:00 transition. **Rehearse to 4:45.** One narrator owns the whole pitch (playbook best practice); others join only for Q&A.
+**Hero:** an **end-to-end food-personalization system** built for Vietnamese context + user behavioral data, and **reliable by design**. The agent (collect → verify → score → refuse) lives inside the *Reliable* pillar so Agentic-AI (rubric #1) still lands.
 
-Language: draft in English below; deliver in whichever language the judges brief specifies — key Vietnamese lines kept where they hit harder.
+Format: 5:00 pitch + 2:00 Q&A. **Rehearse to 4:45.** One narrator owns the pitch; others join for Q&A.
+Language: draft in English; deliver in the briefed language. Vietnamese lines kept where they hit harder.
 
 ---
 
-## 0:00–0:40 — IDENTITY + HOOK (Slide 1: Team + Promise)
+## 🎯 CUE CARD (use live — detail below is backup)
 
-> **WE ARE** [Tôi là AI]. **WE BUILT** [product name] for the Tasco P11 track.
->
-> **For Tasco Maps, we deliver launch-ready restaurant intelligence by using an AI agent to collect, verify, and score POI data — an agent that never fabricates.**
+**0:00–0:35 — IDENTITY + PROMISE**
+- "We are **[Tôi là AI]**. We built **[product]** for Tasco P11."
+- Value line: **"For young Vietnamese who discover food by vibe and slang, we deliver the first food map that speaks their language, learns their taste, and never sends them to a place that's already closed."**
+- Credibility: [X] engineers × F&B/product × shipped end-to-end in 12h on Tasco's real data & API.
 
-Hook (pick ONE, A recommended):
+**0:35–1:20 — PROBLEM / INSIGHT** *(slides: "how Vietnamese think/look for food" + chat)*
+- This is how Vietnamese actually look for food — **by memory, by vibe, in slang.** "Bát phở ngon nhỉ", "quán nào clean không" — none of that fits a maps search bar.
+- Root cause *(Baidu-diagram slide)*: **World-class food-intelligence engines already exist — they just aren't built for us.** Drop them into Vietnam and they can't read how we talk about food, so they can't personalize for how we eat. **The tech isn't missing — the localization is.**
 
-- **(A) The empty-map hook:** "A map that launches with shallow restaurant data dies quietly — because *food is what people open a local map for*. 64% of diners check search or maps before choosing where to eat. Tasco Maps is in testing. The clock to launch-quality data is running. We built the agent that fills the map."
-- **(B) The rot hook:** "In the first half of 2024, 30,000 Vietnamese restaurants closed. Whatever restaurant database you build today is rotting tomorrow. Coverage isn't a project — it's a process. Processes need agents."
+**1:20–2:15 — SOLUTION** *(Solution slide)*
+- "So we built an **end-to-end personalization system** that does two hard things at once: it **reproduces the power of a global food-intelligence engine**, and it's **native to Vietnamese context and behavior.**"
+- One system: understands your slang → learns your taste → only recommends places it can prove are real and open.
+- Agent one-liner: **"Underneath, an AI agent continuously collects, cross-checks, and scores every restaurant — so personalization is never built on guesses."**
 
-Credibility line: "We are [X] engineers + [Y] with F&B/product background — we shipped this end-to-end in 12 hours on Tasco's real datasets and API contract."
+**2:15–3:00 — WHY IT WORKS** *(3-part slide)*
+1. **Understands Vietnamese** — semantic engine for our slang, dishes, vibes ("quán clean", "bình dân", "chỗ chill"). → *Search finally speaks your language.*
+2. **Personalizes from behavior** — learns from what you save, revisit, when/where you eat; ranks for YOU, with reasons. → *Every rec feels chosen for you, not for a tourist.*
+3. **Reliable by design** — every fact verified by 2+ sources, provenance-tagged, confidence-scored; can't verify → **refuses.** → *You can trust it — and so can Tasco's brand.*
+- Land: **"Three parts, one system: it gets Vietnam, it gets you, and it never lies."**
 
-## 0:40–1:20 — PROBLEM INSIGHT (Slide 2)
+**3:00–3:50 — IMPACT** *(Impact slide)*
+- **Market:** young Vietnamese are the largest, highest-frequency, most profitable food-discovery segment — the demand engine, and the behavioral fuel.
+- **User:** right quán, in your words, personalized, never a dead pin — completeness **0.6 → 0.9**, **[X]ms**, no GPU at query time.
+- **Business/Tasco:** launches Tasco Maps with a **defensible** food layer rivals can't copy (localized behavioral data + verified trust = moat), monetized 4 ways (CukCuk 50k+ listings → sponsored placement → data licensing → VETC 2.8M). **Flywheel:** more young users → more behavioral data → better personalization → more users.
 
-Playbook: *insight, not a copy of the brief. "We discovered…", not "the brief says…"*
+**3:50–4:50 — DEMO** *(storyline below)*
+- Slang query → personalized, explained recs → provenance per field → ask an unlisted place → **"Không tìm thấy trong dữ liệu."**
 
-- **WHO:** Tasco Maps' data/product team, pre-launch.
-- **GOAL:** launch-ready F&B coverage deep enough to beat "just use Google."
-- **FRICTION:** Vietnam has **323,010 F&B outlets** (iPOS 2024); their info is unstructured, image-heavy (menus are photos), and stale — **30,000 outlets closed in H1 2024 alone**, so any static dataset decays ~10%/half-year.
-- **ROOT CAUSE:** manual curation can't scale (even 15 min/outlet ≈ **40 person-years** for one national pass — then it's already stale). Naive LLM enrichment scales but **hallucinates** — fabricated opening hours at launch = brand damage a new map can't survive.
-- **EVIDENCE (we discovered):** in Tasco's own dataset, [X]% of POIs miss menu/hours/dietary fields — avg quality score [0.XX]. *(DEV2 fills the real number — this is our "one insight beats five statistics".)*
+**4:50–5:00 — CLOSE**
+- **"A global map can't buy the one thing we built: a food layer that truly understands Vietnam, personalizes to every diner, and earns their trust. Đúng quán, dành cho bạn, và luôn có thật."**
 
-> One-liner: **"Tasco's bottleneck isn't map tech — it's trustworthy depth per POI, at national scale, continuously."**
+---
 
-## 1:20–2:20 — SOLUTION = THE AGENT AT WORK (Slide 3: Agentic Workflow)
+## 0:00–0:35 — IDENTITY + PROMISE
 
-Playbook: judges must SEE plan → tools → act → verify, or they see "only a chatbot." Narrate the loop over the architecture diagram:
+"We are **[Tôi là AI]**, and we built **[product]** for the Tasco P11 track.
 
-1. **Goal** — "Complete this restaurant's profile to quality ≥ 0.9."
-2. **Plan** — the agent inspects the gaps (no menu, no hours) and decides which sources can fill each: Google Places for hours, Foody for menu, TikTok for buzz.
-3. **Tools** — it executes scrapers and vision models: Apify actors, anti-bot fetchers, agentic extraction (AgentQL), OCR + vision LLM for photographed menus.
-4. **Act** — extracts and structures: raw text/images → normalized menu items, prices, dietary tags, opening hours.
-5. **Verify** — the non-negotiable step: **≥2 independent sources must agree before a fact is written**; every field carries `{source, confidence, fetched_at}`; unverifiable → the agent **refuses and flags the gap** instead of guessing.
+> **For young Vietnamese who discover food by vibe and slang, we deliver the first food map that speaks their language, learns their taste, and never sends them to a place that's already closed** — powered by an AI agent that verifies every fact before it's shown.
 
-Then one breath on serving: "The verified knowledge base then powers everything the brief asks for — semantic food search, personalized recommendations *with explanations*, comparison, an assistant that cites its sources, and dish recognition from photos — all through Tasco Maps-compatible APIs."
+[X] engineers with F&B and product backgrounds — shipped end-to-end in 12 hours on Tasco's real datasets and API contract."
 
-> Sentence to land: **"Unlike a wrapper that asks an LLM to 'fill in the data', our agent treats every fact as unverified until two sources agree — that's why Tasco can put its brand on the output."**
+*(Why young adults: highest-frequency diners, discover constantly, and their behavior is the data that makes personalization work. They're both the market and the fuel.)*
 
-## 2:20–3:05 — CREDIBILITY / WHY IT WINS (Slide 4)
+## 0:35–1:20 — PROBLEM / INSIGHT
 
-Playbook frame — Real / Reliable / Controlled / Evaluated:
+Over the "how Vietnamese think/look for food" + chat slides (~35s):
 
-- **Real:** end-to-end working system — CSV + scraped sources → knowledge base → live API → map UI. One static binary online, offline-safe, cache-first (demo survives dead wifi).
-- **Reliable:** anti-hallucination by construction — NER entity gate: a restaurant not in the KB returns `not_found`, never a fabrication. *(Tease: "we'll show it refusing, live.")*
-- **Controlled:** every enriched field is namespaced, provenance-tagged, confidence-scored; benchmark data is never overwritten by scraped data; human-reviewable.
-- **Evaluated:** [N]/15 public evaluation queries + [N]/8 personalization & localization scenarios passing, including **2/2 honesty traps**. *(DEV3 fills final numbers.)*
+> "This is how Vietnamese actually look for food — **by memory, by vibe, in slang.** 'Bát phở hôm trước ngon nhỉ', 'quán nào clean không' — this is real language, and none of it fits in a maps search bar."
 
-Differentiator line (vs Google — 15s version, full ammo in [02-google-competitive.md](02-google-competitive.md)):
-> "Google wins on breadth. A Vietnamese map wins on **depth** — menus, prices, dietary tags per POI; **trust** — every field verifiable to its source; and **being Vietnamese-first** — our ranking favors quán bình dân over tourist traps, by design."
+Root cause, over the global-engine (Baidu QAC) slide (~25s):
 
-## 3:05–3:50 — IMPACT (Slide 5: Evidence + Impact)
+> "World-class food-intelligence engines already exist — Baidu, Google. Here's the uncomfortable part: **they work, they just aren't built for us.** Drop them into Vietnam and they can't read how we describe food — so they can't personalize for how we actually eat. **The technology isn't missing. The localization is.** That's the gap we take."
 
-Playbook: strongest evidence you actually have; label estimates. Three numbers + one comparison:
+## 1:20–2:15 — SOLUTION (Solution slide)
 
-1. **Cost per enriched POI: [X]đ** *(measured tonight — API credits ÷ POIs)* vs. manual curation ≈ 15 min/POI. At national scale: **agent ≈ [X × 323k]đ total** vs **~40 person-years** of manual work — and the agent re-runs continuously, which manual passes can't.
-2. **Quality lift: 0.6 → 0.9 avg completeness** on enriched POIs, [N] gaps closed *(measured)*.
-3. **Latency: [X]ms** core recommendation — production-grade, no GPU required at query time *(measured)*.
+> "So we built **[product]: an end-to-end food-personalization system** that does two hard things at the same time —
+> it **reproduces the power of a global food-intelligence engine**, and it's **native to Vietnamese context and behavior.**"
 
-Frame: "For Tasco this converts directly: **time-to-launch-ready coverage** drops from a curation program to an agent run — and the same agent keeps the data alive as 10% of outlets churn every 6 months."
+One system, three moves the user feels: "It **understands your slang**, it **learns your taste**, and it will **only ever recommend a place it can prove is real and still open.**"
 
-Monetization (20s, from [03-business-case.md](03-business-case.md)): "Post-launch this asset monetizes 4 ways: merchant verified listings — with MISA CukCuk's 50,000+ restaurants as an onboarding channel — sponsored placement inside honest rankings, B2B data licensing, and route-aware dining for VETC's 2.8M vehicles."
+Agent / agentic-AI beat (say it explicitly — rubric #1):
 
-## 3:50–4:50 — DEMO (Slide 6, ≤60s, follows the demo storyline)
+> "Underneath, an **AI agent** does the work no static import can: it continuously **plans** what each restaurant is missing, **pulls** from multiple sources, **cross-checks** them, and **scores** every field — so the personalization on top is never built on a guess."
 
-Primary storyline — **the enrichment agent + the honesty trap** (matches hero claim):
+## 2:15–3:00 — WHY IT WORKS (3-part slide)
+
+Frame: "Three parts. I won't walk the stack — I'll show you why each one matters."
+
+| Part | What it is | Why it's cool / trusted | So what (user value) |
+|---|---|---|---|
+| **1. Understands Vietnamese** | Semantic engine tuned to how Vietnamese talk about food — slang, dishes, vibes ("quán clean", "bình dân", "chỗ chill") | Maps messy natural language → the right places; global engines can't do this here | Search finally speaks your language |
+| **2. Personalizes from behavior** | Ranks from real signals — what you save/revisit, time-of-day, parking, price comfort | Recommends *with explanations*, not a generic top-10 | Every rec feels chosen for you, not for a tourist |
+| **3. Reliable by design** | Every fact verified by **2+ independent sources**, provenance-tagged, confidence-scored; unverifiable → **refuses** | Anti-hallucination by construction — a brand can publish it | You can trust it, and so can Tasco |
+
+Land line:
+> **"Three parts, one system: it gets Vietnam, it gets you, and it never lies."**
+
+## 3:00–3:50 — IMPACT (Impact slide)
+
+Three angles — market, user, business:
+
+1. **The market is the moat.** "Young Vietnamese are the largest, highest-frequency, most profitable food-discovery segment — they eat out constantly and discover constantly. They're not just who we serve; **their behavior is the data that makes personalization better than anyone can copy.**"
+2. **Measured user value:** completeness **0.6 → 0.9** on covered POIs *(measured)*; core recommendation in **[X]ms**, no GPU at query time *(measured)*; **[N]/23** eval scenarios pass including **2/2 honesty traps.**
+3. **Business for Tasco:** "This launches Tasco Maps with a food layer competitors **can't** replicate — localized behavioral data plus verified trust is a compounding moat. And it monetizes four ways: verified merchant listings with **MISA CukCuk's 50,000+** restaurants as the onboarding channel, sponsored placement inside honest rankings, B2B data licensing, and route-aware dining for **VETC's 2.8M** vehicles."
+
+Flywheel line (say it):
+> **"More young diners → more behavioral data → sharper personalization → more diners. The data gets better the more it's used — that's the part a global map can't buy."**
+
+## 3:50–4:50 — DEMO (≤60s)
+
+Storyline — **understand → personalize → refuse** (matches the 3 pillars):
 
 | Time | Beat | On screen |
 |---|---|---|
-| 0–10s | Goal | Real restaurant POI on the map, quality badge **0.61**, missing menu & hours |
-| 10–20s | Trigger | Click "Enrich" — agent panel opens |
-| 20–45s | Agent acts | Visible plan + tool calls: sources found → fields extracted → **consensus check** → provenance badges appear |
-| 45–55s | Outcome | Same card now quality **0.90**: menu, prices, hours, dietary tags — each field showing its source |
-| 55–60s | Proof | Type "Crystal BBQ có ngon không?" → assistant: **"Không tìm thấy trong dữ liệu"** — "it enriches aggressively, and refuses to lie." |
+| 0–10s | Goal | Type a real slang query — e.g. **"quán bún đậu clean gần đây"** |
+| 10–25s | Understand + personalize | Results resolve the slang → ranked **for this user**, each rec with a one-line *why* (near you / open now / your price range) |
+| 25–45s | Trust | Open one card — quality **0.90**, every field (menu, price, hours) showing **its source** |
+| 45–55s | Honesty trap | Ask about an unlisted place → **"Không tìm thấy trong dữ liệu."** |
+| 55–60s | Proof | "It personalizes aggressively — and refuses to lie." |
 
-Fallbacks: backup video recorded (playbook mandate); if time collapses, cut to the 45–60s segment only.
+Fallback: backup video recorded; if time collapses, cut to 25–60s (trust + refusal).
 
-## 4:50–5:00 — CLOSE (10s)
+## 4:50–5:00 — CLOSE
 
-> "With [product], Tasco Maps launches with the deepest, most trustworthy food layer in Vietnam — built by an agent, verified by design. **Chúng tôi không chỉ làm giàu dữ liệu — chúng tôi làm cho dữ liệu đáng tin.** Thank you."
+> "A global map can't buy the one thing we built: a food layer that **truly understands Vietnam, personalizes to every diner, and earns their trust.**
+> **Đúng quán, dành cho bạn, và luôn có thật.** Thank you."
 
 ---
 
-## Deck = 6 slides (playbook recommendation)
+## Slide map (matches current deck)
 
-1. **Team + Promise** — team, one-sentence promise, credibility line
-2. **Problem Insight** — 323k outlets / 30k closures / [X]% incomplete fields — one chart max
-3. **Agentic Workflow** — the Goal→Plan→Tools→Act→Verify loop diagram (THE slide)
-4. **Why It Wins** — Real/Reliable/Controlled/Evaluated + Google side-by-side screenshot
-5. **Evidence + Impact** — 3 measured numbers + cost math + monetization strip
-6. **Demo + Close** — live demo, closing line
-+ Numbered appendix A1–A8 (see [04-qa-prep.md](04-qa-prep.md)) — shown only if asked.
+1. Team + Promise
+2. "This is how Vietnamese think about / look for food"
+3. Chat screenshot — by memory, vibe, slang
+4. Global engines exist, but fail to localize → not personalized in VN *(root cause)*
+5. **Solution** — reproduce global food-intelligence + localize to VN context
+6. **Why It Works** — 3 parts (Understands VN / Personalizes / Reliable)
+7. **Impact** — market + measured value + monetization + flywheel
+8. **Demo + Close**
++ Numbered appendix A1–A8 ([04-qa-prep.md](04-qa-prep.md)) — only if asked.
 
-## Rubric self-check (write one sentence per criterion — playbook "next move")
+## Rubric self-check (one sentence each)
 
 | Criterion | Our sentence |
 |---|---|
-| Agentic AI use | The agent plans source selection per gap, invokes scraping/OCR/vision tools, and verifies via multi-source consensus before writing any fact. |
-| Problem/track fit | We solve Tasco P11's exact brief — enrichment, menu OCR, dish recognition, search, assistant, recommendations, quality scoring — on Tasco's datasets and API contract. |
-| Technical execution | Working end-to-end system: agent-built KB → sub-[X]ms API → map UI; offline-safe demo; [N]/23 eval scenarios pass. |
-| Impact | Cost per launch-ready POI drops from ~15 min of human curation to [X]đ of agent run, across 323,010 outlets that churn ~10% per half-year. |
-| Creativity | Verification-first agent: consensus gating + provenance + refusal — enrichment that a brand can actually publish. |
-| Clarity | One story — "the agent that feeds Vietnam's map, and never lies" — told in 6 slides and one 60s demo. |
+| Agentic AI use | An agent plans each POI's gaps, pulls multiple sources, cross-checks them, and scores every field before personalization ever uses it. |
+| Problem / track fit | We solve Tasco P11's brief for how Vietnamese actually search — slang understanding, personalization, verification, dish/menu OCR — on Tasco's data and API. |
+| Technical execution | Working end-to-end personalization system: agent-verified KB → sub-[X]ms ranking → map UI; offline-safe demo; [N]/23 scenarios pass. |
+| Impact | An end-to-end system that turns slang into the right, personalized, verified quán — for the largest and fastest-growing food-discovery segment in Vietnam. |
+| Creativity | Localization + behavioral personalization + verification-first refusal — a global-grade engine rebuilt to be Vietnamese-first and trustworthy. |
+| Clarity | One story: "it gets Vietnam, it gets you, and it never lies." |
