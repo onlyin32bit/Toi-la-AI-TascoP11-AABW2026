@@ -45,10 +45,11 @@ Light up Tiers 1–2 with live MISA CukCuk (50,000+ restaurants) and VETC (2.8M 
 `go` `python` `qwen` `dashscope` `gemini-vision` `groq` `hutieubert` `apify` `tinyfish` `zenrows` `jina` `bm25` `react` `vite` `leaflet` `tauri` `postgres` `qdrant`
 
 ## AABW Partner Tool Usage (be specific)
-- **Apify** — Google Places crawler actor; licensed Tier-3 source (confidence 0.80) for POI facts, hours, parking, reviews.
-- **TinyFish / AgentQL** — agentic web extraction for the Tier-4a facts tier (Foody/Riviu/website).
-- **Groq** — review → aspect extraction in the offline pipeline.
-- **Gemini / Qwen-VL** — menu OCR and dish-from-photo recognition, cache-first.
+- **Apify** — Google Places crawler actor (`compass~crawler-google-places`), plus TikTok and Facebook actors; our licensed Tier-3 source (confidence 0.80) for POI facts, hours, parking, and reviews across 537 real POIs in Thủ Đức/Quận 2/Làng Đại Học.
+- **TinyFish** — agentic web extraction (AgentQL) for the Tier-4a tier, pulling structured facts off schema-varying pages like Foody/Riviu where no ready-made actor exists.
+- **OpenAI** — our engine's LLM client (`llmclient.go`) is written to the OpenAI chat/vision/embeddings API contract, so any OpenAI-compatible model can be swapped in without touching the serving code.
+- **Qwen** — the model actually served through that OpenAI-compatible endpoint (Alibaba DashScope): `qwen-plus` answers assistant queries with citations, `qwen-vl-plus` does menu OCR and dish-from-photo recognition, cache-first so demos stay offline-safe.
+- **ZenRows** — anti-bot HTML fetching for enrichment sources that block plain crawlers.
 
 ---
 *Reminder: Demo URL tested in incognito; GitHub public with runnable README; 3–5 real-product screenshots (3:2); 2–3 min demo video showing the product working (not slides).*

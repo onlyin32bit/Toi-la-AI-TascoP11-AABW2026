@@ -1,0 +1,32 @@
+# Local secrets/config — must never leak into the image or override the
+# same-origin relative-URL defaults the production build relies on.
+.env
+.env.*
+!.env.example
+ui/.env
+ui/.env.*
+!ui/.env.example
+
+node_modules
+ui/node_modules
+ui/dist
+ui/src-tauri/target
+
+engine/engine
+engine/build
+
+.git
+plans/
+docs/
+paper/
+business/
+resources/
+*.md
+*.pdf
+*.html
+
+# Large raw scrape dumps not needed to build the serving kb.json
+data/thuduc/raw
+preprocess/scrape_env
+preprocess/__pycache__
+preprocess/cache
