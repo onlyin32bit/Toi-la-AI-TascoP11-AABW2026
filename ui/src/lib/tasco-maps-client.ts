@@ -60,7 +60,10 @@ export interface TascoMapsClientConfig {
   timeoutMs?: number;
 }
 
-const DEFAULT_BASE_URL = "http://localhost:8787";
+// Relative (same-origin) by default — correct in production, where the Go
+// binary serves the map-service surface itself. Only local dev, where this
+// client's mock server runs on a separate port, needs an absolute override.
+const DEFAULT_BASE_URL = "";
 const DEFAULT_LOCALE = "vi-VN";
 const DEFAULT_TZ_FALLBACK = "Asia/Ho_Chi_Minh";
 const DEFAULT_TIMEOUT_MS = 15000;

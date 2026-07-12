@@ -1,7 +1,10 @@
 // Shared fetch helper for the Go engine (all endpoints live on one origin —
 // see PLAN.md/README.md route table; CORS is wide-open server-side).
-export const ENGINE_BASE_URL =
-  (import.meta.env.VITE_ENGINE_BASE_URL as string | undefined) ?? "http://localhost:8000";
+// Empty string = relative to the current origin. Correct default in
+// production, where the Go binary serves the built UI and the API from the
+// same origin (UI_DIST) — only local dev needs VITE_ENGINE_BASE_URL set to
+// point at a separately-running engine on a different port.
+export const ENGINE_BASE_URL = (import.meta.env.VITE_ENGINE_BASE_URL as string | undefined) ?? "";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 
